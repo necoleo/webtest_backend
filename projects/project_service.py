@@ -1,3 +1,5 @@
+from urllib import response
+
 from django.core.exceptions import ObjectDoesNotExist
 
 from projects import models
@@ -7,6 +9,7 @@ from projects.models import Projects
 class ProjectService:
 
     def add_project(self, request_data):
+        """添加项目"""
         response = {}
         try:
             project, created = Projects.objects.get_or_create(
@@ -36,6 +39,7 @@ class ProjectService:
         return response
 
     def get_projects_list(self):
+        """获取项目列表"""
         response = {}
         projects_list = []
         try:
@@ -64,6 +68,31 @@ class ProjectService:
         except Exception as e:
             response['code'] = "error"
             response['message'] = "查询过程发生错误"
+            response['data'] = str(e)
+
+        return response
+
+    def delete_project(self, project_code):
+        response = {
+            'code': "",
+            'message': "",
+            'data': ""
+        }
+        try:
+            target_project = Projects.objects.get(project_code=project_code)
+            target_project.delete()
+            response['code'] = "success"
+            response['message'] = f"项目 {project_code} 删除成功"
+            response['data'] = ""
+
+        except ObjectDoesNotExist:
+            response['code'] = "error"
+            response['message'] = f"项目 {project_code} 不存在，删除失败"
+            response['data'] = ""
+
+        except Exception as e:
+            response['code'] = "error"
+            response['message'] = "删除失败"
             response['data'] = str(e)
 
         return response

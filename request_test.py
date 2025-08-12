@@ -11,5 +11,10 @@ if __name__ == "__main__":
     # }
     # res = requests.post("http://127.0.0.1:8000/api/project/add", json=data)
     #
-    res = requests.get("http://127.0.0.1:8000/api/project/show")
+    # res = requests.get("http://127.0.0.1:8000/api/project/show")
+
+    data = {
+        'project_code': "",
+    }
+    res = requests.post("http://127.0.0.1:8000/api/project/delete", json=data)
     print(res.json())
