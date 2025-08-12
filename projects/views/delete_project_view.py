@@ -22,7 +22,7 @@ class DeleteProjectView(View):
             response['data'] = ""
             return JsonResponse(status=400, data=response)
 
-        response = self.project_service.delete_project(project_code)
+        response = self.project_service.delete_project_by_code(project_code)
 
         if response['code'] == "success":
             status = 200

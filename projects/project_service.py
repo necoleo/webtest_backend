@@ -8,6 +8,16 @@ from projects.models import Projects
 
 class ProjectService:
 
+    # 设置不可修改的字段
+    ALLOWED_UPDATE_FIELDS = [
+        'project_name',
+        'description',
+        'project_type',
+        'status',
+        'start_date',
+        'end_date',
+    ]
+
     def add_project(self, request_data):
         """添加项目"""
         response = {}
@@ -72,7 +82,8 @@ class ProjectService:
 
         return response
 
-    def delete_project(self, project_code):
+    def delete_project_by_code(self, project_code):
+        """根据 project_code 删除项目"""
         response = {
             'code': "",
             'message': "",
@@ -96,3 +107,42 @@ class ProjectService:
             response['data'] = str(e)
 
         return response
+
+    def update_project_by_code(self, project_code, update_data):
+        """根据 project_code 修改项目"""
+        response = {
+            'code': "",
+            'message': "",
+            'data': ""
+        }
+
+        try:
+
+            target_project = Projects.objects.get(project_code=project_code)
+
+            valid_update_data = {}
+            # 过滤数据，只保留可以更新的数据
+            for key, value in update_data:
+                if value in self.ALLOWED_UPDATE_FIELDS:
+                    valid_update_data[key] = update_data[value]
+
+            # 更新数据
+            for field, value in valid_update_data.items():
+                # 动态设置字段
+                setattr(target_project, field, value)
+            target_project.save()
+
+            response['code'] = "success"
+            response['message'] = "更新成功"
+            response['data'] = f"项目 {target_project.project_code} 更新成功"
+
+        except ObjectDoesNotExist:
+            # 项目不存在
+            response['code'] = "error"
+            response['message'] = f"更新失败：项目 {project_code} 不存在"
+            response['data'] = ""
+
+        except Exception as e:
+            response['code'] = "error"
+            response['message'] = "更新失败"
+            response['data'] = str(e)
