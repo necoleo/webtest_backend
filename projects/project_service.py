@@ -117,15 +117,13 @@ class ProjectService:
         }
 
         try:
-
             target_project = Projects.objects.get(project_code=project_code)
 
             valid_update_data = {}
             # 过滤数据，只保留可以更新的数据
-            for key, value in update_data:
-                if value in self.ALLOWED_UPDATE_FIELDS:
-                    valid_update_data[key] = update_data[value]
-
+            for key, value in update_data.items():
+                if key in self.ALLOWED_UPDATE_FIELDS:
+                    valid_update_data[key] = value
             # 更新数据
             for field, value in valid_update_data.items():
                 # 动态设置字段
@@ -146,3 +144,4 @@ class ProjectService:
             response['code'] = "error"
             response['message'] = "更新失败"
             response['data'] = str(e)
+        return response

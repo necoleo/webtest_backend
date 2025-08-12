@@ -19,6 +19,7 @@ from django.urls import path
 
 from projects.views.add_project_view import AddProjectView
 from projects.views.delete_project_view import DeleteProjectView
+from projects.views.edit_project_view import EditProjectView
 from projects.views.show_project_view import ShowProjectView
 from users.views.UserLoginView import UserLoginView
 
@@ -28,4 +29,5 @@ urlpatterns = [
     path('api/project/add', AddProjectView.as_view()),
     path('api/project/show', ShowProjectView.as_view()),
     path('api/project/delete', DeleteProjectView.as_view()),
+    path('api/project/edit', EditProjectView.as_view()),
 ]
