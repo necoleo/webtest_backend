@@ -1,8 +1,10 @@
+
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.http import require_http_methods
 
+from decorators.request_decorators import valid_login_required
 from projects.project_service import ProjectService
 
 
@@ -10,6 +12,7 @@ class ShowProjectView(View):
 
     service = ProjectService()
 
+    @method_decorator(valid_login_required)
     @method_decorator(require_http_methods(['GET']))
     def get(self, request):
 

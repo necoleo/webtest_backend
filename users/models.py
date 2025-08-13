@@ -10,6 +10,7 @@ class User(AbstractUser):
     phone = models.CharField(
         max_length=20,
         unique=True,
+        null=True,
         verbose_name='手机号码',
         db_comment='手机号码'
     )

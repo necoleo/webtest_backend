@@ -17,5 +17,4 @@ class AddProjectView(View):
         response = self.service.add_project(request_data)
         if response['code'] == "success":
             status = 200
-
         return JsonResponse(status=status, data=response)

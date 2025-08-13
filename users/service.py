@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login
+from django.db import IntegrityError
 
 from users import models as users_model
 
@@ -38,4 +39,29 @@ class UserService:
         return response
 
 
+    def user_register(self, username, password, check_password):
+        """用户注册"""
+        response = {}
+        if check_password != password:
+            response['code'] = "error"
+            response['message'] = "两次输入的密码不一致"
+            response['data'] = ""
+            return response
+        try:
+            user_obj = users_model.User.objects.create_user(username=username, password=password)
+            response['code'] = "success"
+            response['message'] = "注册成功"
+            response['data'] = f"{user_obj.get_username()} 注册成功"
 
+        except IntegrityError as e:
+            response['code'] = "error"
+            response['message'] = "账号存在"
+            response['data'] = str(e)
+            return response
+
+        except Exception as e:
+            response['code'] = "error"
+            response['message'] = "注册过程发生错误"
+            response['data'] = str(e)
+            return response
+        return response
