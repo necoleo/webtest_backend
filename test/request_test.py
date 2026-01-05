@@ -1,0 +1,50 @@
+import os
+
+import requests
+
+if __name__ == '__main__':
+    base_url = 'http://127.0.0.1:8000'
+    login_url = f'{base_url}/user/login/'
+    upload_url = f'{base_url}/api_document/upload/'
+    get_list_url = f'{base_url}/api_document/list/'
+    login_data = {
+        "username": "heypon",
+        "password": "xiehaipeng"
+    }
+    session = requests.Session()
+    r = session.post(url=login_url, json=login_data)
+
+    print(r.json())
+    session.headers.update()
+    data = {
+        "project_id": 1,
+        "version": "1.0.0",
+        "comment": "测试"
+    }
+    # 准备文件（使用实际文件路径）
+    file_path = r"C:\Users\92700\Downloads\【管理端】列表筛选时间组件支持年、月、日筛选.pdf"  # 测试文件路径
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as f:
+            files = {
+                'file': (os.path.basename(file_path), f, 'application/pdf')
+            }
+
+            # 发送 POST 请求（multipart/form-data）
+            response = session.post(
+                url=upload_url,
+                data=data,  # 表单字段
+                files=files,  # 文件
+                timeout=30
+            )
+
+            print(f"状态码: {response.status_code}")
+            print(f"响应: {response.json()}")
+    else:
+        print(f"测试文件不存在: {file_path}")
+
+    get_list_data = {
+        "page": 1,
+        "page_size": 20
+    }
+    get_list_respone = session.get(url=get_list_url, params=get_list_data)
+    print(get_list_respone.json())

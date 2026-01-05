@@ -1,0 +1,249 @@
+import os
+from datetime import datetime
+
+from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator
+from django.utils.decorators import method_decorator
+
+from api_auto_test.models import ApiDocuments
+from constant.error_code import ErrorCode
+from project_decorator.request_decorators import valid_params_blank
+from utils.cos.cos_client import CosClient
+from qcloud_cos import CosClientError
+
+
+
+class Service:
+    def __init__(self):
+        # 本地缓存目录
+        self.UPLOAD_SAVED_TEMP = "upload_file_temp"
+        self.cos_client = CosClient()
+
+    @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user"]))
+    def upload_api_document(self, project_id, version, file, comment, created_user):
+        """
+        上传接口文档
+        :param project_id: 所属项目id
+        :param version: 接口文档版本号
+        :param file: 接口文档文件
+        :param comment: 备注
+        :param created_user: 创建人
+        :return:
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+        try:
+            # 将文件缓存至本地
+            upload_file = FileSystemStorage(location=self.UPLOAD_SAVED_TEMP)
+            saved_filename = upload_file.save(file.name, file)
+            if not saved_filename:
+                response["code"] = ErrorCode.FILE_SAVE_FAILED
+                response["message"] = "文件保存失败"
+                response["status_code"] = 500
+                return response
+
+            # 设置 COS 目标目录（按项目分目录）
+            target_dir = f"webtest_api_document/{project_id}/"
+            temp_dir = os.path.abspath(self.UPLOAD_SAVED_TEMP)
+            temp_file_path = os.path.join(temp_dir, saved_filename)
+            # 上传需求文档到 COS
+            cos_res = self.cos_client.upload_file_to_cos_bucket(target_dir, saved_filename, temp_file_path)
+
+            # 判断上传是否成功（SDK 通常返回包含 ETag 的响应头）
+            if not cos_res or 'ETag' not in cos_res:
+                response['code'] = ErrorCode.FILE_SAVE_FAILED
+                response['message'] = f"上传失败: {cos_res}"
+                response['status_code'] = 500
+                return response
+
+            # 生成 COS 对象键与访问链接
+            cos_key = f"{target_dir}{file.name}"
+            cos_access_url = f"https://{self.cos_client.bucket}.cos.ap-guangzhou.myqcloud.com/{cos_key}"
+            # 计算文件大小
+            file_size = os.path.getsize(temp_file_path)
+            # 删除缓存文件
+            upload_file.delete(saved_filename)
+
+            # 创建接口文档记录
+            api_document = ApiDocuments.objects.create(
+                project_id=project_id,
+                doc_name=file.name,
+                version=version,
+                cos_access_url=cos_access_url,
+                file_size=file_size,
+                comment=comment,
+                created_user=created_user
+            )
+
+            response['code'] = ErrorCode.SUCCESS
+            response['message'] = "上传成功"
+            response['data']['document_id'] = api_document.id
+            response['data']['project_id'] = project_id
+            response['data']['cos_access_url'] = cos_access_url
+            response['data']['file_size'] = file_size
+            response['data']['etag'] = cos_res['ETag']
+            response['status_code'] = 200
+
+            return response
+
+        except CosClientError as e:
+            response['code'] = ErrorCode.FILE_SAVE_FAILED
+            response['message'] = f"上传过程中发生错误：COS 客户端异常：{str(e)}"
+            response['status_code'] = 500
+
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = f"服务器错误：{str(e)}"
+            response["status_code"] = 500
+
+            return response
+
+
+    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    def get_api_document(self, page, page_size, api_document_id=None, project_id=None, doc_name=None, version=None):
+        """
+        获取接口文档
+        :param page: 页码（必填）
+        :param page_size: 分页大小（必填）
+        :param api_document_id: 接口文档id
+        :param project_id: 所属项目id
+        :param doc_name: 接口文档名称
+        :param version: 接口文档版本
+        :return:
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+
+        #  参数校验
+        if not isinstance(page, int) or not isinstance(page_size, int):
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "参数无效"
+            response['status_code'] = 400
+            return response
+        if page < 1:
+            page = 1
+        if page_size < 1:
+            page_size = 20
+        if page_size > 100:
+            page_size = 100
+
+        try:
+            filter_map = {
+                "deleted_at__isnull": True
+            }
+
+            if api_document_id:
+                # 精准查询
+                filter_map["id"] = api_document_id
+
+            if project_id:
+                # 精准查询
+                filter_map["project_id"] = project_id
+
+            if doc_name:
+                # 模糊查询
+                filter_map["doc_name__contains"] = doc_name
+
+            if version:
+                # 模糊查询
+                filter_map["version__contains"] = version
+
+            query_set = ApiDocuments.objects.filter(**filter_map)
+
+            paginator = Paginator(query_set, page_size)
+            page_obj = paginator.get_page(page)
+
+            query_results = page_obj.object_list
+            results = []
+            for api_document_obj in query_results:
+                api_document_info = {
+                    "id": api_document_obj.id,
+                    "project_id": api_document_obj.project_id,
+                    "doc_name": api_document_obj.doc_name,
+                    "version": api_document_obj.version,
+                    "cos_access_url": api_document_obj.cos_access_url,
+                    "file_size": api_document_obj.file_size,
+                    "comment": api_document_obj.comment,
+                    "created_user": api_document_obj.created_user,
+                    "created_at": api_document_obj.created_at,
+                    "updated_at": api_document_obj.updated_at
+                }
+
+                results.append(api_document_info)
+
+
+            current_page = page_obj.number
+            total_count = paginator.count
+            total_pages = paginator.num_pages
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "查询接口文档成功"
+            response["data"]["results"] = results
+            response['data']['total_count'] = total_count
+            response['data']['total_pages'] = total_pages
+            response['data']['current_page'] = current_page
+            response['data']['page_size'] = page_size
+
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = f"服务器错误：{str(e)}"
+            response["status_code"] = 500
+
+            return response
+
+
+    @method_decorator(valid_params_blank(required_params_list=["api_document_id"]))
+    def delete_api_document(self, api_document_id):
+        """
+        删除接口文档
+        :param api_document_id:
+        :return:
+        """
+
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+
+        # 校验参数
+        if not isinstance(api_document_id, int):
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "参数无效"
+            response['status_code'] = 400
+            return response
+
+        try:
+            target_api_document = ApiDocuments.objects.get(id=api_document_id, deleted_at__isnull=True)
+            target_api_document.deleted_at = datetime.now()
+            target_api_document.save()
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "删除成功"
+            response['data']['api_document_id'] = api_document_id
+            return response
+
+        except ApiDocuments.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "该接口文档不存在"
+            response['status_code'] = 400
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = f"服务器错误：{str(e)}"
+            response['status_code'] = 500
+            return response
