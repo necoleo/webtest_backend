@@ -178,6 +178,10 @@ class Service:
                     "created_at": api_document_obj.created_at,
                     "updated_at": api_document_obj.updated_at
                 }
+                if api_document_info["created_at"]:
+                    api_document_info["created_at"] = api_document_info["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+                if api_document_info["updated_at"]:
+                    api_document_info["updated_at"] = api_document_info["updated_at"].strftime("%Y-%m-%d %H:%M:%S")
 
                 results.append(api_document_info)
 
