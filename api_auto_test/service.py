@@ -3,9 +3,11 @@ from datetime import datetime
 
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.utils.decorators import method_decorator
 
-from api_auto_test.models import ApiDocuments
+from api_auto_test.models import ApiDocuments, ApiInterfaceModel
+from api_auto_test.parser.api_document_parser import ApiDocumentParser
 from constant.error_code import ErrorCode
 from project_decorator.request_decorators import valid_params_blank
 from utils.cos.cos_client import CosClient
@@ -249,5 +251,56 @@ class Service:
         except Exception as e:
             response["code"] = ErrorCode.SERVER_ERROR
             response["message"] = f"服务器错误：{str(e)}"
+            response['status_code'] = 500
+            return response
+
+
+    @method_decorator(valid_params_blank(required_params_list=["api_document_id", "file_content"]))
+    def parse_api_document(self, api_document_id, file_content):
+        """
+        将接口文档解析成接口列表并保存到数据库
+        :param api_document_id: 接口文档的id
+        :param file_content: 接口文档的内容
+        :return:
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+
+        try:
+            parser = ApiDocumentParser(api_document_id, file_content)
+
+            api_document_type = parser.check_api_document_type()
+
+            if api_document_type == "swagger":
+                api_interface_list = parser.parser_swagger()
+
+            else:
+                response["code"] = ErrorCode.PARAM_INVALID
+                response["message"] = "不支持的文档格式"
+                response['status_code'] = 400
+                return response
+
+            # 使用事务
+            with transaction.atomic():
+                # 批量保存到数据库
+                api_interface_model_list = []
+                for item in api_interface_list:
+                    api_interface_model = ApiInterfaceModel(**item)
+                    api_interface_model_list.append(api_interface_model)
+
+                ApiInterfaceModel.objects.bulk_create(api_interface_model_list)
+
+                response["code"] = ErrorCode.SUCCESS
+                response["message"] = f"成功导入 {len(api_interface_list)} 个接口"
+
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = f"错误信息: {str(e)}"
             response['status_code'] = 500
             return response

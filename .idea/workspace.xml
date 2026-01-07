@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1958225-d9cb-4cd7-86e0-1e44539a2930" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/api_auto_test/parser/api_document_parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/back.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/back.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api_auto_test/views/parse_api_document_view.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_auto_test/parser/api_document_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_auto_test/parser/api_document_parser.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api_auto_test/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_auto_test/service.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
