@@ -41,7 +41,7 @@ class Service:
         }
         try:
             # 将文件缓存至本地
-            upload_file = FileSystemStorage(location=self.UPLOAD_SAVED_TEMP)
+            upload_file = FileSystemStorage(location=self.COS_FILE_SAVED_TEMP)
             saved_filename = upload_file.save(file.name, file)
             if not saved_filename:
                 response["code"] = ErrorCode.FILE_SAVE_FAILED
@@ -51,7 +51,7 @@ class Service:
 
             # 设置 COS 目标目录（按项目分目录）
             target_dir = f"webtest_api_document/{project_id}/"
-            temp_dir = os.path.abspath(self.UPLOAD_SAVED_TEMP)
+            temp_dir = os.path.abspath(self.COS_FILE_SAVED_TEMP)
             temp_file_path = os.path.join(temp_dir, saved_filename)
             # 上传需求文档到 COS
             cos_res = self.cos_client.upload_file_to_cos_bucket(target_dir, saved_filename, temp_file_path)
