@@ -177,6 +177,7 @@ class Service:
                     "cos_access_url": api_document_obj.cos_access_url,
                     "file_size": api_document_obj.file_size,
                     "comment": api_document_obj.comment,
+                    "is_parsed": api_document_obj.is_parsed,
                     "created_user": api_document_obj.created_user,
                     "created_at": api_document_obj.created_at,
                     "updated_at": api_document_obj.updated_at
