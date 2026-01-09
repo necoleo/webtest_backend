@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+import requests
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -18,7 +19,7 @@ from qcloud_cos import CosClientError
 class Service:
     def __init__(self):
         # 本地缓存目录
-        self.UPLOAD_SAVED_TEMP = "upload_file_temp"
+        self.COS_FILE_SAVED_TEMP = "cos_file_temp"
         self.cos_client = CosClient()
 
     @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user"]))
@@ -255,8 +256,8 @@ class Service:
             return response
 
 
-    @method_decorator(valid_params_blank(required_params_list=["api_document_id", "file_content"]))
-    def parse_api_document(self, api_document_id, file_content):
+    @method_decorator(valid_params_blank(required_params_list=["api_document_id"]))
+    def parse_api_document(self, api_document_id):
         """
         将接口文档解析成接口列表并保存到数据库
         :param api_document_id: 接口文档的id
@@ -271,6 +272,27 @@ class Service:
         }
 
         try:
+
+            # 获取接口文档
+            api_document = ApiDocuments.objects.get(id=api_document_id, deleted_at__isnull=True)
+
+            # 判断是否已解析
+            if api_document.is_parsed:
+                response["code"] = ErrorCode.PARAM_INVALID
+                response["message"] = "该文档已解析"
+                response["status_code"] = 400
+                return response
+
+            # 下载接口文档内容
+            file_content = self.cos_client.download_and_read_json_by_url(api_document.cos_access_url, self.COS_FILE_SAVED_TEMP )
+
+            if not file_content:
+                response["code"] = ErrorCode.SERVER_ERROR
+                response["message"] = "获取文件失败"
+                response['status_code'] = 500
+                return response
+
+            # 解析文档
             parser = ApiDocumentParser(api_document_id, file_content)
 
             api_document_type = parser.check_api_document_type()
@@ -294,8 +316,12 @@ class Service:
 
                 ApiInterfaceModel.objects.bulk_create(api_interface_model_list)
 
+                api_document.is_parsed = True
+                api_document.save(update_fields=["is_parsed"])
+
                 response["code"] = ErrorCode.SUCCESS
                 response["message"] = f"成功导入 {len(api_interface_list)} 个接口"
+                response["data"]["count"] = len(api_interface_list)
 
             return response
 

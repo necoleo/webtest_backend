@@ -4,9 +4,9 @@ import requests
 
 if __name__ == '__main__':
     base_url = 'http://127.0.0.1:8000'
-    login_url = f'{base_url}/user/login/'
-    upload_url = f'{base_url}/api_document/upload/'
-    get_list_url = f'{base_url}/api_document/list/'
+    login_url = f'{base_url}/api/user/login/'
+    upload_url = f'{base_url}/api/api_document/upload/'
+    get_list_url = f'{base_url}/api/api_document/list/'
     login_data = {
         "username": "heypon",
         "password": "xiehaipeng"
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     session = requests.Session()
     r = session.post(url=login_url, json=login_data)
 
-    print(r.json())
+    print(r)
     session.headers.update()
     data = {
         "project_id": 1,
@@ -22,11 +22,11 @@ if __name__ == '__main__':
         "comment": "测试"
     }
     # 准备文件（使用实际文件路径）
-    file_path = r"C:\Users\92700\Downloads\【管理端】列表筛选时间组件支持年、月、日筛选.pdf"  # 测试文件路径
+    file_path = r"D:\pyproject\new_webtest\backend\doc.json"  # 测试文件路径
     if os.path.exists(file_path):
         with open(file_path, 'rb') as f:
             files = {
-                'file': (os.path.basename(file_path), f, 'application/pdf')
+                'file': (os.path.basename(file_path), f)
             }
 
             # 发送 POST 请求（multipart/form-data）
@@ -42,9 +42,9 @@ if __name__ == '__main__':
     else:
         print(f"测试文件不存在: {file_path}")
 
-    get_list_data = {
-        "page": 1,
-        "page_size": 20
-    }
-    get_list_respone = session.get(url=get_list_url, params=get_list_data)
-    print(get_list_respone.json())
+    # get_list_data = {
+    #     "page": 1,
+    #     "page_size": 20
+    # }
+    # get_list_respone = session.get(url=get_list_url, params=get_list_data)
+    # print(get_list_respone.json())

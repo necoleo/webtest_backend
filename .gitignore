@@ -60,7 +60,7 @@ config/.env
 .settings/
 
 # Upload files and temp directories
-upload_file_temp/
+cos_file_temp/
 *.pdf
 *.doc
 *.docx

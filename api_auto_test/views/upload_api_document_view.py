@@ -40,11 +40,10 @@ class UploadApiDocumentView(View):
         }
 
         try:
-            request_data = json.loads(request.body)
-            project_id = request_data.get("project_id")
-            version = request_data.get("version")
-            file = request_data.get("file")
-            comment = request_data.get("comment")
+            project_id = int(request.POST.get("project_id"))
+            version = request.POST.get("version")
+            file = request.FILES.get("file")
+            comment = request.POST.get("comment")
             created_user = request.user
 
             service_response = self.service.upload_api_document(project_id, version, file, comment, created_user)

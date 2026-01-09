@@ -1,4 +1,7 @@
 # -*- coding=utf-8
+import json
+import uuid
+
 from dotenv import load_dotenv
 from qcloud_cos import CosConfig, CosClientError, CosServiceError
 from qcloud_cos import CosS3Client
@@ -11,6 +14,9 @@ class CosClient:
     def __init__(self):
         # 正常情况日志级别使用 INFO，需要定位时可以修改为 DEBUG，此时 SDK 会打印和服务端的通信信息
         logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+
+        # 本地缓存目录
+        self.COS_FILE_SAVED_TEMP = "cos_file_temp"
 
         # 加载 .env文件
         load_dotenv("../config/.env")
@@ -100,6 +106,42 @@ class CosClient:
             for folder in response['CommonPrefixes']:
                 print(folder['Prefix'])
         return response
+
+
+    def download_and_read_json_by_url(self, cos_url, file_path):
+        """
+        通过cos下载链接下载文件并返回内容
+        :param cos_url:
+        :return:
+        """
+        cos_key = cos_url.split('.com/')[-1]
+
+        # 确保临时目录存在
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
+
+        # 本地临时文件路径
+        temp_filename = f"{uuid.uuid4().hex}.json"
+        temp_path = os.path.join(file_path, temp_filename)
+
+        try:
+            # 下载文件
+            self.client.download_file(
+                Bucket=self.bucket,
+                Key=cos_key,
+                DestFilePath=temp_path
+            )
+
+            # 读取 JSON
+            with open(temp_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        finally:
+            # 清理临时文件
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+
+
+
 
 if __name__ == '__main__':
     cos_client = CosClient()

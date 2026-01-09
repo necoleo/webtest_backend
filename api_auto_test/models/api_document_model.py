@@ -46,6 +46,11 @@ class ApiDocuments(models.Model):
         db_comment="备注说明"
     )
 
+    is_parsed = models.BooleanField(
+        default=False,
+        db_comment="是否已解析"
+    )
+
     # 创建人
     created_user = models.CharField(
         max_length=255,
