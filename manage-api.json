@@ -1,0 +1,7504 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Manage API",
+    "description": "配置管理员后台专用 API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/manage",
+      "description": "Manage API Server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "PageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "页码",
+        "schema": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "PerPageParam": {
+        "name": "per_page",
+        "in": "query",
+        "description": "每页数量",
+        "schema": {
+          "type": "integer",
+          "default": 10
+        }
+      },
+      "ProjectIdParam": {
+        "name": "project_id",
+        "in": "query",
+        "description": "项目ID",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "ConfigModeParam": {
+        "name": "config_mode",
+        "in": "query",
+        "description": "配置模式 (formal=正式表, draft=草稿表)",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "formal",
+            "draft"
+          ],
+          "default": "formal"
+        }
+      }
+    },
+    "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "required": ["code", "msg"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "业务状态码（200=成功，其他表示失败）",
+            "example": 200
+          },
+          "msg": {
+            "type": "string",
+            "description": "消息"
+          },
+          "data": {
+            "description": "数据"
+          }
+        },
+        "example": {
+          "code": 200,
+          "msg": "",
+          "data": null
+        }
+      },
+      "PaginatedResponse": {
+        "type": "object",
+        "required": ["code", "msg"],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "业务状态码（200=成功，其他表示失败）",
+            "example": 200
+          },
+          "msg": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "current_page": {
+                "type": "integer"
+              },
+              "per_page": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "code": 200,
+          "msg": "",
+          "data": {
+            "current_page": 1,
+            "per_page": 10,
+            "total": 100,
+            "data": []
+          }
+        }
+      },
+      "UserAccountCreate": {
+        "type": "object",
+        "required": [
+          "name",
+          "mobile"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 125,
+            "description": "用户名称"
+          },
+          "mobile": {
+            "type": "integer",
+            "description": "手机号"
+          }
+        }
+      },
+      "ProjectCreate": {
+        "type": "object",
+        "required": [
+          "form_info"
+        ],
+        "properties": {
+          "form_info": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "项目名称"
+              },
+              "cover": {
+                "type": "string",
+                "description": "项目封面"
+              }
+            }
+          }
+        }
+      },
+      "ObjectTypeCreate": {
+        "type": "object",
+        "required": [
+          "project_id",
+          "form_info"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "integer",
+            "description": "项目ID"
+          },
+          "project_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "关联项目ID列表"
+          },
+          "form_info": {
+            "type": "object",
+            "required": [
+              "name",
+              "display_name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "对象类型名称(英文标识)"
+              },
+              "display_name": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "显示名称"
+              },
+              "icon": {
+                "type": "string",
+                "maxLength": 255,
+                "description": "图标"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "描述"
+              },
+              "group_id": {
+                "type": "integer",
+                "description": "分组ID"
+              },
+              "api_name": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "API名称"
+              },
+              "assignee": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "操作人配置"
+              },
+              "is_primary": {
+                "type": "integer",
+                "enum": [
+                  0,
+                  1
+                ],
+                "description": "是否主对象类型"
+              }
+            }
+          }
+        }
+      },
+      "WidgetTypeCreate": {
+        "type": "object",
+        "description": "display_name 和 description 为 JSON 国际化字段，支持 16 种语言",
+        "required": [
+          "name",
+          "display_name",
+          "type",
+          "scope_type",
+          "channel_type",
+          "source_type",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 30,
+            "description": "名称"
+          },
+          "display_name": {
+            "type": "object",
+            "description": "显示名称（JSON国际化字段，必填）",
+            "example": {
+              "zh_CN": "中文名称",
+              "en": "English Name"
+            }
+          },
+          "description": {
+            "type": "object",
+            "nullable": true,
+            "description": "描述（JSON国际化字段）",
+            "example": {
+              "zh_CN": "中文描述",
+              "en": "English Description"
+            }
+          },
+          "type": {
+            "type": "string",
+            "maxLength": 40,
+            "description": "类型"
+          },
+          "scope_type": {
+            "type": "string",
+            "maxLength": 30,
+            "description": "作用域类型"
+          },
+          "config": {
+            "type": "object",
+            "nullable": true,
+            "description": "配置"
+          },
+          "industries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "适用行业"
+          },
+          "channel_type": {
+            "type": "string",
+            "maxLength": 30,
+            "description": "渠道类型"
+          },
+          "source_type": {
+            "type": "string",
+            "maxLength": 30,
+            "description": "来源类型"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 30,
+            "description": "状态"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/user_accounts": {
+      "post": {
+        "tags": [
+          "用户账号管理"
+        ],
+        "summary": "创建账号",
+        "operationId": "createUserAccount",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAccountCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user_accounts/list": {
+      "get": {
+        "tags": [
+          "用户账号管理"
+        ],
+        "summary": "查询账号列表",
+        "operationId": "listUserAccounts",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "用户名称(模糊搜索)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mobile",
+            "in": "query",
+            "description": "手机号",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "状态",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user_accounts/{userAccount}": {
+      "get": {
+        "tags": [
+          "用户账号管理"
+        ],
+        "summary": "账号详情",
+        "operationId": "getUserAccountDetail",
+        "parameters": [
+          {
+            "name": "userAccount",
+            "in": "path",
+            "required": true,
+            "description": "用户账号ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "用户账号管理"
+        ],
+        "summary": "更新账号",
+        "operationId": "updateUserAccount",
+        "parameters": [
+          {
+            "name": "userAccount",
+            "in": "path",
+            "required": true,
+            "description": "用户账号ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAccountCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/user_accounts/{userAccount}/psw": {
+      "get": {
+        "tags": [
+          "用户账号管理"
+        ],
+        "summary": "获取账号密码",
+        "operationId": "getUserAccountPsw",
+        "parameters": [
+          {
+            "name": "userAccount",
+            "in": "path",
+            "required": true,
+            "description": "用户账号ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/user_accounts/{userAccount}/update_status": {
+      "put": {
+        "tags": [
+          "用户账号管理"
+        ],
+        "summary": "更新状态",
+        "operationId": "updateUserAccountStatus",
+        "parameters": [
+          {
+            "name": "userAccount",
+            "in": "path",
+            "required": true,
+            "description": "用户账号ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "type": "integer",
+                    "description": "状态值"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/user_accounts/{userAccount}/unbind_wechat": {
+      "put": {
+        "tags": [
+          "用户账号管理"
+        ],
+        "summary": "解除用户账户绑定微信小程序",
+        "operationId": "unbindWechat",
+        "parameters": [
+          {
+            "name": "userAccount",
+            "in": "path",
+            "required": true,
+            "description": "用户账号ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/organizations/{code}/locale-config": {
+      "get": {
+        "tags": [
+          "机构语言配置"
+        ],
+        "summary": "获取机构语言配置",
+        "operationId": "getOrganizationLocale",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "description": "机构代码",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "机构语言配置"
+        ],
+        "summary": "更新机构语言配置",
+        "operationId": "updateOrganizationLocale",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "description": "机构代码",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "default_locale": {
+                    "type": "string",
+                    "description": "默认语言"
+                  },
+                  "supported_locales": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "支持的语言列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/project/list": {
+      "get": {
+        "tags": [
+          "项目管理"
+        ],
+        "summary": "项目列表",
+        "operationId": "listProjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "项目名称(模糊搜索)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "项目状态",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/project/formal_list": {
+      "get": {
+        "tags": [
+          "项目管理"
+        ],
+        "summary": "获取正式项目列表",
+        "operationId": "formalProjectList",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "项目名称",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/project": {
+      "post": {
+        "tags": [
+          "项目管理"
+        ],
+        "summary": "创建项目",
+        "operationId": "createProject",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/project/{project}": {
+      "get": {
+        "tags": [
+          "项目管理"
+        ],
+        "summary": "项目详情",
+        "operationId": "getProjectDetail",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "项目ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "项目管理"
+        ],
+        "summary": "修改项目详情",
+        "operationId": "updateProject",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "项目ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "项目管理"
+        ],
+        "summary": "删除项目及子项目",
+        "operationId": "deleteProject",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "项目ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/project/{project}/role_list": {
+      "get": {
+        "tags": [
+          "项目管理"
+        ],
+        "summary": "获取项目下的角色列表",
+        "operationId": "getProjectRoleList",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "项目ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/project/{project}/sub_list": {
+      "get": {
+        "tags": [
+          "项目管理"
+        ],
+        "summary": "获取项目的子项目列表",
+        "operationId": "getSubProjectList",
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "description": "项目ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_type_groups/create": {
+      "post": {
+        "tags": [
+          "对象类型分组管理"
+        ],
+        "summary": "新增对象类型分组",
+        "operationId": "createObjectTypeGroup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "name"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "分组名称"
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "description": "显示名称"
+                  },
+                  "sort": {
+                    "type": "integer",
+                    "description": "排序"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_type_groups/list": {
+      "get": {
+        "tags": [
+          "对象类型分组管理"
+        ],
+        "summary": "查询对象类型分组列表接口",
+        "operationId": "listObjectTypeGroups",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "$ref": "#/components/parameters/ConfigModeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_type_groups/object_type_groups": {
+      "get": {
+        "tags": [
+          "对象类型分组管理"
+        ],
+        "summary": "查询对象类型列表",
+        "operationId": "getObjectTypeGroups",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_type_groups/{objectTypeGroup}": {
+      "put": {
+        "tags": [
+          "对象类型分组管理"
+        ],
+        "summary": "修改对象类型分组",
+        "operationId": "updateObjectTypeGroup",
+        "parameters": [
+          {
+            "name": "objectTypeGroup",
+            "in": "path",
+            "required": true,
+            "description": "对象类型分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "分组名称"
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "description": "显示名称"
+                  },
+                  "sort": {
+                    "type": "integer",
+                    "description": "排序"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "对象类型分组管理"
+        ],
+        "summary": "删除对象类型分组",
+        "operationId": "deleteObjectTypeGroup",
+        "parameters": [
+          {
+            "name": "objectTypeGroup",
+            "in": "path",
+            "required": true,
+            "description": "对象类型分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/create": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "新增对象类型",
+        "operationId": "createObjectType",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectTypeCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/list": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询对象类型列表",
+        "operationId": "listObjectTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "$ref": "#/components/parameters/ConfigModeParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "名称(模糊搜索)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "description": "分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/init_object_types": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "批量初始化对象类型",
+        "operationId": "initObjectTypes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "object_type_ids"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "object_type_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "对象类型ID列表"
+                  },
+                  "is_create_table": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1
+                    ],
+                    "description": "是否创建数据表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询对象类型详情",
+        "operationId": "getObjectTypeDetail",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ConfigModeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "编辑对象类型详情",
+        "operationId": "updateObjectType",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ConfigModeParam"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "form_info": {
+                    "type": "object",
+                    "properties": {
+                      "display_name": {
+                        "type": "string"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "group_id": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/update_display_name": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "更新对象类型显示名称",
+        "operationId": "updateObjectTypeDisplayName",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "display_name"
+                ],
+                "properties": {
+                  "display_name": {
+                    "type": "object",
+                    "description": "显示名称（JSON国际化字段）"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/init_object_type": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "更新对象类型初始化对象类型",
+        "operationId": "initObjectType",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "is_create_table": {
+                    "type": "integer",
+                    "enum": [
+                      0,
+                      1
+                    ],
+                    "description": "是否创建数据表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/link_types": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询对象类型关联对象列表",
+        "operationId": "getObjectTypeLinkTypes",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ConfigModeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/link_object_types": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询对象类型关联的对象列表",
+        "operationId": "getLinkObjectTypes",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ConfigModeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/layout_configs": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询对象类型关联的布局配置列表",
+        "operationId": "getObjectTypeLayoutConfigs",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "layout_type",
+            "in": "query",
+            "description": "布局类型",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/form_used_version": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询对象类型表单模板使用中的版本",
+        "operationId": "getFormUsedVersion",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "form_key",
+            "in": "query",
+            "required": true,
+            "description": "表单key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/save_form_version_mapping": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "保存模板关联关系",
+        "operationId": "saveFormVersionMapping",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "form_key",
+                  "target_version",
+                  "mappings"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer"
+                  },
+                  "form_key": {
+                    "type": "string"
+                  },
+                  "target_version": {
+                    "type": "integer"
+                  },
+                  "mappings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/get_form_version_mapping": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询模板关联关系",
+        "operationId": "getFormVersionMapping",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "form_key",
+            "in": "query",
+            "required": true,
+            "description": "表单key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "target_version",
+            "in": "query",
+            "required": true,
+            "description": "目标版本",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/upgrade_form_data": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "根据历史模板与当前模板关联字段升级表单数据",
+        "operationId": "upgradeFormData",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "form_key",
+                  "target_version"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer"
+                  },
+                  "form_key": {
+                    "type": "string"
+                  },
+                  "target_version": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/upgrade_status": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询表单数据升级状态",
+        "operationId": "getUpgradeStatus",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/cancel_upgrade_task": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "取消表单数据升级任务",
+        "operationId": "cancelUpgradeTask",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/relate_info_object_type": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询关联信息对象类型",
+        "operationId": "getRelateInfoObjectType",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "link_type_id",
+            "in": "query",
+            "description": "连接类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/relate_info_object_type_form_key": {
+      "get": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "查询关联信息对象类型表单",
+        "operationId": "getRelateInfoObjectTypeFormKey",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "link_type_id",
+            "in": "query",
+            "description": "连接类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/relate_projects": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "为对象类型添加项目关联",
+        "operationId": "relateProjects",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_ids"
+                ],
+                "properties": {
+                  "project_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "项目ID列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_types/{objectType}/unrelate_projects": {
+      "post": {
+        "tags": [
+          "对象类型管理"
+        ],
+        "summary": "取消对象类型的项目关联",
+        "operationId": "unrelateProjects",
+        "parameters": [
+          {
+            "name": "objectType",
+            "in": "path",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_ids"
+                ],
+                "properties": {
+                  "project_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "项目ID列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/widget_types/create": {
+      "post": {
+        "tags": [
+          "widget类型管理"
+        ],
+        "summary": "新增widget类型",
+        "operationId": "createWidgetType",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WidgetTypeCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/widget_types/{widgetType}": {
+      "get": {
+        "tags": [
+          "widget类型管理"
+        ],
+        "summary": "查询widget类型详情",
+        "operationId": "getWidgetTypeDetail",
+        "parameters": [
+          {
+            "name": "widgetType",
+            "in": "path",
+            "required": true,
+            "description": "widget类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "widget类型管理"
+        ],
+        "summary": "更新widget类型",
+        "operationId": "updateWidgetType",
+        "parameters": [
+          {
+            "name": "widgetType",
+            "in": "path",
+            "required": true,
+            "description": "widget类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WidgetTypeCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "widget类型管理"
+        ],
+        "summary": "删除widget类型",
+        "operationId": "deleteWidgetType",
+        "parameters": [
+          {
+            "name": "widgetType",
+            "in": "path",
+            "required": true,
+            "description": "widget类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/storage/upload": {
+      "post": {
+        "tags": [
+          "对象存储管理"
+        ],
+        "summary": "上传文件",
+        "operationId": "uploadFile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "文件"
+                  },
+                  "path": {
+                    "type": "string",
+                    "description": "存储路径"
+                  },
+                  "disk": {
+                    "type": "string",
+                    "description": "存储磁盘"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/storage/delete": {
+      "delete": {
+        "tags": [
+          "对象存储管理"
+        ],
+        "summary": "删除文件",
+        "operationId": "deleteFile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "path"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "文件路径"
+                  },
+                  "disk": {
+                    "type": "string",
+                    "description": "存储磁盘"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/storage/batch_delete": {
+      "delete": {
+        "tags": [
+          "对象存储管理"
+        ],
+        "summary": "批量删除文件",
+        "operationId": "batchDeleteFiles",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "paths"
+                ],
+                "properties": {
+                  "paths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "文件路径列表"
+                  },
+                  "disk": {
+                    "type": "string",
+                    "description": "存储磁盘"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/storage/info": {
+      "get": {
+        "tags": [
+          "对象存储管理"
+        ],
+        "summary": "获取文件信息",
+        "operationId": "getFileInfo",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "description": "文件路径",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "disk",
+            "in": "query",
+            "description": "存储磁盘",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/storage/url": {
+      "get": {
+        "tags": [
+          "对象存储管理"
+        ],
+        "summary": "获取文件 URL",
+        "operationId": "getFileUrl",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "description": "文件路径",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "disk",
+            "in": "query",
+            "description": "存储磁盘",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expires",
+            "in": "query",
+            "description": "过期时间(秒)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/storage/list": {
+      "get": {
+        "tags": [
+          "对象存储管理"
+        ],
+        "summary": "文件列表",
+        "operationId": "listFiles",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "description": "目录路径",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "disk",
+            "in": "query",
+            "description": "存储磁盘",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/storage/exists": {
+      "get": {
+        "tags": [
+          "对象存储管理"
+        ],
+        "summary": "检查文件是否存在",
+        "operationId": "checkFileExists",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "description": "文件路径",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "disk",
+            "in": "query",
+            "description": "存储磁盘",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/storage/config": {
+      "get": {
+        "tags": [
+          "对象存储管理"
+        ],
+        "summary": "获取存储配置",
+        "operationId": "getStorageConfig",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/themes": {
+      "get": {
+        "tags": [
+          "项目主题管理"
+        ],
+        "summary": "获取可用主题列表（支持按项目筛选当前主题）",
+        "operationId": "getAvailableThemes",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "description": "项目ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/themes/apply": {
+      "post": {
+        "tags": [
+          "项目主题管理"
+        ],
+        "summary": "应用项目主题",
+        "operationId": "applyTheme",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "theme_id"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "theme_id": {
+                    "type": "integer",
+                    "description": "主题ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/themes/current": {
+      "get": {
+        "tags": [
+          "项目主题管理"
+        ],
+        "summary": "获取项目主题",
+        "operationId": "getProjectTheme",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": true,
+            "description": "项目ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms": {
+      "post": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "新建表单",
+        "operationId": "createActDynamicForm",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "name",
+                  "form_key"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "表单名称"
+                  },
+                  "form_key": {
+                    "type": "string",
+                    "description": "表单key"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "描述"
+                  },
+                  "form_json": {
+                    "type": "object",
+                    "description": "表单JSON配置"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms/list_filter": {
+      "get": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "查询表单列表筛选条件",
+        "operationId": "getFormListFilter",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms/list": {
+      "get": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "查询表单列表",
+        "operationId": "listActDynamicForms",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "表单名称",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "form_key",
+            "in": "query",
+            "description": "表单key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms/project_list": {
+      "get": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "查询项目的表单模板列表",
+        "operationId": "getProjectFormList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms/detail": {
+      "get": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "根据form_key查询表单模板",
+        "operationId": "getFormDetail",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "form_key",
+            "in": "query",
+            "required": true,
+            "description": "表单key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms/form_templates": {
+      "get": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "根据form_keys查询表单模板",
+        "operationId": "getFormTemplates",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "form_keys",
+            "in": "query",
+            "required": true,
+            "description": "表单key列表(逗号分隔)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms/publish": {
+      "put": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "发布表单",
+        "operationId": "publishForm",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "表单ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms/form_template": {
+      "get": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "查看表单模板详情 (支持版本号查询)",
+        "operationId": "getFormTemplate",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "form_key",
+            "in": "query",
+            "required": true,
+            "description": "表单key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "版本号",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/act_dynamic_forms/{actDynamicForm}": {
+      "get": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "查看表单",
+        "operationId": "showActDynamicForm",
+        "parameters": [
+          {
+            "name": "actDynamicForm",
+            "in": "path",
+            "required": true,
+            "description": "表单ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "修改表单",
+        "operationId": "updateActDynamicForm",
+        "parameters": [
+          {
+            "name": "actDynamicForm",
+            "in": "path",
+            "required": true,
+            "description": "表单ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "表单名称"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "描述"
+                  },
+                  "form_json": {
+                    "type": "object",
+                    "description": "表单JSON配置"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/get_templates_variables": {
+      "get": {
+        "tags": [
+          "表单模板管理"
+        ],
+        "summary": "根据form_keys查询表单模板可选变量",
+        "operationId": "getTemplatesVariables",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "form_keys",
+            "in": "query",
+            "required": true,
+            "description": "表单key列表(逗号分隔)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/objects/list": {
+      "get": {
+        "tags": [
+          "对象实例管理"
+        ],
+        "summary": "查询对象列表",
+        "operationId": "listObjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/assignees/role_type_list": {
+      "get": {
+        "tags": [
+          "操作人管理"
+        ],
+        "summary": "角色类型",
+        "operationId": "getAssigneeRoleTypeList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/assignees/list": {
+      "get": {
+        "tags": [
+          "操作人管理"
+        ],
+        "summary": "查询指定操作人类型的数据列表",
+        "operationId": "listAssignees",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "role_type",
+            "in": "query",
+            "description": "角色类型",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/assignees/create": {
+      "post": {
+        "tags": [
+          "操作人管理"
+        ],
+        "summary": "新增操作人",
+        "operationId": "createAssignee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "name",
+                  "role_type"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "操作人名称"
+                  },
+                  "role_type": {
+                    "type": "string",
+                    "description": "角色类型"
+                  },
+                  "mobile": {
+                    "type": "string",
+                    "description": "手机号"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "邮箱"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/assignees/detail": {
+      "get": {
+        "tags": [
+          "操作人管理"
+        ],
+        "summary": "查询操作人详情",
+        "operationId": "getAssigneeDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "操作人ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/assignees/update": {
+      "put": {
+        "tags": [
+          "操作人管理"
+        ],
+        "summary": "修改操作人",
+        "operationId": "updateAssignee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "操作人ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "操作人名称"
+                  },
+                  "mobile": {
+                    "type": "string",
+                    "description": "手机号"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "邮箱"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/assignees/delete": {
+      "delete": {
+        "tags": [
+          "操作人管理"
+        ],
+        "summary": "删除操作人",
+        "operationId": "deleteAssignee",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "操作人ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/assignees/link_user_account": {
+      "post": {
+        "tags": [
+          "操作人管理"
+        ],
+        "summary": "关联操作人和用户账户",
+        "operationId": "linkUserAccount",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "assignee_id",
+                  "user_account_id"
+                ],
+                "properties": {
+                  "assignee_id": {
+                    "type": "integer",
+                    "description": "操作人ID"
+                  },
+                  "user_account_id": {
+                    "type": "integer",
+                    "description": "用户账户ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/assignees/unlink_user_account": {
+      "delete": {
+        "tags": [
+          "操作人管理"
+        ],
+        "summary": "解绑操作人和用户账户",
+        "operationId": "unlinkUserAccount",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "assignee_id"
+                ],
+                "properties": {
+                  "assignee_id": {
+                    "type": "integer",
+                    "description": "操作人ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/link_types/create": {
+      "post": {
+        "tags": [
+          "连接类型管理"
+        ],
+        "summary": "新增连接类型",
+        "operationId": "createLinkType",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "name",
+                  "from_object_type_id",
+                  "to_object_type_id"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "连接类型名称"
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "description": "显示名称"
+                  },
+                  "from_object_type_id": {
+                    "type": "integer",
+                    "description": "源对象类型ID"
+                  },
+                  "to_object_type_id": {
+                    "type": "integer",
+                    "description": "目标对象类型ID"
+                  },
+                  "relation_type": {
+                    "type": "string",
+                    "description": "关系类型"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/link_types/list": {
+      "get": {
+        "tags": [
+          "连接类型管理"
+        ],
+        "summary": "查询连接类型列表",
+        "operationId": "listLinkTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "$ref": "#/components/parameters/ConfigModeParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/link_types/init_link_types": {
+      "post": {
+        "tags": [
+          "连接类型管理"
+        ],
+        "summary": "批量初始化链接类型",
+        "operationId": "initLinkTypes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "link_type_ids"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "link_type_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "连接类型ID列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/link_types/{linkType}": {
+      "get": {
+        "tags": [
+          "连接类型管理"
+        ],
+        "summary": "查询连接类型详情",
+        "operationId": "getLinkTypeDetail",
+        "parameters": [
+          {
+            "name": "linkType",
+            "in": "path",
+            "required": true,
+            "description": "连接类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ConfigModeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "连接类型管理"
+        ],
+        "summary": "更新连接类型",
+        "operationId": "updateLinkType",
+        "parameters": [
+          {
+            "name": "linkType",
+            "in": "path",
+            "required": true,
+            "description": "连接类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "display_name": {
+                    "type": "string",
+                    "description": "显示名称"
+                  },
+                  "relation_type": {
+                    "type": "string",
+                    "description": "关系类型"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "连接类型管理"
+        ],
+        "summary": "删除连接类型",
+        "operationId": "deleteLinkType",
+        "parameters": [
+          {
+            "name": "linkType",
+            "in": "path",
+            "required": true,
+            "description": "连接类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/link_types/{linkType}/init_link_type": {
+      "post": {
+        "tags": [
+          "连接类型管理"
+        ],
+        "summary": "初始化连接类型",
+        "operationId": "initLinkType",
+        "parameters": [
+          {
+            "name": "linkType",
+            "in": "path",
+            "required": true,
+            "description": "连接类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/action_types/list": {
+      "get": {
+        "tags": [
+          "操作类型管理"
+        ],
+        "summary": "查询操作类型列表",
+        "operationId": "listActionTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/action_types/{actionType}": {
+      "get": {
+        "tags": [
+          "操作类型管理"
+        ],
+        "summary": "查询对象类型的属性列表",
+        "operationId": "getActionTypeDetail",
+        "parameters": [
+          {
+            "name": "actionType",
+            "in": "path",
+            "required": true,
+            "description": "操作类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/action_types/run": {
+      "post": {
+        "tags": [
+          "操作类型管理"
+        ],
+        "summary": "调用操作类型",
+        "operationId": "runActionType",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "action_type_id",
+                  "object_ids"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "action_type_id": {
+                    "type": "integer",
+                    "description": "操作类型ID"
+                  },
+                  "object_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "对象ID列表"
+                  },
+                  "params": {
+                    "type": "object",
+                    "description": "操作参数"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/menu_configs/get_default_menu_config": {
+      "get": {
+        "tags": [
+          "菜单配置"
+        ],
+        "summary": "查询默认菜单配置",
+        "operationId": "getDefaultMenuConfig",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/menu_configs/components": {
+      "get": {
+        "tags": [
+          "菜单配置"
+        ],
+        "summary": "查询可加入菜单组件列表",
+        "operationId": "getMenuComponents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/menu_configs/save": {
+      "post": {
+        "tags": [
+          "菜单配置"
+        ],
+        "summary": "保存菜单配置",
+        "operationId": "saveMenuConfig",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "menu_config"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "menu_config": {
+                    "type": "object",
+                    "description": "菜单配置"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/menu_configs/get_menu_config": {
+      "get": {
+        "tags": [
+          "菜单配置"
+        ],
+        "summary": "查询菜单配置详情",
+        "operationId": "getMenuConfig",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/menu_configs/{menuConfig}": {
+      "delete": {
+        "tags": [
+          "菜单配置"
+        ],
+        "summary": "删除菜单配置",
+        "operationId": "deleteMenuConfig",
+        "parameters": [
+          {
+            "name": "menuConfig",
+            "in": "path",
+            "required": true,
+            "description": "菜单配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/system/version_list": {
+      "get": {
+        "tags": [
+          "系统版本管理"
+        ],
+        "summary": "获取版本列表",
+        "operationId": "getSystemVersionList",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/all_version_list": {
+      "get": {
+        "tags": [
+          "系统版本管理"
+        ],
+        "summary": "获取所有启用版本",
+        "operationId": "getAllAdminSystemVersionList",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/system/version_detail": {
+      "get": {
+        "tags": [
+          "系统版本管理"
+        ],
+        "summary": "获取版本信息详情",
+        "operationId": "getSystemVersionDetail",
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "query",
+            "description": "版本ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/system/transaction_list": {
+      "get": {
+        "tags": [
+          "系统版本管理"
+        ],
+        "summary": "获取账户交易明细",
+        "operationId": "getSystemTransactionList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/system/capacity_info": {
+      "get": {
+        "tags": [
+          "系统版本管理"
+        ],
+        "summary": "获取系统容量",
+        "operationId": "getSystemCapacityDetail",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/system/get_industry_types": {
+      "get": {
+        "tags": [
+          "系统版本管理"
+        ],
+        "summary": "获取所有行业类型",
+        "operationId": "getIndustryTypes",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_templates/create": {
+      "post": {
+        "tags": [
+          "页面模板管理"
+        ],
+        "summary": "新增页面模板",
+        "operationId": "createLayoutTemplate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "business_type",
+                  "template_json"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "模板名称"
+                  },
+                  "business_type": {
+                    "type": "string",
+                    "description": "业务类型"
+                  },
+                  "template_json": {
+                    "type": "object",
+                    "description": "模板JSON配置"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "描述"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_templates/list": {
+      "get": {
+        "tags": [
+          "页面模板管理"
+        ],
+        "summary": "根据业务类型查询页面模板列表",
+        "operationId": "listLayoutTemplates",
+        "parameters": [
+          {
+            "name": "business_type",
+            "in": "query",
+            "description": "业务类型",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_templates/{layoutTemplate}": {
+      "get": {
+        "tags": [
+          "页面模板管理"
+        ],
+        "summary": "查询页面模板详情",
+        "operationId": "getLayoutTemplateDetail",
+        "parameters": [
+          {
+            "name": "layoutTemplate",
+            "in": "path",
+            "required": true,
+            "description": "页面模板ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "页面模板管理"
+        ],
+        "summary": "更新页面模板",
+        "operationId": "updateLayoutTemplate",
+        "parameters": [
+          {
+            "name": "layoutTemplate",
+            "in": "path",
+            "required": true,
+            "description": "页面模板ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "template_json": {
+                    "type": "object"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "页面模板管理"
+        ],
+        "summary": "删除页面模板",
+        "operationId": "deleteLayoutTemplate",
+        "parameters": [
+          {
+            "name": "layoutTemplate",
+            "in": "path",
+            "required": true,
+            "description": "页面模板ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/role_types": {
+      "get": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "查询角色列表",
+        "operationId": "getLayoutRoleTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/get_default_layout_configs": {
+      "get": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "查询默认布局配置",
+        "operationId": "getDefaultLayoutConfig",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/widget_types": {
+      "get": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "查询布局widget类型列表",
+        "operationId": "getLayoutWidgetTypes",
+        "parameters": [
+          {
+            "name": "scope_type",
+            "in": "query",
+            "description": "作用域类型",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/show_infos": {
+      "get": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "查询布局的可选展示信息",
+        "operationId": "getLayoutShowInfos",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/create": {
+      "post": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "保存布局配置",
+        "operationId": "createLayoutConfig",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "object_type_id",
+                  "layout_type",
+                  "layout_json"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "object_type_id": {
+                    "type": "integer",
+                    "description": "对象类型ID"
+                  },
+                  "layout_type": {
+                    "type": "string",
+                    "description": "布局类型"
+                  },
+                  "layout_json": {
+                    "type": "object",
+                    "description": "布局JSON配置"
+                  },
+                  "role_type": {
+                    "type": "string",
+                    "description": "角色类型"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/copy": {
+      "post": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "复制页面布局",
+        "operationId": "copyLayoutConfig",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "source_id",
+                  "target_object_type_id"
+                ],
+                "properties": {
+                  "source_id": {
+                    "type": "integer",
+                    "description": "源布局配置ID"
+                  },
+                  "target_object_type_id": {
+                    "type": "integer",
+                    "description": "目标对象类型ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/list": {
+      "get": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "查询对象类型的页面配置列表",
+        "operationId": "listLayoutConfigs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/get_by_layout_type": {
+      "get": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "根据页面类型查询页面配置",
+        "operationId": "getLayoutConfigByLayoutType",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "layout_type",
+            "in": "query",
+            "required": true,
+            "description": "布局类型",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/layout_configs/get_by_code": {
+      "get": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "根据编码查询页面布局详情",
+        "operationId": "getLayoutConfigByCode",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "description": "布局配置编码",
+            "schema": {
+              "type": "string",
+              "maxLength": 40
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/layout_configs/{layoutConfig}": {
+      "get": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "查询页面布局详情",
+        "operationId": "getLayoutConfigDetail",
+        "parameters": [
+          {
+            "name": "layoutConfig",
+            "in": "path",
+            "required": true,
+            "description": "布局配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "页面布局配置"
+        ],
+        "summary": "更新页面布局",
+        "operationId": "updateLayoutConfig",
+        "parameters": [
+          {
+            "name": "layoutConfig",
+            "in": "path",
+            "required": true,
+            "description": "布局配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "layout_json": {
+                    "type": "object",
+                    "description": "布局JSON配置"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/config_list_configs/get_fields": {
+      "get": {
+        "tags": [
+          "列表配置管理"
+        ],
+        "summary": "查询可配置字段",
+        "operationId": "getConfigListConfigFields",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/config_list_configs/save": {
+      "post": {
+        "tags": [
+          "列表配置管理"
+        ],
+        "summary": "保存配置列表时使用的配置",
+        "operationId": "saveConfigListConfig",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "object_type_id",
+                  "config"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer"
+                  },
+                  "object_type_id": {
+                    "type": "integer"
+                  },
+                  "config": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/config_list_configs/get_config_list_config": {
+      "get": {
+        "tags": [
+          "列表配置管理"
+        ],
+        "summary": "查询配置列表时使用的配置详情",
+        "operationId": "getConfigListConfig",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/config_lists/get_fields": {
+      "get": {
+        "tags": [
+          "列表配置管理"
+        ],
+        "summary": "查询展示字段",
+        "operationId": "getListFields",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/config_lists/save": {
+      "post": {
+        "tags": [
+          "列表配置管理"
+        ],
+        "summary": "保存列表配置",
+        "operationId": "saveListConfig",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "object_type_id",
+                  "list_type",
+                  "config"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer"
+                  },
+                  "object_type_id": {
+                    "type": "integer"
+                  },
+                  "list_type": {
+                    "type": "string"
+                  },
+                  "config": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/config_lists/list_config": {
+      "get": {
+        "tags": [
+          "列表配置管理"
+        ],
+        "summary": "查询某个列表的配置",
+        "operationId": "getListConfig",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "list_type",
+            "in": "query",
+            "description": "列表类型",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/config_lists/get_list_filter": {
+      "get": {
+        "tags": [
+          "列表配置管理"
+        ],
+        "summary": "查询列表筛选条件",
+        "operationId": "getListFilter",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/config_lists/get_list": {
+      "get": {
+        "tags": [
+          "列表配置管理"
+        ],
+        "summary": "查询列表",
+        "operationId": "getList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "required": true,
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_relations/generate": {
+      "post": {
+        "tags": [
+          "对象关系管理"
+        ],
+        "summary": "根据描述生成对象关系图表",
+        "operationId": "generateObjectRelation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "description"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "描述文本"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_relations/generate_status": {
+      "get": {
+        "tags": [
+          "对象关系管理"
+        ],
+        "summary": "查询生成对象关系图表任务状态",
+        "operationId": "getGenerateObjectRelationStatus",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "query",
+            "required": true,
+            "description": "任务ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_relations/check_project": {
+      "post": {
+        "tags": [
+          "对象关系管理"
+        ],
+        "summary": "检查项目对象类型等是否有更新",
+        "operationId": "checkProject",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_relations/generate_by_ontology": {
+      "post": {
+        "tags": [
+          "对象关系管理"
+        ],
+        "summary": "根据项目对象类型生成对象关系图表",
+        "operationId": "generateObjectRelationByOntology",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_relations/generate_by_ontology_status": {
+      "get": {
+        "tags": [
+          "对象关系管理"
+        ],
+        "summary": "查询项目对象类型生成对象关系图表任务状态",
+        "operationId": "getGenerateObjectRelationByOntologyStatus",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "query",
+            "required": true,
+            "description": "任务ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_relations/get": {
+      "get": {
+        "tags": [
+          "对象关系管理"
+        ],
+        "summary": "查询对象关系图表数据",
+        "operationId": "getObjectRelation",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_relations/generate_ontology_by_object_relation": {
+      "post": {
+        "tags": [
+          "对象关系管理"
+        ],
+        "summary": "根据项目对象关系图表生成对象类型",
+        "operationId": "generateOntologyByObjectRelation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "relation_data"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "relation_data": {
+                    "type": "object",
+                    "description": "关系图表数据"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/object_relations/generate_ontology_by_object_relation_status": {
+      "get": {
+        "tags": [
+          "对象关系管理"
+        ],
+        "summary": "查询对象关系图表生成对象类型任务状态",
+        "operationId": "getGenerateOntologyByObjectRelationStatus",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "query",
+            "required": true,
+            "description": "任务ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_groups/list": {
+      "get": {
+        "tags": [
+          "流程节点分组管理"
+        ],
+        "summary": "查询节点分组列表",
+        "operationId": "listNodeGroups",
+        "parameters": [
+          {
+            "name": "group_type",
+            "in": "query",
+            "required": false,
+            "description": "分组类型（模糊匹配）",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "分组名称关键字（按当前语言/zh_CN/en 模糊匹配）",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_groups/create": {
+      "post": {
+        "tags": [
+          "流程节点分组管理"
+        ],
+        "summary": "创建节点分组",
+        "operationId": "createNodeGroup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "group_type",
+                  "name"
+                ],
+                "properties": {
+                  "group_type": {
+                    "type": "string",
+                    "description": "分组类型（唯一标识，建议使用英文/下划线）"
+                  },
+                  "name": {
+                    "type": "object",
+                    "description": "分组名称多语言（16种语言，locale => 文案）",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "desc": {
+                    "type": "object",
+                    "description": "分组描述多语言（16种语言，locale => 文案）",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_groups/{dictNodeGroup}": {
+      "get": {
+        "tags": [
+          "流程节点分组管理"
+        ],
+        "summary": "查询节点分组详情",
+        "operationId": "getNodeGroupDetail",
+        "parameters": [
+          {
+            "name": "dictNodeGroup",
+            "in": "path",
+            "required": true,
+            "description": "节点分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "流程节点分组管理"
+        ],
+        "summary": "修改节点分组",
+        "operationId": "updateNodeGroup",
+        "parameters": [
+          {
+            "name": "dictNodeGroup",
+            "in": "path",
+            "required": true,
+            "description": "节点分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "group_type",
+                  "name"
+                ],
+                "properties": {
+                  "group_type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "object",
+                    "description": "分组名称多语言（16种语言，locale => 文案）",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "desc": {
+                    "type": "object",
+                    "description": "分组描述多语言（16种语言，locale => 文案）",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "流程节点分组管理"
+        ],
+        "summary": "删除节点分组",
+        "operationId": "deleteNodeGroup",
+        "parameters": [
+          {
+            "name": "dictNodeGroup",
+            "in": "path",
+            "required": true,
+            "description": "节点分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_types/group_types": {
+      "get": {
+        "tags": [
+          "流程节点管理"
+        ],
+        "summary": "查询任务节点的分组类型列表",
+        "operationId": "getNodeGroupTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_types/save": {
+      "post": {
+        "tags": [
+          "流程节点管理"
+        ],
+        "summary": "创建节点模板",
+        "operationId": "saveNodeType",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "name",
+                  "node_type"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "节点名称"
+                  },
+                  "node_type": {
+                    "type": "string",
+                    "description": "节点类型"
+                  },
+                  "config": {
+                    "type": "object",
+                    "description": "节点配置"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_types/page_list": {
+      "get": {
+        "tags": [
+          "流程节点管理"
+        ],
+        "summary": "查询节点模板列表",
+        "operationId": "getNodeTypePageList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_types/source_types": {
+      "get": {
+        "tags": [
+          "流程节点管理"
+        ],
+        "summary": "查询节点大分类",
+        "operationId": "getNodeSourceTypes",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_types/group_nodes": {
+      "get": {
+        "tags": [
+          "流程节点管理"
+        ],
+        "summary": "查询节点模板列表按分组类型分组",
+        "operationId": "getGroupNodes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/node_types/{nodeType}": {
+      "get": {
+        "tags": [
+          "流程节点管理"
+        ],
+        "summary": "查询节点类型详情",
+        "operationId": "getNodeTypeDetail",
+        "parameters": [
+          {
+            "name": "nodeType",
+            "in": "path",
+            "required": true,
+            "description": "节点类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "流程节点管理"
+        ],
+        "summary": "更新节点类型",
+        "operationId": "updateNodeType",
+        "parameters": [
+          {
+            "name": "nodeType",
+            "in": "path",
+            "required": true,
+            "description": "节点类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "config": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflow_groups/create": {
+      "post": {
+        "tags": [
+          "流程模型分组管理"
+        ],
+        "summary": "新增流程模型分组",
+        "operationId": "createWorkflowGroup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "name"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "分组名称"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflow_groups/all_list": {
+      "get": {
+        "tags": [
+          "流程模型分组管理"
+        ],
+        "summary": "查询流程模型分组列表接口(包含默认分组)",
+        "operationId": "getAllWorkflowGroupList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflow_groups/list": {
+      "get": {
+        "tags": [
+          "流程模型分组管理"
+        ],
+        "summary": "查询流程模型分组列表接口",
+        "operationId": "listWorkflowGroups",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflow_groups/{workflowGroup}": {
+      "put": {
+        "tags": [
+          "流程模型分组管理"
+        ],
+        "summary": "修改流程模型分组",
+        "operationId": "updateWorkflowGroup",
+        "parameters": [
+          {
+            "name": "workflowGroup",
+            "in": "path",
+            "required": true,
+            "description": "流程模型分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "流程模型分组管理"
+        ],
+        "summary": "删除流程模型分组",
+        "operationId": "deleteWorkflowGroup",
+        "parameters": [
+          {
+            "name": "workflowGroup",
+            "in": "path",
+            "required": true,
+            "description": "流程模型分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/templates": {
+      "get": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "查询流程模型分组下的流程模板列表",
+        "operationId": "getWorkflowTemplates",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "description": "分组ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/project_role_types": {
+      "get": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-操作人角色类型列表",
+        "operationId": "getProjectRoleTypes",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/create_model": {
+      "post": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-创建流程模型",
+        "operationId": "createWorkflowModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "name"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "流程名称"
+                  },
+                  "object_type_id": {
+                    "type": "integer",
+                    "description": "对象类型ID"
+                  },
+                  "group_id": {
+                    "type": "integer",
+                    "description": "分组ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/edit_workflow": {
+      "put": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-编辑流程模型",
+        "operationId": "editWorkflow",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "workflow_json"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "流程映射ID"
+                  },
+                  "workflow_json": {
+                    "type": "object",
+                    "description": "流程JSON配置"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/edit_test_workflow": {
+      "put": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-编辑试运行流程模型",
+        "operationId": "editTestWorkflow",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "workflow_json"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "流程映射ID"
+                  },
+                  "workflow_json": {
+                    "type": "object",
+                    "description": "流程JSON配置"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/saveModel": {
+      "put": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-保存流程模型",
+        "operationId": "saveWorkflowModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "流程映射ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/saveModelName": {
+      "put": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-保存流程模型名称",
+        "operationId": "saveWorkflowModelName",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "流程映射ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "名称"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/project_workflow_info/{projectWorkflowMapping}": {
+      "get": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-流程模型详情",
+        "operationId": "getProjectWorkflowMapping",
+        "parameters": [
+          {
+            "name": "projectWorkflowMapping",
+            "in": "path",
+            "required": true,
+            "description": "项目流程映射ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-删除草稿",
+        "operationId": "deleteProjectWorkflow",
+        "parameters": [
+          {
+            "name": "projectWorkflowMapping",
+            "in": "path",
+            "required": true,
+            "description": "项目流程映射ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/project_workflow_info/{projectWorkflowMapping}/update_status": {
+      "put": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "项目下-更新状态",
+        "operationId": "updateProjectWorkflowStatus",
+        "parameters": [
+          {
+            "name": "projectWorkflowMapping",
+            "in": "path",
+            "required": true,
+            "description": "项目流程映射ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "description": "状态"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/project_workflow_info/{projectWorkflowMapping}/json_info": {
+      "put": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "更新jsonInfo",
+        "operationId": "updateProjectWorkflowJsonInfo",
+        "parameters": [
+          {
+            "name": "projectWorkflowMapping",
+            "in": "path",
+            "required": true,
+            "description": "项目流程映射ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "json_info": {
+                    "type": "object",
+                    "description": "JSON信息"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/history_list": {
+      "get": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "查询流程模型的历史部署版本",
+        "operationId": "getWorkflowHistoryList",
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "query",
+            "required": true,
+            "description": "流程ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/project_workflow_info/{projectWorkflowMapping}/update_group": {
+      "put": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "修改流程模板分组",
+        "operationId": "updateWorkflowTemplateGroup",
+        "parameters": [
+          {
+            "name": "projectWorkflowMapping",
+            "in": "path",
+            "required": true,
+            "description": "项目流程映射ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "group_id"
+                ],
+                "properties": {
+                  "group_id": {
+                    "type": "integer",
+                    "description": "分组ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/workflows/project_workflow_info/{projectWorkflowMapping}/update_info": {
+      "put": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "修改流程模板信息（分组、对象类型ID、名称）",
+        "operationId": "updateWorkflowInfo",
+        "parameters": [
+          {
+            "name": "projectWorkflowMapping",
+            "in": "path",
+            "required": true,
+            "description": "项目流程映射ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "名称"
+                  },
+                  "group_id": {
+                    "type": "integer",
+                    "description": "分组ID"
+                  },
+                  "object_type_id": {
+                    "type": "integer",
+                    "description": "对象类型ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/project_workflows": {
+      "get": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "获取项目的流程模板列表",
+        "operationId": "getAllProjectWorkflows",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/clound_services/get_models": {
+      "get": {
+        "tags": [
+          "流程模型管理"
+        ],
+        "summary": "查询云服务的大模型列表",
+        "operationId": "getCloudModels",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_sets/create": {
+      "post": {
+        "tags": [
+          "试运行测试集管理"
+        ],
+        "summary": "创建测试集",
+        "operationId": "createTestSet",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "name"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "测试集名称"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "描述"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_sets/list": {
+      "get": {
+        "tags": [
+          "试运行测试集管理"
+        ],
+        "summary": "查询测试集列表",
+        "operationId": "listTestSets",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_sets/{testSet}": {
+      "get": {
+        "tags": [
+          "试运行测试集管理"
+        ],
+        "summary": "查询测试集详情",
+        "operationId": "getTestSetDetail",
+        "parameters": [
+          {
+            "name": "testSet",
+            "in": "path",
+            "required": true,
+            "description": "测试集ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "试运行测试集管理"
+        ],
+        "summary": "更新测试集详情",
+        "operationId": "updateTestSet",
+        "parameters": [
+          {
+            "name": "testSet",
+            "in": "path",
+            "required": true,
+            "description": "测试集ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "试运行测试集管理"
+        ],
+        "summary": "删除测试集",
+        "operationId": "deleteTestSet",
+        "parameters": [
+          {
+            "name": "testSet",
+            "in": "path",
+            "required": true,
+            "description": "测试集ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/fromal_objects_filter": {
+      "get": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "待导入沙箱的正式对象列表筛选条件",
+        "operationId": "getFromalObjectsFilter",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/fromal_objects": {
+      "get": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "待导入沙箱的正式对象列表",
+        "operationId": "getFromalObjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "object_type_id",
+            "in": "query",
+            "description": "对象类型ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/copy_object_to_sandbox": {
+      "post": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "复制正式对象到沙箱",
+        "operationId": "copyObjectToSandbox",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "object_ids"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "object_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "对象ID列表"
+                  },
+                  "test_set_id": {
+                    "type": "integer",
+                    "description": "测试集ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/sandbox_objects": {
+      "get": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "查询沙箱对象列表",
+        "operationId": "getSandboxObjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          },
+          {
+            "name": "test_set_id",
+            "in": "query",
+            "description": "测试集ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/get_object_config": {
+      "get": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "查询行业对象配置",
+        "operationId": "getHyObjectConfig",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProjectIdParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/object": {
+      "get": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "查询对象",
+        "operationId": "showTestRunObject",
+        "parameters": [
+          {
+            "name": "object_id",
+            "in": "query",
+            "required": true,
+            "description": "对象ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "修改对象",
+        "operationId": "updateTestRunObject",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "object_id"
+                ],
+                "properties": {
+                  "object_id": {
+                    "type": "integer",
+                    "description": "对象ID"
+                  },
+                  "form_data": {
+                    "type": "object",
+                    "description": "表单数据"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "删除对象",
+        "operationId": "deleteTestRunObject",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "object_id"
+                ],
+                "properties": {
+                  "object_id": {
+                    "type": "integer",
+                    "description": "对象ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/test_run": {
+      "post": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "试运行",
+        "operationId": "testRun",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "project_id",
+                  "workflow_id",
+                  "object_ids"
+                ],
+                "properties": {
+                  "project_id": {
+                    "type": "integer",
+                    "description": "项目ID"
+                  },
+                  "workflow_id": {
+                    "type": "integer",
+                    "description": "流程ID"
+                  },
+                  "object_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "对象ID列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/add_objects_status": {
+      "get": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "查询对象加入批次任务状态",
+        "operationId": "getAddObjectsStatus",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "query",
+            "required": true,
+            "description": "任务ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/run_info": {
+      "get": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "查询试运行节点信息",
+        "operationId": "getRunInfo",
+        "parameters": [
+          {
+            "name": "process_instance_id",
+            "in": "query",
+            "required": true,
+            "description": "流程实例ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/test_run_node": {
+      "post": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "单节点试运行",
+        "operationId": "testRunNode",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "node_id",
+                  "object_id"
+                ],
+                "properties": {
+                  "node_id": {
+                    "type": "string",
+                    "description": "节点ID"
+                  },
+                  "object_id": {
+                    "type": "integer",
+                    "description": "对象ID"
+                  },
+                  "params": {
+                    "type": "object",
+                    "description": "参数"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/terminate_workflows": {
+      "post": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "批量终止工作流任务",
+        "operationId": "terminateWorkflows",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "process_instance_ids"
+                ],
+                "properties": {
+                  "process_instance_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "流程实例ID列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/test_runs/complete_tasks": {
+      "post": {
+        "tags": [
+          "试运行管理"
+        ],
+        "summary": "批量完成工作流任务",
+        "operationId": "completeTasks",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "task_ids"
+                ],
+                "properties": {
+                  "task_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "任务ID列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/use_scenes": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取应用场景列表",
+        "operationId": "getAgentUseScenes",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/create": {
+      "post": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "创建智能体",
+        "operationId": "createAgent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "use_scene"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "智能体名称"
+                  },
+                  "use_scene": {
+                    "type": "string",
+                    "description": "应用场景"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "描述"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "description": "头像URL"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/{agentConfig}/modify": {
+      "put": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "更新智能体请求结构体",
+        "operationId": "modifyAgent",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "智能体名称"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "描述"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "description": "头像URL"
+                  },
+                  "config": {
+                    "type": "object",
+                    "description": "配置信息"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/list": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取所有智能体列表",
+        "operationId": "getAllAgentList",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "分页获取智能体列表",
+        "operationId": "getAgentList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PerPageParam"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "名称搜索",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/{agentConfig}": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取智能体应用信息",
+        "operationId": "describeAgentApp",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/describe_storage_credential": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取文件上传临时密钥",
+        "operationId": "describeStorageCredential",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/model/list": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取模型列表",
+        "operationId": "getAgentModelList",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/{agentConfig}/create_release": {
+      "post": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "创建发布",
+        "operationId": "createAgentRelease",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/{agentConfig}/get_release": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "查询发布",
+        "operationId": "describeAgentRelease",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/{agentConfig}/release_info": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "查询发布按钮状态",
+        "operationId": "describeAgentReleaseInfo",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/test/session": {
+      "post": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "保存历史会话",
+        "operationId": "saveAgentSession",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "agent_config_id",
+                  "session_id"
+                ],
+                "properties": {
+                  "agent_config_id": {
+                    "type": "integer",
+                    "description": "智能体配置ID"
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "description": "会话ID"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "会话标题"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/test/session_list": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取历史会话列表",
+        "operationId": "getAgentSession",
+        "parameters": [
+          {
+            "name": "agent_config_id",
+            "in": "query",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/test/session_record": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取历史会话记录",
+        "operationId": "getMsgRecord",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": true,
+            "description": "会话ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/save_doc": {
+      "post": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "知识库文档导入",
+        "operationId": "saveAgentDoc",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "文档文件"
+                  },
+                  "category_id": {
+                    "type": "integer",
+                    "description": "分类ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/status": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "知识库文档状态",
+        "operationId": "getAgentDocStatus",
+        "parameters": [
+          {
+            "name": "doc_id",
+            "in": "query",
+            "required": true,
+            "description": "文档ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/list_doc": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "文档列表",
+        "operationId": "listAgentDoc",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "description": "分类ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/detail": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "文档详情",
+        "operationId": "getAgentDocDetail",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "doc_id",
+            "in": "query",
+            "required": true,
+            "description": "文档ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/modify_doc": {
+      "put": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "修改文档",
+        "operationId": "modifyAgentDoc",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "doc_id"
+                ],
+                "properties": {
+                  "doc_id": {
+                    "type": "string",
+                    "description": "文档ID"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "文档内容"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/rename": {
+      "put": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "重命名文档",
+        "operationId": "renameAgentDoc",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "doc_id",
+                  "name"
+                ],
+                "properties": {
+                  "doc_id": {
+                    "type": "string",
+                    "description": "文档ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "新名称"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/delete_doc": {
+      "delete": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "删除文档",
+        "operationId": "deleteAgentDoc",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "doc_id",
+            "in": "query",
+            "required": true,
+            "description": "文档ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/get_doc_preview": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取文档预览信息",
+        "operationId": "getAgentDocPreview",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "doc_id",
+            "in": "query",
+            "required": true,
+            "description": "文档ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/list_doc_cate": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "获取文档分类",
+        "operationId": "listAgentDocCate",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/create_doc_cate": {
+      "post": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "创建Doc分类",
+        "operationId": "createAgentDocCate",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "分类名称"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/delete_doc_cate": {
+      "delete": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "Doc分类删除",
+        "operationId": "deleteAgentDocCate",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": true,
+            "description": "分类ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/{agentConfig}/modify_doc_cate": {
+      "put": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "修改Doc分类",
+        "operationId": "modifyAgentDocCate",
+        "parameters": [
+          {
+            "name": "agentConfig",
+            "in": "path",
+            "required": true,
+            "description": "智能体配置ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "category_id",
+                  "name"
+                ],
+                "properties": {
+                  "category_id": {
+                    "type": "integer",
+                    "description": "分类ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "分类名称"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/agents/doc/describe_knowledge_usage": {
+      "get": {
+        "tags": [
+          "智能体管理"
+        ],
+        "summary": "查询知识库用量",
+        "operationId": "describeKnowledgeUsage",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/get_auth_code": {
+      "get": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "获取授权二维码",
+        "operationId": "getWorkWechatAuthCode",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/get_auth_status": {
+      "get": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "获取授权状态",
+        "operationId": "getWorkWechatAuthStatus",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/get_users": {
+      "get": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "获取部门企业微信用户列表信息",
+        "operationId": "getWorkWechatUsers",
+        "parameters": [
+          {
+            "name": "department_id",
+            "in": "query",
+            "description": "部门ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/get_user_info": {
+      "get": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "获取企业微信用户信息",
+        "operationId": "getWorkWechatUserInfo",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "query",
+            "required": true,
+            "description": "用户ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/get_department": {
+      "get": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "获取企业微信部门信息",
+        "operationId": "getWorkWechatDepartment",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/import_admin_user": {
+      "post": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "企业微信导入管理员",
+        "operationId": "importWorkWechatAdminUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userids"
+                ],
+                "properties": {
+                  "userids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "用户ID列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/admin_user/{adminUser}/bind": {
+      "post": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "企业微信绑定管理员",
+        "operationId": "bindWorkWechatAdminUser",
+        "parameters": [
+          {
+            "name": "adminUser",
+            "in": "path",
+            "required": true,
+            "description": "管理员ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "work_wechat_userid"
+                ],
+                "properties": {
+                  "work_wechat_userid": {
+                    "type": "string",
+                    "description": "企业微信用户ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/admin_user/{adminUser}/unbind": {
+      "post": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "企业微信解除绑定管理员",
+        "operationId": "unbindWorkWechatAdminUser",
+        "parameters": [
+          {
+            "name": "adminUser",
+            "in": "path",
+            "required": true,
+            "description": "管理员ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/create_approval_template": {
+      "post": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "获取审批模版并生成相应模板",
+        "operationId": "createWorkWechatApprovalTemplate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "template_id"
+                ],
+                "properties": {
+                  "template_id": {
+                    "type": "string",
+                    "description": "企业微信审批模板ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/work_wechat/get_approval_templates": {
+      "get": {
+        "tags": [
+          "企业微信"
+        ],
+        "summary": "获取已存在的企业微信审批模版",
+        "operationId": "getWorkWechatApprovalTemplates",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/ding_talk/get_department": {
+      "get": {
+        "tags": [
+          "钉钉"
+        ],
+        "summary": "获取部门列表",
+        "operationId": "getDingTalkDepartment",
+        "parameters": [
+          {
+            "name": "parent_id",
+            "in": "query",
+            "description": "父部门ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/ding_talk/get_users": {
+      "get": {
+        "tags": [
+          "钉钉"
+        ],
+        "summary": "获取部门员工列表",
+        "operationId": "getDingTalkUsers",
+        "parameters": [
+          {
+            "name": "department_id",
+            "in": "query",
+            "required": true,
+            "description": "部门ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/ding_talk/get_user_info": {
+      "get": {
+        "tags": [
+          "钉钉"
+        ],
+        "summary": "员工详情",
+        "operationId": "getDingTalkUserInfo",
+        "parameters": [
+          {
+            "name": "userid",
+            "in": "query",
+            "required": true,
+            "description": "员工ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/ding_talk/import_admin_user": {
+      "post": {
+        "tags": [
+          "钉钉"
+        ],
+        "summary": "导入管理员",
+        "operationId": "importDingTalkAdminUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userids"
+                ],
+                "properties": {
+                  "userids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "员工ID列表"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/ding_talk/admin_user/{adminUser}/bind": {
+      "post": {
+        "tags": [
+          "钉钉"
+        ],
+        "summary": "钉钉绑定管理员",
+        "operationId": "bindDingTalkAdminUser",
+        "parameters": [
+          {
+            "name": "adminUser",
+            "in": "path",
+            "required": true,
+            "description": "管理员ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ding_talk_userid"
+                ],
+                "properties": {
+                  "ding_talk_userid": {
+                    "type": "string",
+                    "description": "钉钉用户ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/ding_talk/admin_user/{adminUser}/unbind": {
+      "post": {
+        "tags": [
+          "钉钉"
+        ],
+        "summary": "钉钉解除绑定管理员",
+        "operationId": "unbindDingTalkAdminUser",
+        "parameters": [
+          {
+            "name": "adminUser",
+            "in": "path",
+            "required": true,
+            "description": "管理员ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/ding_talk/create_approval_template": {
+      "post": {
+        "tags": [
+          "钉钉"
+        ],
+        "summary": "获取审批模版并生成相应模板",
+        "operationId": "createDingTalkApprovalTemplate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "process_code"
+                ],
+                "properties": {
+                  "process_code": {
+                    "type": "string",
+                    "description": "钉钉审批流程编码"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/ding_talk/get_approval_templates": {
+      "get": {
+        "tags": [
+          "钉钉"
+        ],
+        "summary": "获取本人可见的钉钉审批模版",
+        "operationId": "getDingTalkApprovalTemplates",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    }
+  }
+}
