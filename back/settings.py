@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'corsheaders',
     # 自定义应用
     'users',
-    'api_auto_test'
+    'api_auto_test',
+    'projects'
 ]
 
 MIDDLEWARE = [

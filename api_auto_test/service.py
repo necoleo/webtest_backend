@@ -22,14 +22,15 @@ class Service:
         self.COS_FILE_SAVED_TEMP = "cos_file_temp"
         self.cos_client = CosClient()
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user"]))
-    def upload_api_document(self, project_id, version, file, comment, created_user):
+    @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user_id", "created_user"]))
+    def upload_api_document(self, project_id, version, file, comment, created_user_id, created_user):
         """
         上传接口文档
         :param project_id: 所属项目id
         :param version: 接口文档版本号
         :param file: 接口文档文件
         :param comment: 备注
+        :param created_user_id: 创建人id
         :param created_user: 创建人
         :return:
         """
@@ -79,6 +80,7 @@ class Service:
                 cos_access_url=cos_access_url,
                 file_size=file_size,
                 comment=comment,
+                created_user_id=created_user_id,
                 created_user=created_user
             )
 
@@ -178,6 +180,7 @@ class Service:
                     "file_size": api_document_obj.file_size,
                     "comment": api_document_obj.comment,
                     "is_parsed": api_document_obj.is_parsed,
+                    "created_user_id": api_document_obj.created_user_id,
                     "created_user": api_document_obj.created_user,
                     "created_at": api_document_obj.created_at,
                     "updated_at": api_document_obj.updated_at

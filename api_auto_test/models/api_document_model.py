@@ -46,9 +46,16 @@ class ApiDocuments(models.Model):
         db_comment="备注说明"
     )
 
+    # 是否已解析
     is_parsed = models.BooleanField(
         default=False,
         db_comment="是否已解析"
+    )
+
+    # 创建人id
+    created_user_id = models.IntegerField(
+        null=True,
+        db_comment="创建人id"
     )
 
     # 创建人

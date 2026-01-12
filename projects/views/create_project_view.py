@@ -5,34 +5,21 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.http import require_http_methods
 
-from api_auto_test.service import Service
 from constant.error_code import ErrorCode
 from project_decorator.request_decorators import valid_login_required
+from projects.service import Service
 
 
-class UploadApiDocumentView(View):
-
+class CreateProjectView(View):
+    """
+    创建项目接口
+    """
     def __init__(self):
         self.service = Service()
 
-    """
-    上传接口文档
-    """
     @method_decorator(valid_login_required)
     @method_decorator(require_http_methods("POST"))
     def post(self, request):
-        """
-        上传接口文档接口
-        :param
-        request: {
-            "project_id": "integer",
-            "version": "string",
-            "file": "file",
-            "comment": "string"
-        }
-        :return:
-        """
-
         response = {
             "code": "",
             "message": "",
@@ -40,14 +27,11 @@ class UploadApiDocumentView(View):
         }
 
         try:
-            project_id = int(request.POST.get("project_id"))
-            version = request.POST.get("version")
-            file = request.FILES.get("file")
-            comment = request.POST.get("comment")
-            created_user_id = request.user.id
-            created_user = request.user.username
+            project_params_dict = json.loads(request.body)
+            project_params_dict["created_user_id"] = request.user.id
+            project_params_dict["created_username"] = request.user.username
 
-            service_response = self.service.upload_api_document(project_id, version, file, comment, created_user_id, created_user)
+            service_response = self.service.create_project(project_params_dict)
             response['code'] = service_response['code']
             response['message'] = service_response['message']
             response['data'] = service_response['data']
@@ -58,8 +42,3 @@ class UploadApiDocumentView(View):
             response['code'] = ErrorCode.SERVER_ERROR
             response['message'] = str(e)
             return JsonResponse(status=500, data=response)
-
-
-
-
-

@@ -22,6 +22,10 @@ from api_auto_test.views.get_api_document_list_view import GetApiDocumentListVie
 from api_auto_test.views.parse_api_document_view import ParseApiDocumentView
 from api_auto_test.views.update_api_document_view import UpdateApiDocumentView
 from api_auto_test.views.upload_api_document_view import UploadApiDocumentView
+from projects.views.create_project_view import CreateProjectView
+from projects.views.delete_project_view import DeleteProjectView
+from projects.views.get_project_list_view import GetProjectListView
+from projects.views.update_project_view import UpdateProjectView
 from users.views.UserLoginView import UserLoginView
 
 urlpatterns = [
@@ -35,4 +39,10 @@ urlpatterns = [
     path("api/api_document/delete/", DeleteApiDocumentView.as_view()),
     path("api/api_document/parse/", ParseApiDocumentView.as_view()),
     path("api/api_document/update/", UpdateApiDocumentView.as_view()),
+
+    # 项目管理相关接口
+    path("api/project/create/", CreateProjectView.as_view()),
+    path("api/project/update/", UpdateProjectView.as_view()),
+    path("api/project/delete/", DeleteProjectView.as_view()),
+    path("api/project/list/", GetProjectListView.as_view()),
 ]
