@@ -109,6 +109,61 @@ class Service:
 
             return response
 
+    @method_decorator(valid_params_blank(required_params_list=["api_document_id"]))
+    def update_api_document(self, api_document_id, doc_name=None, version=None, comment=None):
+        """
+        编辑接口文档
+        :param api_document_id: 接口文档id，必填
+        :param doc_name: 接口文档名称，可选
+        :param version: 接口文档版本，可选
+        :param comment: 接口文档备注，可选
+        :return:
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+
+        if not doc_name and not version and not comment:
+            response["code"] = ErrorCode.PARAM_BLANK
+            response["message"] = "参数为空"
+            response['status_code'] = 400
+            return response
+
+        try:
+            api_document = ApiDocuments.objects.get(id=api_document_id, deleted_at__isnull=True)
+
+            if not api_document:
+                response["code"] = ErrorCode.PARAM_INVALID
+                response["message"] = "该文档不存在"
+                response['status_code'] = 400
+                return response
+
+            if doc_name:
+                api_document.doc_name = doc_name
+            if version:
+                api_document.version = version
+            if comment:
+                api_document.comment = comment
+
+            api_document.save(update_fields=["doc_name", "version", "comment"])
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "更新成功"
+            response["data"] = {
+                "api_document_id": api_document.id,
+                "doc_name": api_document.doc_name,
+                "version": api_document.version,
+                "comment": api_document.comment
+            }
+            return response
+
+        except Exception as e:
+            response["message"] = f"错误信息: {str(e)}"
+            response['status_code'] = 500
+            return response
 
     @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
     def get_api_document(self, page, page_size, api_document_id=None, project_id=None, doc_name=None, version=None):
