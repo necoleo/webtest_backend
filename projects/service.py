@@ -88,7 +88,6 @@ class Service:
             for project_obj in query_results:
                 project_info = {
                     "id": project_obj.id,
-                    "project_id": project_obj.project_id,
                     "project_name": project_obj.project_name,
                     "project_type": project_obj.project_type,
                     "project_status": project_obj.project_status,
