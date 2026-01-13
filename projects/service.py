@@ -294,7 +294,7 @@ class Service:
 
                 response["code"] = ErrorCode.SUCCESS
                 response["message"] = "删除成功"
-                response['data']['api_document_id'] = project_id
+                response['data']['project_id'] = project_id
                 return response
 
         except ProjectModel.DoesNotExist:
