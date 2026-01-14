@@ -68,7 +68,7 @@ class Service:
                 # 模糊查询
                 filter_map["project_type__contains"] = project_type
 
-            if project_status:
+            if project_status is not None:
                 # 精准查询
                 filter_map["project_status"] = project_status
 
