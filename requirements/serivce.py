@@ -1,13 +1,15 @@
 import os
+from datetime import datetime
 
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.utils.decorators import method_decorator
 from qcloud_cos import CosClientError
 
 from constant.error_code import ErrorCode
 from project_decorator.request_decorators import valid_params_blank
-from requirements.models import RequirementDocumentModel
+from requirements.models import RequirementDocumentModel, RequirementModel
 from utils.cos.cos_client import CosClient
 
 
@@ -262,5 +264,57 @@ class Service:
 
         except Exception as e:
             response["message"] = f"错误信息: {str(e)}"
+            response['status_code'] = 500
+            return response
+
+
+    @method_decorator(valid_params_blank(required_params_list=["requirement_document_id"]))
+    def delete_requirement_document(self, requirement_document_id):
+        """
+        删除需求文档
+        :param requirement_document_id:
+        :return:
+        """
+
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+
+        # 校验参数
+        if not isinstance(requirement_document_id, int):
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "参数无效"
+            response['status_code'] = 400
+            return response
+
+        try:
+            with transaction.atomic():
+                # 删除需求文档
+                target_requirement_document = RequirementDocumentModel.objects.get(id=requirement_document_id, deleted_at__isnull=True)
+                target_requirement_document.deleted_at = datetime.now()
+                target_requirement_document.save()
+                # 删除所有关联的需求项
+                RequirementModel.objects.filter(
+                    requirement_document_id=requirement_document_id,
+                    deleted_at__isnull=True
+                ).update(deleted_at=datetime.now())
+
+                response["code"] = ErrorCode.SUCCESS
+                response["message"] = "删除成功"
+                response['data']['requirement_document_id'] = requirement_document_id
+                return response
+
+        except RequirementDocumentModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "该需求文档不存在"
+            response['status_code'] = 400
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = f"服务器错误：{str(e)}"
             response['status_code'] = 500
             return response
