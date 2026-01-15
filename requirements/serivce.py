@@ -10,6 +10,8 @@ from qcloud_cos import CosClientError
 from constant.error_code import ErrorCode
 from project_decorator.request_decorators import valid_params_blank
 from requirements.models import RequirementDocumentModel, RequirementModel
+from requirements.parser.requirement_document_parser import RequirementDocumentParser
+from requirements.parser.requirement_extractor import RequirementExtractor
 from utils.cos.cos_client import CosClient
 
 
@@ -19,6 +21,9 @@ class Service:
         # 本地缓存目录
         self.COS_FILE_SAVED_TEMP = "cos_file_temp"
         self.cos_client = CosClient()
+
+        self.requirement_extractor = RequirementExtractor()
+
 
     @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user_id", "created_user"]))
     def upload_requirement_document(self, project_id, version, file, comment, created_user_id, created_user):
@@ -267,7 +272,6 @@ class Service:
             response['status_code'] = 500
             return response
 
-
     @method_decorator(valid_params_blank(required_params_list=["requirement_document_id"]))
     def delete_requirement_document(self, requirement_document_id):
         """
@@ -318,3 +322,61 @@ class Service:
             response["message"] = f"服务器错误：{str(e)}"
             response['status_code'] = 500
             return response
+
+    @method_decorator(valid_params_blank(required_params_list=["requirement_document_id"]))
+    def parse_requirement_document(self, requirement_document_id):
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+        try:
+            requirement_document_obj = RequirementDocumentModel.objects.get(id=requirement_document_id, deleted_at__isnull=True)
+
+            # "解析状态: 0-未解析, 1-解析中, 2-已解析, 3-解析失败"
+            if requirement_document_obj.parse_status != 0:
+                response["code"] = ErrorCode.PARAM_INVALID
+                response["message"] = "该文件已解析"
+                response['status_code'] = 400
+                return response
+
+            local_path = self.cos_client.download_and_read_json_by_url(
+                requirement_document_obj.cos_access_url,
+                self.COS_FILE_SAVED_TEMP
+            )
+
+            parser = RequirementDocumentParser(file_path=local_path)
+            content = parser.get_document_content()
+
+            requirement_list = self.requirement_extractor.extract_requirement_document(content)
+
+            with transaction.atomic():
+                # 批量保存到数据库
+                requirement_model_list = []
+                for requirement in requirement_list:
+                    requirement_model = RequirementModel(**requirement)
+                    requirement_model_list.append(requirement_model)
+
+                RequirementModel.objects.bluk_create(requirement_model_list)
+                requirement_document_obj.requirement_count = len(requirement_list)
+                requirement_document_obj.parse_status = 1
+
+            # 清理缓存文件
+            if os.path.exists(local_path):
+                os.remove(local_path)
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = f"需求文档解析完成, 成功导入 {len(requirement_list)} 个需求"
+            response['data']["count"] = len(requirement_list)
+            response["status_code"] = 200
+
+            return response
+        except Exception as e:
+
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = f"<UNK>{str(e)}"
+            response['status_code'] = 500
+            return response
+
+
