@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    # Celery 相关应用
+    'django_celery_results',
+    'django_celery_beat',
     # 自定义应用
     'users',
     'api_auto_test',
@@ -155,3 +158,44 @@ EMAIL_HOST_PASSWORD = 'ojewodtmabwobbaj'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# ==================== Celery 配置 ====================
+# 消息代理配置 - 使用 RabbitMQ
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://guest:guest@localhost:5672//')
+
+# Windows 开发环境使用 solo 进程池（避免 prefork 权限问题）
+# 生产环境（Linux）可移除此配置
+import platform
+if platform.system() == 'Windows':
+    CELERY_WORKER_POOL = 'solo'
+
+# 任务结果存储（使用 Django 数据库）
+CELERY_RESULT_BACKEND = 'django-db'
+
+# 序列化配置
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# 时区配置
+CELERY_TIMEZONE = 'Asia/Shanghai'
+
+# 任务追踪
+CELERY_TASK_TRACK_STARTED = True
+
+# 任务超时时间（1 小时）
+CELERY_TASK_TIME_LIMIT = 3600
+
+# ==================== Celery Beat 定时任务配置 ====================
+CELERY_BEAT_SCHEDULE = {
+    # 每分钟检查接口测试定时任务
+    'check-api-test-scheduled-tasks': {
+        'task': 'tasks.schedule_tasks.check_api_test_scheduled_tasks',
+        'schedule': 60.0,  # 每 60 秒执行一次
+    },
+    # 每 5 分钟更新定时任务执行状态
+    'update-schedule-execution-status': {
+        'task': 'tasks.schedule_tasks.update_schedule_execution_status',
+        'schedule': 300.0,  # 每 300 秒执行一次
+    },
+}

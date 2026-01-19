@@ -8,42 +8,43 @@ from constant.error_code import ErrorCode
 from project_decorator.request_decorators import valid_login_required
 
 
-class GetApiDocumentListView(View):
+class GetApiTestCaseListView(View):
     """
-    获取接口文档列表
+    获取接口测试用例列表
     """
+
     def __init__(self):
         self.service = Service()
-
 
     @method_decorator(valid_login_required)
     @method_decorator(require_http_methods(["GET"]))
     def get(self, request):
         """
-        获取接口文档列表接口
+        获取接口测试用例列表接口
         :param request:
         :return:
         """
 
         response = {
-        "code": "",
-        "message": "",
-        "data": {}
+            "code": "",
+            "message": "",
+            "data": {}
         }
 
         try:
             page = int(request.GET.get("page", 1))
             page_size = int(request.GET.get("page_size", 20))
-            api_document_id = request.GET.get("id")
-            if api_document_id:
-                api_document_id = int(api_document_id)
             project_id = request.GET.get("project_id")
             if project_id:
                 project_id = int(project_id)
-            doc_name = request.GET.get("doc_name")
-            version = request.GET.get("version")
+            case_name = request.GET.get("case_name")
+            source = request.GET.get("source")
+            if source:
+                source = int(source)
 
-            service_response = self.service.get_api_document(page, page_size, api_document_id, project_id, doc_name, version)
+            service_response = self.service.get_api_test_case_list(
+                page, page_size, project_id, case_name, source
+            )
             response['code'] = service_response['code']
             response['message'] = service_response['message']
             response['data'] = service_response['data']

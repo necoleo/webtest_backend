@@ -17,19 +17,51 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 
+# 接口文档相关视图
 from api_auto_test.views.delete_api_document_view import DeleteApiDocumentView
 from api_auto_test.views.get_api_document_list_view import GetApiDocumentListView
 from api_auto_test.views.parse_api_document_view import ParseApiDocumentView
 from api_auto_test.views.update_api_document_view import UpdateApiDocumentView
 from api_auto_test.views.upload_api_document_view import UploadApiDocumentView
+
+# 接口测试用例相关视图
+from api_auto_test.views.upload_api_test_case_view import UploadApiTestCaseView
+from api_auto_test.views.get_api_test_case_list_view import GetApiTestCaseListView
+from api_auto_test.views.get_api_test_case_detail_view import GetApiTestCaseDetailView
+from api_auto_test.views.get_api_test_case_yaml_view import GetApiTestCaseYamlView
+from api_auto_test.views.delete_api_test_case_view import DeleteApiTestCaseView
+
+# 接口测试环境配置相关视图
+from api_auto_test.views.create_api_test_environment_view import CreateApiTestEnvironmentView
+from api_auto_test.views.get_api_test_environment_list_view import GetApiTestEnvironmentListView
+from api_auto_test.views.update_api_test_environment_view import UpdateApiTestEnvironmentView
+from api_auto_test.views.delete_api_test_environment_view import DeleteApiTestEnvironmentView
+
+# 接口测试执行相关视图
+from api_auto_test.views.execute_api_test_case_view import ExecuteApiTestCaseView
+from api_auto_test.views.get_api_test_execution_status_view import GetApiTestExecutionStatusView
+from api_auto_test.views.get_api_test_execution_history_view import GetApiTestExecutionHistoryView
+from api_auto_test.views.get_api_test_execution_detail_view import GetApiTestExecutionDetailView
+
+# 接口测试定时任务相关视图
+from api_auto_test.views.create_api_test_schedule_view import CreateApiTestScheduleView
+from api_auto_test.views.get_api_test_schedule_list_view import GetApiTestScheduleListView
+from api_auto_test.views.update_api_test_schedule_view import UpdateApiTestScheduleView
+from api_auto_test.views.toggle_api_test_schedule_view import ToggleApiTestScheduleView
+from api_auto_test.views.delete_api_test_schedule_view import DeleteApiTestScheduleView
+from api_auto_test.views.trigger_api_test_schedule_view import TriggerApiTestScheduleView
+
+# 项目管理相关视图
 from projects.views.create_project_view import CreateProjectView
 from projects.views.delete_project_view import DeleteProjectView
 from projects.views.get_project_list_view import GetProjectListView
 from projects.views.update_project_view import UpdateProjectView
+
+# 用户相关视图
 from users.views.UserLoginView import UserLoginView
 
 urlpatterns = [
-       # path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     # 用户账号相关接口
     path("api/user/login/", UserLoginView.as_view()),
 
@@ -45,4 +77,31 @@ urlpatterns = [
     path("api/project/update/", UpdateProjectView.as_view()),
     path("api/project/delete/", DeleteProjectView.as_view()),
     path("api/project/list/", GetProjectListView.as_view()),
+
+    # 接口测试用例相关接口
+    path("api/api_test_case/upload/", UploadApiTestCaseView.as_view()),
+    path("api/api_test_case/list/", GetApiTestCaseListView.as_view()),
+    path("api/api_test_case/detail/", GetApiTestCaseDetailView.as_view()),
+    path("api/api_test_case/yaml/", GetApiTestCaseYamlView.as_view()),
+    path("api/api_test_case/delete/", DeleteApiTestCaseView.as_view()),
+
+    # 接口测试环境配置相关接口
+    path("api/api_test_environment/create/", CreateApiTestEnvironmentView.as_view()),
+    path("api/api_test_environment/list/", GetApiTestEnvironmentListView.as_view()),
+    path("api/api_test_environment/update/", UpdateApiTestEnvironmentView.as_view()),
+    path("api/api_test_environment/delete/", DeleteApiTestEnvironmentView.as_view()),
+
+    # 接口测试执行相关接口
+    path("api/api_test_execution/execute/", ExecuteApiTestCaseView.as_view()),
+    path("api/api_test_execution/status/", GetApiTestExecutionStatusView.as_view()),
+    path("api/api_test_execution/history/", GetApiTestExecutionHistoryView.as_view()),
+    path("api/api_test_execution/detail/", GetApiTestExecutionDetailView.as_view()),
+
+    # 接口测试定时任务相关接口
+    path("api/api_test_schedule/create/", CreateApiTestScheduleView.as_view()),
+    path("api/api_test_schedule/list/", GetApiTestScheduleListView.as_view()),
+    path("api/api_test_schedule/update/", UpdateApiTestScheduleView.as_view()),
+    path("api/api_test_schedule/toggle/", ToggleApiTestScheduleView.as_view()),
+    path("api/api_test_schedule/delete/", DeleteApiTestScheduleView.as_view()),
+    path("api/api_test_schedule/trigger/", TriggerApiTestScheduleView.as_view()),
 ]
