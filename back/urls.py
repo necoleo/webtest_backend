@@ -59,11 +59,13 @@ from projects.views.update_project_view import UpdateProjectView
 
 # 用户相关视图
 from users.views.UserLoginView import UserLoginView
+from users.views.UserRegisterView import UserRegisterView
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     # 用户账号相关接口
     path("api/user/login/", UserLoginView.as_view()),
+    path("api/user/register/", UserRegisterView.as_view()),
 
     # 接口文档相关接口
     path("api/api_document/upload/", UploadApiDocumentView.as_view()),

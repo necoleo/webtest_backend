@@ -22,7 +22,7 @@ app.autodiscover_tasks(['tasks'])
 app.conf.beat_schedule = {
     # 每分钟检查接口测试定时任务
     'check-api-test-scheduled-tasks': {
-        'task': 'tasks.schedule_tasks.check_api_test_scheduled_tasks',
+        'task': 'tasks.schedule_tasks.ScheduleTaskService.checkScheduledTasks',
         'schedule': 60.0,
     },
 }

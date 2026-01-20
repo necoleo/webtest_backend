@@ -46,7 +46,7 @@ class UserService:
                 return response
         return response
 
-
+    @method_decorator(valid_params_blank(required_params_list=["username","password","check_password"]))
     def user_register(self, username, password, check_password):
         """用户注册"""
         response = {}

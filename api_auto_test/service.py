@@ -20,7 +20,7 @@ from api_auto_test.models import (
 from api_auto_test.parser.api_document_parser import ApiDocumentParser
 from constant.error_code import ErrorCode
 from project_decorator.request_decorators import valid_params_blank
-from tasks.api_test_tasks import execute_api_test_task
+from tasks.api_test_tasks import ApiTestTaskService
 from utils.cos.cos_client import CosClient
 
 
@@ -407,7 +407,7 @@ class Service:
 
     # ==================== 接口测试用例管理 ====================
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id", "case_name", "file", "created_user_id", "created_user"]))
+    # @method_decorator(valid_params_blank(required_params_list=["project_id", "case_name", "file", "created_user_id", "created_user"]))
     def upload_api_test_case(self, project_id, case_name, file, created_user_id, created_user, description=None):
         """
         上传接口测试用例
@@ -1090,7 +1090,7 @@ class Service:
             )
 
             # 提交异步任务
-            task = execute_api_test_task.delay(execution.id)
+            task = ApiTestTaskService.executeApiTestTask.delay(execution.id)
 
             # 更新 Celery 任务 ID
             execution.celery_task_id = task.id
@@ -1905,7 +1905,7 @@ class Service:
             )
 
             # 提交异步任务
-            task = execute_api_test_task.delay(execution.id)
+            task = ApiTestTaskService.executeApiTestTask.delay(execution.id)
 
             # 更新 Celery 任务 ID
             execution.celery_task_id = task.id

@@ -45,8 +45,8 @@ class UploadApiTestCaseView(View):
             created_user_id = request.user.id
             created_user = request.user.username
             service_response = self.service.upload_api_test_case(
-                project_id, case_name, file, description,
-                created_user_id, created_user
+                project_id, case_name, file, created_user_id,
+                created_user, description
             )
             print(service_response['message'])
             response['code'] = service_response['code']

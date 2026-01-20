@@ -17,224 +17,212 @@ if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
 from api_auto_test.models import ApiTestScheduleModel, ApiTestExecutionModel
-from tasks.api_test_tasks import execute_api_test_task
+from tasks.api_test_tasks import ApiTestTaskService
 from constant.error_code import ErrorCode
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task
-def check_api_test_scheduled_tasks() -> dict:
-    """
-    检查接口测试定时任务
+class ScheduleTaskService:
+    """定时任务调度服务类"""
 
-    每分钟执行一次，检查是否有到达执行时间的定时任务，触发执行。
+    @staticmethod
+    @shared_task
+    def checkScheduledTasks() -> dict:
+        """
+        检查接口测试定时任务（Celery 任务入口）
 
-    调度逻辑：
-    - daily: 每天在指定时间执行
-    - weekly: 每周在指定星期的指定时间执行
+        每分钟执行一次，检查是否有到达执行时间的定时任务，触发执行。
 
-    :return: 执行结果（与 Service 层响应格式一致）
-    """
-    # 响应格式与 Service 层保持一致
-    response = {
-        "code": "",
-        "message": "",
-        "data": {},
-        "status_code": 200
-    }
+        调度逻辑：
+        - daily: 每天在指定时间执行
+        - weekly: 每周在指定星期的指定时间执行
 
-    now = timezone.now()
-    # 转换为本地时间进行比较（因为 schedule_time 是本地时间）
-    local_now = timezone.localtime(now)
-    current_time = local_now.time()
-    current_weekday = local_now.isoweekday()  # 1=Monday, 7=Sunday
-
-    # 查询所有启用的定时任务
-    schedules = ApiTestScheduleModel.objects.filter(
-        is_enabled=True,
-        deleted_at__isnull=True
-    )
-
-    triggered_count = 0
-    triggered_tasks = []
-    errors = []
-
-    for schedule in schedules:
-        should_trigger = False
-
-        # 检查是否应该触发
-        if schedule.schedule_type == ApiTestScheduleModel.ScheduleType.DAILY:
-            # 每天执行：检查当前时间是否在执行时间附近（同一分钟）
-            schedule_hour = schedule.schedule_time.hour
-            schedule_minute = schedule.schedule_time.minute
-            current_hour = current_time.hour
-            current_minute = current_time.minute
-
-            # 简单比较：同一小时且同一分钟
-            should_trigger = (schedule_hour == current_hour and schedule_minute == current_minute)
-
-        elif schedule.schedule_type == ApiTestScheduleModel.ScheduleType.WEEKLY:
-            # 每周执行：检查星期和时间
-            if schedule.schedule_weekday == current_weekday:
-                schedule_hour = schedule.schedule_time.hour
-                schedule_minute = schedule.schedule_time.minute
-                current_hour = current_time.hour
-                current_minute = current_time.minute
-
-                should_trigger = (schedule_hour == current_hour and schedule_minute == current_minute)
-
-        # 检查是否已经在今天执行过（避免重复执行）
-        if should_trigger and schedule.last_execution_time:
-            last_exec_local = timezone.localtime(schedule.last_execution_time)
-            if last_exec_local.date() == local_now.date():
-                # 今天已经执行过
-                if schedule.schedule_type == ApiTestScheduleModel.ScheduleType.DAILY:
-                    # 每日任务：今天已执行，跳过
-                    should_trigger = False
-                elif schedule.schedule_type == ApiTestScheduleModel.ScheduleType.WEEKLY:
-                    # 每周任务：本周同一天已执行，跳过
-                    should_trigger = False
-
-        if should_trigger:
-            try:
-                # 创建执行记录
-                execution = ApiTestExecutionModel.objects.create(
-                    test_case_id=schedule.test_case_id,
-                    env_id=schedule.env_id,
-                    status=ApiTestExecutionModel.ExecutionStatus.PENDING,
-                    trigger_type=ApiTestExecutionModel.TriggerType.SCHEDULED,
-                    scheduled_task_id=schedule.id,
-                    executed_user_id=schedule.created_user_id,
-                    executed_user=schedule.created_user
-                )
-
-                # 触发异步执行任务
-                task = execute_api_test_task.delay(execution.id)
-
-                # 更新执行记录的 Celery 任务 ID
-                execution.celery_task_id = task.id
-                execution.save(update_fields=['celery_task_id'])
-
-                # 更新定时任务的执行信息
-                schedule.last_execution_time = now
-                schedule.last_execution_status = ApiTestScheduleModel.ExecutionStatus.PENDING
-
-                # 计算下次执行时间
-                if schedule.schedule_type == ApiTestScheduleModel.ScheduleType.DAILY:
-                    # 下一天的同一时间
-                    next_date = local_now.date() + timedelta(days=1)
-                    next_time = timezone.make_aware(
-                        datetime.combine(next_date, schedule.schedule_time)
-                    )
-                elif schedule.schedule_type == ApiTestScheduleModel.ScheduleType.WEEKLY:
-                    # 下周同一天的同一时间
-                    days_until_next = 7  # 下周同一天
-                    next_date = local_now.date() + timedelta(days=days_until_next)
-                    next_time = timezone.make_aware(
-                        datetime.combine(next_date, schedule.schedule_time)
-                    )
-                else:
-                    next_time = None
-
-                schedule.next_execution_time = next_time
-                schedule.save(update_fields=[
-                    'last_execution_time', 'last_execution_status', 'next_execution_time'
-                ])
-
-                triggered_count += 1
-                triggered_tasks.append({
-                    'schedule_id': schedule.id,
-                    'task_name': schedule.task_name,
-                    'execution_id': execution.id,
-                    'celery_task_id': task.id
-                })
-
-                logger.info(f"触发定时任务: {schedule.task_name} (schedule_id={schedule.id}, execution_id={execution.id})")
-
-            except Exception as e:
-                # 记录错误但不中断其他任务的检查
-                error_msg = f"触发定时任务 {schedule.id} ({schedule.task_name}) 失败: {str(e)}"
-                logger.error(error_msg)
-                errors.append({
-                    'schedule_id': schedule.id,
-                    'task_name': schedule.task_name,
-                    'error': str(e)
-                })
-
-    response['code'] = ErrorCode.SUCCESS
-    response['message'] = f'检查完成，触发了 {triggered_count} 个定时任务'
-    response['data'] = {
-        'checked_at': now.isoformat(),
-        'triggered_count': triggered_count,
-        'triggered_tasks': triggered_tasks,
-        'errors': errors
-    }
-
-    return response
-
-
-@shared_task
-def update_schedule_execution_status() -> dict:
-    """
-    更新定时任务的执行状态
-
-    定期检查定时任务关联的最近执行记录，更新定时任务的 last_execution_status。
-
-    :return: 执行结果
-    """
-    response = {
-        "code": "",
-        "message": "",
-        "data": {},
-        "status_code": 200
-    }
-
-    updated_count = 0
-
-    try:
-        # 获取所有有最近执行时间且状态为 PENDING 的定时任务
-        schedules = ApiTestScheduleModel.objects.filter(
-            is_enabled=True,
-            deleted_at__isnull=True,
-            last_execution_status=ApiTestScheduleModel.ExecutionStatus.PENDING,
-            last_execution_time__isnull=False
-        )
-
-        for schedule in schedules:
-            # 查询该定时任务最近的执行记录
-            try:
-                latest_execution = ApiTestExecutionModel.objects.filter(
-                    scheduled_task_id=schedule.id
-                ).order_by('-created_at').first()
-
-                if latest_execution:
-                    # 如果执行已完成，更新定时任务状态
-                    if latest_execution.status in [
-                        ApiTestExecutionModel.ExecutionStatus.SUCCESS,
-                        ApiTestExecutionModel.ExecutionStatus.FAILED
-                    ]:
-                        if latest_execution.status == ApiTestExecutionModel.ExecutionStatus.SUCCESS:
-                            schedule.last_execution_status = ApiTestScheduleModel.ExecutionStatus.SUCCESS
-                        else:
-                            schedule.last_execution_status = ApiTestScheduleModel.ExecutionStatus.FAILED
-
-                        schedule.save(update_fields=['last_execution_status'])
-                        updated_count += 1
-
-            except Exception as e:
-                logger.error(f"更新定时任务 {schedule.id} 状态失败: {str(e)}")
-
-        response['code'] = ErrorCode.SUCCESS
-        response['message'] = f'更新完成，共更新 {updated_count} 个定时任务状态'
-        response['data'] = {
-            'updated_count': updated_count
+        :return: 执行结果
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
         }
 
-    except Exception as e:
-        response['code'] = ErrorCode.SERVER_ERROR
-        response['message'] = f'更新失败: {str(e)}'
-        response['status_code'] = 500
-        logger.error(f"update_schedule_execution_status 失败: {str(e)}")
+        now = timezone.now()
+        localNow = timezone.localtime(now)
+        currentTime = localNow.time()
+        currentWeekday = localNow.isoweekday()
 
-    return response
+        schedules = ApiTestScheduleModel.objects.filter(
+            is_enabled=True,
+            deleted_at__isnull=True
+        )
+
+        triggeredCount = 0
+        triggeredTasks = []
+        errors = []
+
+        for schedule in schedules:
+            shouldTrigger = False
+
+            if schedule.schedule_type == ApiTestScheduleModel.ScheduleType.DAILY:
+                scheduleHour = schedule.schedule_time.hour
+                scheduleMinute = schedule.schedule_time.minute
+                currentHour = currentTime.hour
+                currentMinute = currentTime.minute
+
+                shouldTrigger = (scheduleHour == currentHour and scheduleMinute == currentMinute)
+
+            elif schedule.schedule_type == ApiTestScheduleModel.ScheduleType.WEEKLY:
+                if schedule.schedule_weekday == currentWeekday:
+                    scheduleHour = schedule.schedule_time.hour
+                    scheduleMinute = schedule.schedule_time.minute
+                    currentHour = currentTime.hour
+                    currentMinute = currentTime.minute
+
+                    shouldTrigger = (scheduleHour == currentHour and scheduleMinute == currentMinute)
+
+            if shouldTrigger and schedule.last_execution_time:
+                lastExecLocal = timezone.localtime(schedule.last_execution_time)
+                if lastExecLocal.date() == localNow.date():
+                    if schedule.schedule_type == ApiTestScheduleModel.ScheduleType.DAILY:
+                        shouldTrigger = False
+                    elif schedule.schedule_type == ApiTestScheduleModel.ScheduleType.WEEKLY:
+                        shouldTrigger = False
+
+            if shouldTrigger:
+                try:
+                    execution = ApiTestExecutionModel.objects.create(
+                        test_case_id=schedule.test_case_id,
+                        env_id=schedule.env_id,
+                        status=ApiTestExecutionModel.ExecutionStatus.PENDING,
+                        trigger_type=ApiTestExecutionModel.TriggerType.SCHEDULED,
+                        scheduled_task_id=schedule.id,
+                        executed_user_id=schedule.created_user_id,
+                        executed_user=schedule.created_user
+                    )
+
+                    task = ApiTestTaskService.executeApiTestTask.delay(execution.id)
+
+                    execution.celery_task_id = task.id
+                    execution.save(update_fields=['celery_task_id'])
+
+                    schedule.last_execution_time = now
+                    schedule.last_execution_status = ApiTestScheduleModel.ExecutionStatus.PENDING
+
+                    nextTime = ScheduleTaskService.calculateNextExecutionTime(schedule, localNow)
+                    schedule.next_execution_time = nextTime
+                    schedule.save(update_fields=[
+                        'last_execution_time', 'last_execution_status', 'next_execution_time'
+                    ])
+
+                    triggeredCount += 1
+                    triggeredTasks.append({
+                        'schedule_id': schedule.id,
+                        'task_name': schedule.task_name,
+                        'execution_id': execution.id,
+                        'celery_task_id': task.id
+                    })
+
+                    logger.info(f"触发定时任务: {schedule.task_name} (schedule_id={schedule.id}, execution_id={execution.id})")
+
+                except Exception as e:
+                    errorMsg = f"触发定时任务 {schedule.id} ({schedule.task_name}) 失败: {str(e)}"
+                    logger.error(errorMsg)
+                    errors.append({
+                        'schedule_id': schedule.id,
+                        'task_name': schedule.task_name,
+                        'error': str(e)
+                    })
+
+        response['code'] = ErrorCode.SUCCESS
+        response['message'] = f'检查完成，触发了 {triggeredCount} 个定时任务'
+        response['data'] = {
+            'checked_at': now.isoformat(),
+            'triggered_count': triggeredCount,
+            'triggered_tasks': triggeredTasks,
+            'errors': errors
+        }
+
+        return response
+
+    @staticmethod
+    def calculateNextExecutionTime(schedule, localNow):
+        """计算下次执行时间"""
+        if schedule.schedule_type == ApiTestScheduleModel.ScheduleType.DAILY:
+            nextDate = localNow.date() + timedelta(days=1)
+            nextTime = timezone.make_aware(
+                datetime.combine(nextDate, schedule.schedule_time)
+            )
+        elif schedule.schedule_type == ApiTestScheduleModel.ScheduleType.WEEKLY:
+            daysUntilNext = 7
+            nextDate = localNow.date() + timedelta(days=daysUntilNext)
+            nextTime = timezone.make_aware(
+                datetime.combine(nextDate, schedule.schedule_time)
+            )
+        else:
+            nextTime = None
+
+        return nextTime
+
+    @staticmethod
+    @shared_task
+    def updateExecutionStatus() -> dict:
+        """
+        更新定时任务的执行状态（Celery 任务入口）
+
+        定期检查定时任务关联的最近执行记录，更新定时任务的 last_execution_status。
+
+        :return: 执行结果
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+
+        updatedCount = 0
+
+        try:
+            schedules = ApiTestScheduleModel.objects.filter(
+                is_enabled=True,
+                deleted_at__isnull=True,
+                last_execution_status=ApiTestScheduleModel.ExecutionStatus.PENDING,
+                last_execution_time__isnull=False
+            )
+
+            for schedule in schedules:
+                try:
+                    latestExecution = ApiTestExecutionModel.objects.filter(
+                        scheduled_task_id=schedule.id
+                    ).order_by('-created_at').first()
+
+                    if latestExecution:
+                        if latestExecution.status in [
+                            ApiTestExecutionModel.ExecutionStatus.SUCCESS,
+                            ApiTestExecutionModel.ExecutionStatus.FAILED
+                        ]:
+                            if latestExecution.status == ApiTestExecutionModel.ExecutionStatus.SUCCESS:
+                                schedule.last_execution_status = ApiTestScheduleModel.ExecutionStatus.SUCCESS
+                            else:
+                                schedule.last_execution_status = ApiTestScheduleModel.ExecutionStatus.FAILED
+
+                            schedule.save(update_fields=['last_execution_status'])
+                            updatedCount += 1
+
+                except Exception as e:
+                    logger.error(f"更新定时任务 {schedule.id} 状态失败: {str(e)}")
+
+            response['code'] = ErrorCode.SUCCESS
+            response['message'] = f'更新完成，共更新 {updatedCount} 个定时任务状态'
+            response['data'] = {
+                'updated_count': updatedCount
+            }
+
+        except Exception as e:
+            response['code'] = ErrorCode.SERVER_ERROR
+            response['message'] = f'更新失败: {str(e)}'
+            response['status_code'] = 500
+            logger.error(f"updateExecutionStatus 失败: {str(e)}")
+
+        return response
