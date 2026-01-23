@@ -57,6 +57,13 @@ from projects.views.delete_project_view import DeleteProjectView
 from projects.views.get_project_list_view import GetProjectListView
 from projects.views.update_project_view import UpdateProjectView
 
+# 需求文档相关视图
+from requirements.views.delete_requirement_document_view import DeleteRequirementDocumentView
+from requirements.views.get_requirement_document_list_view import GetRequirementDocumentListView
+from requirements.views.parse_requirement_document_view import ParseRequirementDocumentView
+from requirements.views.update_requirement_document_view import UpdateRequirementDocumentView
+from requirements.views.upload_requirement_document_view import UploadRequirementDocumentView
+
 # 用户相关视图
 from users.views.UserLoginView import UserLoginView
 from users.views.UserRegisterView import UserRegisterView
@@ -66,6 +73,13 @@ urlpatterns = [
     # 用户账号相关接口
     path("api/user/login/", UserLoginView.as_view()),
     path("api/user/register/", UserRegisterView.as_view()),
+
+    # 需求文档相关接口
+    path("api/requirement_document/upload/", UploadRequirementDocumentView.as_view()),
+    path("api/requirement_document/update/", UpdateRequirementDocumentView.as_view()),
+    path("api/requirement_document/delete/", DeleteRequirementDocumentView.as_view()),
+    path("api/requirement_document/list/", GetRequirementDocumentListView.as_view()),
+    path("api/requirement_document/parse/",ParseRequirementDocumentView.as_view()),
 
     # 接口文档相关接口
     path("api/api_document/upload/", UploadApiDocumentView.as_view()),

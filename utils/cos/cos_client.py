@@ -9,6 +9,9 @@ import sys
 import os
 import logging
 
+from config.env_config import ENV_FILE_PATH
+
+
 class CosClient:
 
     def __init__(self):
@@ -19,19 +22,19 @@ class CosClient:
         self.COS_FILE_SAVED_TEMP = "cos_file_temp"
 
         # 加载 .env文件
-        load_dotenv("../config/.env")
+        load_dotenv(ENV_FILE_PATH)
 
         # 1. 设置用户属性
         secret_id = os.environ['COS_SECRET_ID']
         secret_key = os.environ['COS_SECRET_KEY']
         # 已创建桶归属的 region
-        region = 'ap-guangzhou'
+        region = os.environ['REGION']
         token = None
         # 指定使用 http/https 协议来访问 COS，默认为 https，可不填
         scheme = 'https'
 
         config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key, Token=token, Scheme=scheme)
-        self.bucket = "heypon-1347960590"
+        self.bucket = os.environ['BUCKET']
         self.client = CosS3Client(config)
 
     # 查询存储桶列表

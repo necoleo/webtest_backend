@@ -47,7 +47,8 @@ static_root/
 .env.*.local
 config/.env
 *.env
-
+.env.dev
+.env.prod
 # IDE
 .idea/
 .vscode/

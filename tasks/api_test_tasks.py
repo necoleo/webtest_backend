@@ -20,8 +20,14 @@ logger = get_task_logger(__name__)
 
 # 添加项目根目录到 Python 路径
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
-API_AUTO_TEST_DIR = os.path.join(PROJECT_ROOT, 'api_auto_test')
+
+# Docker 环境中 api_auto_test 挂载在 /api_auto_test
+# 本地开发环境中在项目根目录的 api_auto_test 下
+if os.path.exists('/api_auto_test'):
+    API_AUTO_TEST_DIR = '/api_auto_test'
+else:
+    PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
+    API_AUTO_TEST_DIR = os.path.join(PROJECT_ROOT, 'api_auto_test')
 
 if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
@@ -278,7 +284,7 @@ class ApiTestTaskService:
             reportHtmlPath = os.path.join(tempDir, f'report_{executionId}.html')
             reportGenerator.save_to_file(reportHtmlPath)
 
-            reportCosDir = f"webtest_api_test_reports/{testCase.project_id}/"
+            reportCosDir = f"webtest/webtest_api_test_reports/{testCase.project_id}/"
             reportFilename = f"report_{executionId}_{timezone.now().strftime('%Y%m%d_%H%M%S')}.html"
 
             try:

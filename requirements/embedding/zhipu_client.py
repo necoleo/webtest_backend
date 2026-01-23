@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from zhipuai import ZhipuAI
 
 from back.settings import BASE_DIR
+from config.env_config import ENV_FILE_PATH
 
 
 class ZhipuClient:
@@ -11,7 +12,7 @@ class ZhipuClient:
 
 
     def __init__(self):
-        load_dotenv(BASE_DIR / "config" / ".env")
+        load_dotenv(ENV_FILE_PATH)
         self.api_key = os.environ['ZHIPU_API_KEY']
         self.client = ZhipuAI(api_key=self.api_key)
         self.chat_model = "GLM-4-Flash"

@@ -60,7 +60,7 @@ class Service:
                 return response
 
             # 设置 COS 目标目录（按项目分目录）
-            target_dir = f"webtest_api_document/{project_id}/"
+            target_dir = f"webtest/webtest_api_document/{project_id}/"
             temp_dir = os.path.abspath(self.COS_FILE_SAVED_TEMP)
             temp_file_path = os.path.join(temp_dir, saved_filename)
             # 上传需求文档到 COS
@@ -465,7 +465,7 @@ class Service:
                 return response
 
             # 设置 COS 目标目录（按项目分目录）
-            target_dir = f"webtest_api_test_cases/{project_id}/"
+            target_dir = f"webtest/webtest_api_test_cases/{project_id}/"
 
             # 上传到 COS
             cos_res = self.cos_client.upload_file_to_cos_bucket(target_dir, saved_filename, temp_file_path)

@@ -64,6 +64,18 @@ class RequirementModel(models.Model):
         db_column='是否已向量化',
     )
 
+    # 创建人id
+    created_user_id = models.IntegerField(
+        db_comment="创建人id"
+    )
+
+    # 创建人名称
+    created_user = models.CharField(
+        max_length=255,
+        null=True,
+        db_comment="创建人"
+    )
+
     #  创建时间
     created_at = models.DateTimeField(
         null=False,

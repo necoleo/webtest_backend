@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+from config.env_config import ENV_FILE_PATH
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +28,12 @@ SECRET_KEY = 'django-insecure-^zm%muipw_(-@w^cy2kd7d8)k4l)y4jv#*+1ffw4d9!agx!^qn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'webtest.yeejay.com',
+    'backend',  # Docker 容器内部访问
+]
 
 
 # Application definition
@@ -83,7 +90,7 @@ WSGI_APPLICATION = 'back.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-load_dotenv(BASE_DIR / "config" / ".env")
+load_dotenv(ENV_FILE_PATH)
 DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
@@ -161,7 +168,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # ==================== Celery 配置 ====================
 # 消息代理配置 - 使用 RabbitMQ
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://guest:guest@localhost:5672//')
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://webtest:webtest@localhost:5672//')
 
 # Windows 开发环境使用 solo 进程池（避免 prefork 权限问题）
 # 生产环境（Linux）可移除此配置
