@@ -89,8 +89,6 @@ urlpatterns = [
     path("api/requirement/update/", UpdateRequirementView.as_view()),
     path("api/requirement/list/", GetRequirementListView.as_view()),
 
-
-
     # 接口文档相关接口
     path("api/api_document/upload/", UploadApiDocumentView.as_view()),
     path("api/api_document/list/", GetApiDocumentListView.as_view()),

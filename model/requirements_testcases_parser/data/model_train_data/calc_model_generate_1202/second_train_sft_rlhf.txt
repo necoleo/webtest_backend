@@ -1,0 +1,1410 @@
+run sh: `/home/ubuntu/webtest_rlhf_project/model_rlhf/bin/python3 /home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/swift/cli/rlhf.py --rlhf_type kto --model Qwen/Qwen2.5-7B-Instruct --adapters /home/ubuntu/webtest_rlhf_project/train_script/sft/first_rlhf_sft_model_output/v2-20251111-014354/checkpoint-80 --train_type lora --dataset /home/ubuntu/webtest_rlhf_project/train_data/tarin_data_1130/second_rlhf_train.jsonl --val_dataset /home/ubuntu/webtest_rlhf_project/train_data/tarin_data_1130/second_rlhf_dev.jsonl --num_train_epochs 2 --per_device_train_batch_size 2 --per_device_eval_batch_size 2 --learning_rate 1e-5 --lora_rank 4 --lora_alpha 16 --target_modules all-linear --gradient_accumulation_steps 2 --eval_steps 4 --save_steps 4 --save_total_limit 3 --logging_steps 2 --max_length 4096 --output_dir second_rlhf_sft_model_output --warmup_ratio 0.1 --weight_decay 0.01 --dataloader_num_workers 2 --bf16 false --fp16 true --gradient_checkpointing true`
+[INFO:swift] Successfully registered `/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/swift/llm/dataset/data/dataset_info.json`.
+[INFO:swift] Loading the model using model_dir: /home/ubuntu/webtest_rlhf_project/train_script/sft/first_rlhf_sft_model_output/v2-20251111-014354/checkpoint-80
+[INFO:swift] rank: -1, local_rank: -1, world_size: 1, local_world_size: 1
+[INFO:swift] Downloading the model from ModelScope Hub, model_id: Qwen/Qwen2.5-7B-Instruct
+[INFO:modelscope] Target directory already exists, skipping creation.
+[INFO:swift] Loading the model using model_dir: /home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2___5-7B-Instruct
+[INFO:swift] Setting torch_dtype: torch.bfloat16
+[INFO:swift] Because len(args.val_dataset) > 0, setting split_dataset_ratio: 0.0
+[INFO:swift] Setting args.lazy_tokenize: False
+[INFO:swift] output_dir: /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355
+[INFO:swift] Global seed set to 42
+[INFO:swift] args: RLHFArguments(
+_n_gpu=-1,
+acc_strategy=token,
+accelerator_config={'dispatch_batches': False},
+adafactor=False,
+adalora_beta1=0.85,
+adalora_beta2=0.85,
+adalora_deltaT=1,
+adalora_init_r=12,
+adalora_orth_reg_weight=0.5,
+adalora_target_r=8,
+adalora_tfinal=0,
+adalora_tinit=0,
+adam_beta1=0.9,
+adam_beta2=0.95,
+adam_epsilon=1e-08,
+adapter_act=gelu,
+adapter_length=128,
+adapters=['/home/ubuntu/webtest_rlhf_project/train_script/sft/first_rlhf_sft_model_output/v2-20251111-014354/checkpoint-80'],
+add_version=True,
+agent_template=None,
+aligner_lr=None,
+async_generate=False,
+attn_impl=None,
+auto_find_batch_size=False,
+average_tokens_across_devices=True,
+batch_eval_metrics=False,
+beta=0.1,
+bf16=False,
+bf16_full_eval=False,
+bnb_4bit_compute_dtype=torch.bfloat16,
+bnb_4bit_quant_storage=None,
+bnb_4bit_quant_type=nf4,
+bnb_4bit_use_double_quant=True,
+boft_block_num=0,
+boft_block_size=4,
+boft_dropout=0.0,
+boft_n_butterfly_factor=1,
+cached_dataset=[],
+center_rewards_coefficient=None,
+channels=None,
+check_model=True,
+ckpt_dir=/home/ubuntu/webtest_rlhf_project/train_script/sft/first_rlhf_sft_model_output/v2-20251111-014354/checkpoint-80,
+cliprange=0.2,
+cliprange_value=0.2,
+columns={},
+completion_length_limit_scope=per_round,
+cosine_max_len=None,
+cosine_max_len_value_correct=0.5,
+cosine_max_len_value_wrong=0.0,
+cosine_min_len_value_correct=1.0,
+cosine_min_len_value_wrong=-0.5,
+cpo_alpha=1.0,
+create_checkpoint_symlink=False,
+custom_dataset_info=[],
+custom_register_path=[],
+data_parallel_size=None,
+data_seed=42,
+dataloader_drop_last=False,
+dataloader_num_workers=2,
+dataloader_persistent_workers=False,
+dataloader_pin_memory=True,
+dataloader_prefetch_factor=None,
+dataset=['/home/ubuntu/webtest_rlhf_project/train_data/tarin_data_1130/second_rlhf_train.jsonl'],
+dataset_num_proc=1,
+dataset_shuffle=True,
+ddp_backend=None,
+ddp_broadcast_buffers=None,
+ddp_bucket_cap_mb=None,
+ddp_find_unused_parameters=None,
+ddp_timeout=18000000,
+debug=None,
+deepspeed=None,
+deepspeed_autotp_size=None,
+delta=None,
+desirable_weight=1.0,
+device_map=None,
+disable_tqdm=None,
+do_eval=False,
+do_predict=False,
+do_train=False,
+download_mode=reuse_dataset_if_exists,
+ds3_gather_for_generation=True,
+dynamic_sample=False,
+epsilon=0.2,
+epsilon_high=None,
+eval_accumulation_steps=None,
+eval_dataset=[],
+eval_dataset_args=None,
+eval_delay=0,
+eval_do_concat_batches=True,
+eval_generation_config=None,
+eval_limit=None,
+eval_on_start=False,
+eval_steps=4.0,
+eval_strategy=steps,
+eval_use_evalscope=False,
+eval_use_gather_object=False,
+external_plugins=[],
+fourier_n_frequency=2000,
+fourier_scaling=300.0,
+fp16=True,
+fp16_backend=auto,
+fp16_full_eval=False,
+fp16_opt_level=O1,
+freeze_aligner=True,
+freeze_llm=False,
+freeze_parameters=[],
+freeze_parameters_ratio=0.0,
+freeze_parameters_regex=None,
+freeze_vit=True,
+fsdp=,
+fsdp_config=None,
+fsdp_min_num_params=0,
+fsdp_transformer_layer_cls_to_wrap=None,
+full_determinism=False,
+galore_cos_threshold=0.4,
+galore_gamma_proj=2,
+galore_optim_per_parameter=False,
+galore_proj_bits=4,
+galore_proj_group_size=256,
+galore_proj_quant=False,
+galore_proj_type=std,
+galore_quantization=False,
+galore_queue_size=5,
+galore_rank=128,
+galore_scale=1.0,
+galore_target_modules=None,
+galore_update_proj_gap=50,
+galore_with_embedding=False,
+gamma=1.0,
+gc_collect_after_offload=False,
+generation_batch_size=None,
+generation_config=None,
+generation_max_length=None,
+generation_num_beams=None,
+gpu_memory_utilization=None,
+gradient_accumulation_steps=2,
+gradient_checkpointing=True,
+gradient_checkpointing_kwargs=None,
+greater_is_better=False,
+group_by_length=False,
+half_precision_backend=auto,
+hqq_axis=None,
+hub_always_push=False,
+hub_model_id=None,
+hub_private_repo=None,
+hub_revision=None,
+hub_strategy=every_save,
+hub_token=<HUB_TOKEN>,
+ignore_args_error=False,
+ignore_data_skip=False,
+importance_sampling_level=token,
+include_for_metrics=[],
+include_inputs_for_metrics=False,
+include_num_input_tokens_seen=False,
+include_tokens_per_second=False,
+init_strategy=None,
+init_weights=True,
+interleave_prob=None,
+jit_mode_eval=False,
+kl_coef=0.05,
+label_names=None,
+label_smoothing=0,
+label_smoothing_factor=0.0,
+lam=0.95,
+lazy_tokenize=False,
+learning_rate=1e-05,
+length_column_name=length,
+liger_kernel_config=None,
+limit_mm_per_prompt=None,
+lisa_activated_layers=0,
+lisa_step_interval=20,
+llamapro_num_groups=None,
+llamapro_num_new_blocks=4,
+lmbda=0.5,
+load_args=False,
+load_best_model_at_end=False,
+load_data_args=False,
+load_from_cache_file=True,
+local_rank=-1,
+local_repo_path=None,
+local_rollout_forward_batch_size=64,
+log_completions=False,
+log_entropy=False,
+log_level=passive,
+log_level_replica=warning,
+log_on_each_node=True,
+logging_dir=/home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/runs,
+logging_first_step=True,
+logging_nan_inf_filter=True,
+logging_steps=2,
+logging_strategy=steps,
+logprobs=False,
+lora_alpha=16,
+lora_bias=none,
+lora_dropout=0.05,
+lora_dtype=None,
+lora_ga_batch_size=2,
+lora_ga_direction=ArB2r,
+lora_ga_iters=2,
+lora_ga_max_length=1024,
+lora_ga_scale=stable,
+lora_ga_stable_gamma=16,
+lora_modules=[],
+lora_rank=4,
+lorap_lr_ratio=None,
+loss_scale=last_round,
+loss_type=kto,
+loss_weights=None,
+lr_scheduler_kwargs=None,
+lr_scheduler_type=cosine,
+max_completion_length=512,
+max_epochs=None,
+max_grad_norm=1.0,
+max_length=4096,
+max_memory={},
+max_model_len=None,
+max_new_tokens=512,
+max_pixels=None,
+max_resample_times=3,
+max_steps=-1,
+max_turns=None,
+metric=None,
+metric_for_best_model=loss,
+missing_eos_penalty=None,
+model=Qwen/Qwen2.5-7B-Instruct,
+model_author=None,
+model_kwargs={},
+model_name=None,
+model_revision=None,
+model_type=qwen2_5,
+modules_to_save=[],
+move_model_batches=None,
+mp_parameters=,
+multi_turn_func=None,
+multi_turn_scheduler=None,
+neftune_noise_alpha=None,
+new_special_tokens=[],
+no_cuda=False,
+norm_bbox=None,
+num_beams=1,
+num_generations=8,
+num_iterations=1,
+num_labels=None,
+num_mini_batches=1,
+num_ppo_epochs=4,
+num_sample_generations=10,
+num_train_epochs=2.0,
+offload_model=False,
+offload_optimizer=False,
+optim=adamw_torch,
+optim_args=None,
+optim_target_modules=None,
+optimizer=None,
+output_dir=/home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355,
+overlong_filter=False,
+overwrite_output_dir=False,
+packing=False,
+padding_free=False,
+padding_side=right,
+past_index=-1,
+per_device_eval_batch_size=2,
+per_device_train_batch_size=2,
+predict_with_generate=False,
+prediction_loss_only=False,
+problem_type=None,
+push_to_hub=False,
+push_to_hub_model_id=None,
+push_to_hub_organization=None,
+push_to_hub_token=<PUSH_TO_HUB_TOKEN>,
+quant_bits=None,
+quant_method=None,
+ray_scope=last,
+ref_model=None,
+ref_model_mixup_alpha=0.6,
+ref_model_revision=None,
+ref_model_sync_steps=512,
+ref_model_type=None,
+reft_args=None,
+reft_intervention_type=LoreftIntervention,
+reft_layer_key=None,
+reft_layers=None,
+reft_rank=4,
+remove_unused_columns=True,
+repetition_max_penalty=-1.0,
+repetition_n_grams=3,
+repetition_penalty=1.0,
+report_to=['tensorboard'],
+response_length=512,
+response_prefix=None,
+restore_callback_states_from_checkpoint=False,
+resume_from_checkpoint=None,
+resume_only_model=False,
+reward_adapters=[],
+reward_funcs=[],
+reward_model=None,
+reward_model_plugin=None,
+reward_model_revision=None,
+reward_model_type=None,
+reward_weights=None,
+rlhf_type=kto,
+rope_scaling=None,
+router_aux_loss_coef=0.0,
+rpo_alpha=1.0,
+run_name=/home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355,
+save_on_each_node=False,
+save_only_model=False,
+save_safetensors=True,
+save_steps=4.0,
+save_strategy=steps,
+save_total_limit=3,
+scale_rewards=True,
+seed=42,
+seq_kd=False,
+sequence_parallel_size=1,
+sft_alpha=0,
+shuffle_buffer_size=1000,
+simpo_gamma=1,
+skip_memory_metrics=True,
+sleep_level=0,
+soft_cache_length=None,
+soft_max_length=None,
+sortish_sampler=False,
+split_dataset_ratio=0.0,
+steps_per_generation=None,
+stop_words=[],
+stopping_strategy=first_exhausted,
+stream=False,
+streaming=False,
+strict=False,
+swanlab_exp_name=None,
+swanlab_lark_secret=None,
+swanlab_lark_webhook_url=None,
+swanlab_mode=cloud,
+swanlab_project=None,
+swanlab_token=<SWANLAB_TOKEN>,
+swanlab_workspace=None,
+sync_ref_model=False,
+system=None,
+target_modules=['all-linear'],
+target_parameters=None,
+target_regex=None,
+task_type=causal_lm,
+teacher_adapters=[],
+teacher_model=None,
+teacher_model_revision=None,
+teacher_model_type=None,
+temperature=0.9,
+template=qwen2_5,
+template_backend=swift,
+tensor_parallel_size=None,
+tf32=None,
+top_entropy_quantile=1.0,
+top_k=50,
+top_logprobs=None,
+top_p=0.9,
+torch_compile=False,
+torch_compile_backend=None,
+torch_compile_mode=None,
+torch_dtype=torch.bfloat16,
+torch_empty_cache_steps=None,
+torchdynamo=None,
+tpu_metrics_debug=False,
+tpu_num_cores=None,
+train_dataloader_shuffle=True,
+train_type=lora,
+trainable_parameters=[],
+trainable_parameters_regex=None,
+truncation_strategy=delete,
+tuner_backend=peft,
+undesirable_weight=1.0,
+use_async_engine=None,
+use_chat_template=True,
+use_cpu=False,
+use_dora=False,
+use_galore=False,
+use_hf=False,
+use_ipex=False,
+use_legacy_prediction_loop=False,
+use_liger_kernel=False,
+use_logits_to_keep=None,
+use_mps_device=False,
+use_rslora=False,
+use_swift_lora=False,
+use_vllm=False,
+val_dataset=['/home/ubuntu/webtest_rlhf_project/train_data/tarin_data_1130/second_rlhf_dev.jsonl'],
+val_dataset_shuffle=False,
+vera_d_initial=0.1,
+vera_dropout=0.0,
+vera_projection_prng_key=0,
+vera_rank=256,
+vf_coef=0.1,
+vit_gradient_checkpointing=None,
+vit_lr=None,
+vllm_data_parallel_size=1,
+vllm_disable_custom_all_reduce=True,
+vllm_enable_expert_parallel=False,
+vllm_enable_prefix_caching=True,
+vllm_enforce_eager=False,
+vllm_gpu_memory_utilization=0.9,
+vllm_limit_mm_per_prompt={},
+vllm_max_lora_rank=16,
+vllm_max_model_len=None,
+vllm_max_num_seqs=256,
+vllm_mode=colocate,
+vllm_pipeline_parallel_size=1,
+vllm_quantization=None,
+vllm_server_base_url=None,
+vllm_server_host=None,
+vllm_server_port=[8000],
+vllm_server_timeout=240.0,
+vllm_tensor_parallel_size=1,
+vllm_use_async_engine=False,
+wandb_log_unique_prompts=None,
+warmup_ratio=0.1,
+warmup_steps=0,
+weight_decay=0.01,
+whiten_rewards=False,
+zero_hpz_partition_size=None,
+)
+[INFO:swift] Downloading the model from ModelScope Hub, model_id: Qwen/Qwen2.5-7B-Instruct
+[INFO:modelscope] Target directory already exists, skipping creation.
+[INFO:swift] Loading the model using model_dir: /home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2___5-7B-Instruct
+[INFO:swift] model_kwargs: {'device_map': 'cuda:0'}
+Downloading Model from https://www.modelscope.cn to directory: /home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2.5-7B-Instruct
+Downloading Model from https://www.modelscope.cn to directory: /home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2.5-7B-Instruct
+
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]
+Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:04,  1.42s/it]
+Loading checkpoint shards:  50%|█████     | 2/4 [00:02<00:02,  1.40s/it]
+Loading checkpoint shards:  75%|███████▌  | 3/4 [00:04<00:01,  1.40s/it]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:05<00:00,  1.35s/it]
+Loading checkpoint shards: 100%|██████████| 4/4 [00:05<00:00,  1.37s/it]
+[INFO:swift] model.hf_device_map: {'': device(type='cuda', index=0)}
+[INFO:swift] model_info: ModelInfo(model_type='qwen2_5', model_dir='/home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2___5-7B-Instruct', torch_dtype=torch.bfloat16, max_model_len=32768, quant_method=None, quant_bits=None, rope_scaling=None, is_moe_model=False, config=Qwen2Config {
+  "architectures": [
+    "Qwen2ForCausalLM"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "eos_token_id": 151645,
+  "hidden_act": "silu",
+  "hidden_size": 3584,
+  "initializer_range": 0.02,
+  "intermediate_size": 18944,
+  "layer_types": [
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention",
+    "full_attention"
+  ],
+  "max_position_embeddings": 32768,
+  "max_window_layers": 28,
+  "model_type": "qwen2",
+  "num_attention_heads": 28,
+  "num_hidden_layers": 28,
+  "num_key_value_heads": 4,
+  "pad_token_id": 151643,
+  "rms_norm_eps": 1e-06,
+  "rope_scaling": null,
+  "rope_theta": 1000000.0,
+  "sliding_window": null,
+  "tie_word_embeddings": false,
+  "torch_dtype": "bfloat16",
+  "transformers_version": "4.55.4",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "vocab_size": 152064
+}
+, task_type='causal_lm', num_labels=None)
+[INFO:swift] model.generation_config: GenerationConfig {
+  "bos_token_id": 151643,
+  "do_sample": true,
+  "eos_token_id": [
+    151645,
+    151643
+  ],
+  "max_new_tokens": 512,
+  "pad_token_id": 151643,
+  "temperature": 0.9,
+  "top_p": 0.9
+}
+
+[INFO:swift] default_system: 'You are Qwen, created by Alibaba Cloud. You are a helpful assistant.'
+[INFO:swift] max_length: 4096
+[INFO:swift] response_prefix: ''
+[INFO:swift] agent_template: hermes
+[INFO:swift] Start time of running main: 2025-11-30 21:54:03.352519
+[INFO:swift] swift.__version__: 3.7.2
+
+Generating train split: 0 examples [00:00, ? examples/s]
+Generating train split: 122 examples [00:00, 469.68 examples/s]
+Generating train split: 122 examples [00:00, 468.84 examples/s]
+
+Map:   0%|          | 0/122 [00:00<?, ? examples/s]
+Map: 100%|██████████| 122/122 [00:00<00:00, 2161.46 examples/s]
+[INFO:swift] Dataset filtered, origin length: 122, filtered dataset length: 96
+
+Generating train split: 0 examples [00:00, ? examples/s]
+Generating train split: 10 examples [00:00, 2050.30 examples/s]
+
+Map:   0%|          | 0/10 [00:00<?, ? examples/s]
+Map: 100%|██████████| 10/10 [00:00<00:00, 2140.17 examples/s]
+[INFO:swift] train_dataset: Dataset({
+    features: ['messages', 'label'],
+    num_rows: 96
+})
+[INFO:swift] val_dataset: Dataset({
+    features: ['messages', 'label'],
+    num_rows: 10
+})
+
+Map:   0%|          | 0/96 [00:00<?, ? examples/s]
+Map: 100%|██████████| 96/96 [00:00<00:00, 2772.88 examples/s]
+
+Map:   0%|          | 0/10 [00:00<?, ? examples/s]
+Map: 100%|██████████| 10/10 [00:00<00:00, 1507.06 examples/s]
+[INFO:swift] desirable_weight: 1.0, undesirable_weight: 1.0
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/swift/llm/train/kto.py:68: UserWarning: 
+        You have different amounts of desirable/positive and undesirable/negative examples but the
+        weights on the desirable and undesirable losses don't seem to be in an ideal range. Based
+        on your data, we recommend EITHER desirable_weight in [0.01, '0.01]
+        or undesirable_weight in [72.18, 96.0] (but NOT BOTH).
+        See the documentation on how to optimally set these weights.
+  warnings.warn(
+
+Map:   0%|          | 0/96 [00:00<?, ? examples/s]
+Map: 100%|██████████| 96/96 [00:00<00:00, 286.89 examples/s]
+Map: 100%|██████████| 96/96 [00:00<00:00, 284.01 examples/s]
+
+Map:   0%|          | 0/10 [00:00<?, ? examples/s]
+Map: 100%|██████████| 10/10 [00:00<00:00, 250.74 examples/s]
+[INFO:swift] [CHOSEN_INPUT_IDS] [151644, 8948, 198, 56568, 110124, 107505, 9370, 103951, 81705, 105503, 1773, 112735, 108965, 21287, 19108, 26232, 81705, 11622, 26355, 3837, 118976, 100873, 104378, 43815, 36407, 101128, 103923, 102802, 33108, 104913, 3837, 101889, 100374, 56568, 32664, 103923, 108894, 101092, 105146, 104378, 43815, 43959, 85106, 9370, 14374, 98313, 66635, 11622, 26355, 3837, 85106, 101118, 14374, 98313, 66635, 11622, 26355, 100795, 26381, 3837, 99322, 102844, 100148, 43959, 105444, 9370, 14374, 98313, 66635, 11622, 26355, 3837, 100148, 100211, 100354, 151645, 198, 151644, 872, 198, 20742, 23990, 110195, 99415, 108704, 45139, 81217, 15469, 99307, 41362, 62, 39352, 78882, 33108, 107109, 99307, 41362, 59151, 100111, 98380, 1773, 39352, 78882, 33108, 107109, 71268, 100143, 54021, 45930, 99307, 41362, 59151, 84184, 3837, 72651, 104324, 99307, 41362, 118239, 3837, 100143, 101098, 108732, 44091, 33108, 42140, 30767, 98380, 3837, 72651, 45930, 29991, 30440, 100421, 46670, 26939, 103124, 110195, 81812, 1773, 151645, 198, 151644, 77091, 198, 104210, 100354, 101042, 3837, 43959, 87752, 98380, 81705, 11622, 26355, 1773, 14374, 98313, 66635, 11622, 26355, 25, 107109, 99307, 41362, 59151, 84184, 54021, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 16, 13, 77407, 101, 23990, 102298, 15469, 99307, 41362, 110195, 198, 17, 13, 51461, 94, 41362, 110045, 198, 334, 40090, 105652, 25, 1019, 16, 13, 73562, 20742, 23990, 100111, 36295, 109547, 99307, 41362, 59151, 84184, 198, 334, 104394, 59151, 25, 1019, 16, 13, 51461, 94, 41362, 59151, 84184, 100416, 54021, 198, 17, 13, 6567, 234, 231, 76648, 81812, 100745, 198, 18, 13, 6567, 234, 231, 76648, 112453, 101137, 70500, 26, 14374, 98313, 66635, 11622, 26355, 25, 107109, 99307, 41362, 59151, 118239, 104324, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 99307, 41362, 59151, 84184, 36667, 54021, 198, 334, 40090, 105652, 25, 1019, 16, 13, 10236, 23272, 52726, 99307, 41362, 59151, 84184, 198, 334, 104394, 59151, 25, 1019, 16, 13, 79621, 243, 29767, 99307, 41362, 118239, 36295, 198, 17, 13, 38903, 46871, 55338, 99307, 41362, 45930, 44177, 198, 18, 13, 10236, 39366, 27369, 100873, 26, 14374, 98313, 66635, 11622, 26355, 25, 39352, 78882, 99307, 41362, 59151, 84184, 54021, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 16, 13, 77407, 101, 23990, 102298, 15469, 99307, 41362, 110195, 198, 17, 13, 51461, 94, 41362, 110045, 198, 334, 40090, 105652, 25, 1019, 16, 13, 73562, 20742, 23990, 100111, 36295, 109547, 99307, 41362, 59151, 84184, 198, 334, 104394, 59151, 25, 1019, 16, 13, 51461, 94, 41362, 59151, 84184, 100416, 54021, 198, 17, 13, 6567, 234, 231, 76648, 81812, 100745, 198, 18, 13, 6567, 234, 231, 76648, 112453, 101137, 70500, 26, 14374, 98313, 66635, 11622, 26355, 25, 39352, 78882, 99307, 41362, 59151, 118239, 104324, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 99307, 41362, 59151, 84184, 36667, 54021, 198, 334, 40090, 105652, 25, 1019, 16, 13, 10236, 23272, 52726, 99307, 41362, 59151, 84184, 198, 334, 104394, 59151, 25, 1019, 16, 13, 79621, 243, 29767, 99307, 41362, 118239, 36295, 198, 17, 13, 38903, 46871, 55338, 99307, 41362, 45930, 44177, 198, 18, 13, 10236, 39366, 27369, 100873, 26, 14374, 98313, 66635, 11622, 26355, 25, 39352, 78882, 99307, 41362, 59151, 108732, 98380, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 99307, 41362, 118239, 36295, 36667, 104089, 198, 334, 40090, 105652, 25, 1019, 16, 13, 85658, 44091, 108732, 98380, 198, 17, 13, 220, 50404, 99604, 44091, 71817, 108732, 198, 334, 104394, 59151, 25, 1019, 16, 13, 10236, 255, 249, 30767, 98380, 100416, 198, 17, 13, 89254, 27773, 102188, 54021, 198, 18, 13, 80090, 107, 68878, 42140, 30767, 108732, 26, 14374, 98313, 66635, 11622, 26355, 25, 39352, 78882, 99307, 41362, 59151, 45930, 104116, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 99307, 41362, 118239, 36295, 36667, 104089, 198, 334, 40090, 105652, 25, 1019, 16, 13, 10236, 23272, 52726, 100398, 45930, 29991, 198, 334, 104394, 59151, 25, 1019, 16, 13, 71928, 96, 33956, 100421, 46670, 26939, 103124, 110195, 81812, 198, 17, 13, 44054, 93437, 44636, 99538, 54021, 198, 18, 13, 74159, 108736, 104116, 102188, 151645]
+[INFO:swift] [CHOSEN_INPUT] <|im_start|>system
+你是一名资深的软件测试工程师。你需要帮我生成功能测试用例，需要用完整的需求内容来理解业务关联和逻辑，然后结合你对业务的理解针对指定的需求内容生成需要的### 测试用例，需要考虑### 测试用例覆盖度，切忌不要生成重复的### 测试用例，不要创造需求<|im_end|>
+<|im_start|>user
+表单组件富文本提示及AI校验_管理端和小程序校验结果查看功能。管理端和小程序都支持显示图片校验结果按钮，点击展开校验明细，支持快速筛选状态和多选功能，点击图片名称可跳转到对应组件位置。<|im_end|>
+<|im_start|>assistant
+基于需求分析，生成以下功能测试用例。### 测试用例:小程序校验结果按钮显示
+**优先级:**
+P0
+**前置条件:**
+1. 表单包含AI校验组件
+2. 校验已完成
+**操作步骤:**
+1. 在表单查看页面查找校验结果按钮
+**预期结果:**
+1. 校验结果按钮正常显示
+2. 按钮位置合理
+3. 按钮样式符合设计;### 测试用例:小程序校验结果明细展开
+**优先级:**
+P0
+**前置条件:**
+校验结果按钮已显示
+**操作步骤:**
+1. 点击校验结果按钮
+**预期结果:**
+1. 展开校验明细页面
+2. 显示所有校验图片列表
+3. 状态信息完整;### 测试用例:管理端校验结果按钮显示
+**优先级:**
+P0
+**前置条件:**
+1. 表单包含AI校验组件
+2. 校验已完成
+**操作步骤:**
+1. 在表单查看页面查找校验结果按钮
+**预期结果:**
+1. 校验结果按钮正常显示
+2. 按钮位置合理
+3. 按钮样式符合设计;### 测试用例:管理端校验结果明细展开
+**优先级:**
+P0
+**前置条件:**
+校验结果按钮已显示
+**操作步骤:**
+1. 点击校验结果按钮
+**预期结果:**
+1. 展开校验明细页面
+2. 显示所有校验图片列表
+3. 状态信息完整;### 测试用例:管理端校验结果筛选功能
+**优先级:**
+P0
+**前置条件:**
+校验明细页面已打开
+**操作步骤:**
+1. 使用状态筛选功能
+2. 选择不同状态进行筛选
+**预期结果:**
+1. 筛选功能正常
+2. 结果准确显示
+3. 支持多选筛选;### 测试用例:管理端校验结果图片定位
+**优先级:**
+P0
+**前置条件:**
+校验明细页面已打开
+**操作步骤:**
+1. 点击具体图片名称
+**预期结果:**
+1. 正确跳转到对应组件位置
+2. 组件高亮显示
+3. 页面滚动定位准确<|im_end|>
+[INFO:swift] [CHOSEN_LABELS_IDS] [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 104210, 100354, 101042, 3837, 43959, 87752, 98380, 81705, 11622, 26355, 1773, 14374, 98313, 66635, 11622, 26355, 25, 107109, 99307, 41362, 59151, 84184, 54021, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 16, 13, 77407, 101, 23990, 102298, 15469, 99307, 41362, 110195, 198, 17, 13, 51461, 94, 41362, 110045, 198, 334, 40090, 105652, 25, 1019, 16, 13, 73562, 20742, 23990, 100111, 36295, 109547, 99307, 41362, 59151, 84184, 198, 334, 104394, 59151, 25, 1019, 16, 13, 51461, 94, 41362, 59151, 84184, 100416, 54021, 198, 17, 13, 6567, 234, 231, 76648, 81812, 100745, 198, 18, 13, 6567, 234, 231, 76648, 112453, 101137, 70500, 26, 14374, 98313, 66635, 11622, 26355, 25, 107109, 99307, 41362, 59151, 118239, 104324, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 99307, 41362, 59151, 84184, 36667, 54021, 198, 334, 40090, 105652, 25, 1019, 16, 13, 10236, 23272, 52726, 99307, 41362, 59151, 84184, 198, 334, 104394, 59151, 25, 1019, 16, 13, 79621, 243, 29767, 99307, 41362, 118239, 36295, 198, 17, 13, 38903, 46871, 55338, 99307, 41362, 45930, 44177, 198, 18, 13, 10236, 39366, 27369, 100873, 26, 14374, 98313, 66635, 11622, 26355, 25, 39352, 78882, 99307, 41362, 59151, 84184, 54021, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 16, 13, 77407, 101, 23990, 102298, 15469, 99307, 41362, 110195, 198, 17, 13, 51461, 94, 41362, 110045, 198, 334, 40090, 105652, 25, 1019, 16, 13, 73562, 20742, 23990, 100111, 36295, 109547, 99307, 41362, 59151, 84184, 198, 334, 104394, 59151, 25, 1019, 16, 13, 51461, 94, 41362, 59151, 84184, 100416, 54021, 198, 17, 13, 6567, 234, 231, 76648, 81812, 100745, 198, 18, 13, 6567, 234, 231, 76648, 112453, 101137, 70500, 26, 14374, 98313, 66635, 11622, 26355, 25, 39352, 78882, 99307, 41362, 59151, 118239, 104324, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 99307, 41362, 59151, 84184, 36667, 54021, 198, 334, 40090, 105652, 25, 1019, 16, 13, 10236, 23272, 52726, 99307, 41362, 59151, 84184, 198, 334, 104394, 59151, 25, 1019, 16, 13, 79621, 243, 29767, 99307, 41362, 118239, 36295, 198, 17, 13, 38903, 46871, 55338, 99307, 41362, 45930, 44177, 198, 18, 13, 10236, 39366, 27369, 100873, 26, 14374, 98313, 66635, 11622, 26355, 25, 39352, 78882, 99307, 41362, 59151, 108732, 98380, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 99307, 41362, 118239, 36295, 36667, 104089, 198, 334, 40090, 105652, 25, 1019, 16, 13, 85658, 44091, 108732, 98380, 198, 17, 13, 220, 50404, 99604, 44091, 71817, 108732, 198, 334, 104394, 59151, 25, 1019, 16, 13, 10236, 255, 249, 30767, 98380, 100416, 198, 17, 13, 89254, 27773, 102188, 54021, 198, 18, 13, 80090, 107, 68878, 42140, 30767, 108732, 26, 14374, 98313, 66635, 11622, 26355, 25, 39352, 78882, 99307, 41362, 59151, 45930, 104116, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 99307, 41362, 118239, 36295, 36667, 104089, 198, 334, 40090, 105652, 25, 1019, 16, 13, 10236, 23272, 52726, 100398, 45930, 29991, 198, 334, 104394, 59151, 25, 1019, 16, 13, 71928, 96, 33956, 100421, 46670, 26939, 103124, 110195, 81812, 198, 17, 13, 44054, 93437, 44636, 99538, 54021, 198, 18, 13, 74159, 108736, 104116, 102188, 151645]
+[INFO:swift] [CHOSEN_LABELS] [-100 * 145]基于需求分析，生成以下功能测试用例。### 测试用例:小程序校验结果按钮显示
+**优先级:**
+P0
+**前置条件:**
+1. 表单包含AI校验组件
+2. 校验已完成
+**操作步骤:**
+1. 在表单查看页面查找校验结果按钮
+**预期结果:**
+1. 校验结果按钮正常显示
+2. 按钮位置合理
+3. 按钮样式符合设计;### 测试用例:小程序校验结果明细展开
+**优先级:**
+P0
+**前置条件:**
+校验结果按钮已显示
+**操作步骤:**
+1. 点击校验结果按钮
+**预期结果:**
+1. 展开校验明细页面
+2. 显示所有校验图片列表
+3. 状态信息完整;### 测试用例:管理端校验结果按钮显示
+**优先级:**
+P0
+**前置条件:**
+1. 表单包含AI校验组件
+2. 校验已完成
+**操作步骤:**
+1. 在表单查看页面查找校验结果按钮
+**预期结果:**
+1. 校验结果按钮正常显示
+2. 按钮位置合理
+3. 按钮样式符合设计;### 测试用例:管理端校验结果明细展开
+**优先级:**
+P0
+**前置条件:**
+校验结果按钮已显示
+**操作步骤:**
+1. 点击校验结果按钮
+**预期结果:**
+1. 展开校验明细页面
+2. 显示所有校验图片列表
+3. 状态信息完整;### 测试用例:管理端校验结果筛选功能
+**优先级:**
+P0
+**前置条件:**
+校验明细页面已打开
+**操作步骤:**
+1. 使用状态筛选功能
+2. 选择不同状态进行筛选
+**预期结果:**
+1. 筛选功能正常
+2. 结果准确显示
+3. 支持多选筛选;### 测试用例:管理端校验结果图片定位
+**优先级:**
+P0
+**前置条件:**
+校验明细页面已打开
+**操作步骤:**
+1. 点击具体图片名称
+**预期结果:**
+1. 正确跳转到对应组件位置
+2. 组件高亮显示
+3. 页面滚动定位准确<|im_end|>
+[INFO:swift] [REJECTED_INPUT_IDS] [151644, 8948, 198, 56568, 110124, 107505, 9370, 103951, 81705, 105503, 1773, 112735, 108965, 21287, 19108, 26232, 81705, 11622, 26355, 3837, 118976, 100873, 104378, 43815, 36407, 101128, 103923, 102802, 33108, 104913, 3837, 101889, 100374, 56568, 32664, 103923, 108894, 101092, 105146, 104378, 43815, 43959, 85106, 9370, 14374, 98313, 66635, 11622, 26355, 3837, 85106, 101118, 14374, 98313, 66635, 11622, 26355, 100795, 26381, 3837, 99322, 102844, 100148, 43959, 105444, 9370, 14374, 98313, 66635, 11622, 26355, 3837, 100148, 100211, 100354, 151645, 198, 151644, 872, 198, 20742, 23990, 110195, 99415, 108704, 45139, 81217, 15469, 99307, 41362, 62, 39352, 78882, 33108, 107109, 99307, 41362, 59151, 100111, 98380, 1773, 39352, 78882, 33108, 107109, 71268, 100143, 54021, 45930, 99307, 41362, 59151, 84184, 3837, 72651, 104324, 99307, 41362, 118239, 3837, 100143, 101098, 108732, 44091, 33108, 42140, 30767, 98380, 3837, 72651, 45930, 29991, 30440, 100421, 46670, 26939, 103124, 110195, 81812, 1773, 151645, 198, 151644, 77091, 198, 104210, 100354, 101042, 3837, 43959, 87752, 98380, 81705, 11622, 26355, 1773, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 43918, 103190, 481, 43614, 112, 8863, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 17714, 16, 15, 17177, 198, 17, 13, 82339, 220, 18, 220, 18947, 23990, 30767, 112516, 110195, 198, 18, 13, 6567, 96, 222, 32876, 110195, 107189, 54021, 31838, 43918, 9370, 103190, 198, 19, 13, 53054, 71971, 33447, 36295, 17714, 112516, 59151, 198, 20, 13, 10236, 23272, 52726, 90447, 198, 21, 13, 58230, 237, 74220, 78882, 71971, 75882, 20742, 23990, 3837, 101071, 100716, 54021, 64471, 88991, 198, 334, 104394, 59151, 25, 1019, 16, 13, 44054, 93437, 17447, 36993, 54021, 104588, 33872, 9370, 103190, 198, 17, 13, 10236, 255, 242, 33872, 117876, 59743, 17177, 88991, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 43918, 103190, 481, 98313, 106, 27442, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 17714, 220, 16, 13, 20, 58657, 608, 659, 20, 58657, 198, 17, 13, 82339, 220, 18, 220, 18947, 23990, 30767, 112516, 110195, 198, 18, 13, 6567, 96, 222, 32876, 110195, 107189, 54021, 31838, 43918, 9370, 103190, 198, 19, 13, 53054, 71971, 33447, 36295, 17714, 112516, 59151, 198, 20, 13, 10236, 23272, 52726, 90447, 198, 21, 13, 58230, 237, 74220, 78882, 71971, 75882, 20742, 23990, 3837, 101071, 100716, 54021, 64471, 88991, 198, 334, 104394, 59151, 25, 1019, 16, 13, 58657, 8863, 91680, 100143, 82587, 111749, 3837, 13, 20, 58657, 43918, 22045, 198, 17, 13, 44054, 93437, 17447, 36993, 54021, 104588, 33872, 9370, 103190, 198, 18, 13, 10236, 255, 242, 33872, 117876, 59743, 17177, 88991, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 104482, 43918, 103190, 481, 8908, 112, 253, 8863, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 17714, 481, 16, 15, 58657, 198, 334, 104394, 59151, 25, 1019, 16, 13, 93685, 38109, 22045, 3837, 91680, 100143, 36556, 8863, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 104482, 43918, 103190, 481, 18137, 251, 252, 82587, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 3837, 31196, 12319, 24048, 715, 17, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 3837, 31196, 16, 14, 18, 198, 18, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 3837, 31196, 3570, 1242, 284, 220, 16, 15, 532, 19, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 3837, 31196, 569, 62182, 198, 20, 13, 220, 70589, 43815, 31196, 75768, 109762, 105173, 104957, 99934, 198, 334, 104394, 59151, 25, 1019, 16, 13, 26853, 103, 26232, 31196, 82587, 31905, 198, 17, 13, 220, 101068, 31196, 92894, 31905, 57191, 45139, 31905, 32100, 3837, 101068, 90447, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 16530, 43918, 103190, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 16530, 43918, 103190, 198, 17, 13, 10236, 23272, 52726, 71971, 20742, 23990, 198, 334, 104394, 59151, 25, 1019, 16, 13, 93685, 38109, 22045, 198, 17, 13, 10236, 255, 242, 33872, 110195, 103190, 17714, 58514, 68756, 47882, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 102349, 101244, 106188, 99306, 89012, 17177, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 20742, 23990, 31905, 17714, 112516, 20742, 23990, 198, 334, 40090, 105652, 25, 1019, 16, 13, 53054, 23990, 30767, 33872, 109487, 17714, 362, 5373, 33, 5373, 34, 198, 17, 13, 58230, 228, 356, 53054, 17714, 102349, 109487, 198, 18, 13, 58230, 228, 23990, 30767, 33872, 103190, 43918, 17714, 220, 16, 15, 58657, 715, 19, 13, 58230, 237, 74220, 112516, 3837, 50404, 362, 16276, 11295, 93685, 38109, 198, 334, 104394, 59151, 25, 1019, 16, 13, 220, 30767, 356, 84141, 245, 220, 16, 15, 58657, 198, 17, 13, 220, 30767, 362, 608, 425, 86009, 108305, 151645]
+[INFO:swift] [REJECTED_INPUT] <|im_start|>system
+你是一名资深的软件测试工程师。你需要帮我生成功能测试用例，需要用完整的需求内容来理解业务关联和逻辑，然后结合你对业务的理解针对指定的需求内容生成需要的### 测试用例，需要考虑### 测试用例覆盖度，切忌不要生成重复的### 测试用例，不要创造需求<|im_end|>
+<|im_start|>user
+表单组件富文本提示及AI校验_管理端和小程序校验结果查看功能。管理端和小程序都支持显示图片校验结果按钮，点击展开校验明细，支持快速筛选状态和多选功能，点击图片名称可跳转到对应组件位置。<|im_end|>
+<|im_start|>assistant
+基于需求分析，生成以下功能测试用例。### 测试用例:单选答题组件设置分数 - 整数
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件设置分数为10分
+2. 添加 3 个单选答题组件
+3. 检查组件是否有显示所设置的分数
+4. 设置提交后页面为答题结果
+5. 点击发布
+6. 小程序端提交该表单，检查成绩显示是否正确
+**预期结果:**
+1. 组件上会显示每一题的分数
+2. 答题结果显示总分正确;### 测试用例:单选答题组件设置分数 - 浮点
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件设置分数为 1.5 分 / .5 分
+2. 添加 3 个单选答题组件
+3. 检查组件是否有显示所设置的分数
+4. 设置提交后页面为答题结果
+5. 点击发布
+6. 小程序端提交该表单，检查成绩显示是否正确
+**预期结果:**
+1. 分数只支持数字开头，.5 分设置失败
+2. 组件上会显示每一题的分数
+3. 答题结果显示总分正确;### 测试用例:单选答题组件尝试设置分数 - 负数
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件设置分数为 -10 分
+**预期结果:**
+1. 提交失败，只支持正数;### 测试用例:单选答题组件尝试设置分数 - 非数字
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件设置分数，输入 xxxxxx 
+2. 单选答题组件设置分数，输入1/3
+3. 单选答题组件设置分数，输入 ${sum = 10}
+4. 单选答题组件设置分数，输入 @@@@@
+5. 以上内容输入方式改为复制粘贴
+**预期结果:**
+1. 只能输入数字类型
+2. 无法输入其他类型或提示类型错误，无法发布;### 测试用例:单选答题组件不设置分数
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件不设置分数
+2. 点击提交表单
+**预期结果:**
+1. 提交失败
+2. 答题组件分数为必填项;### 测试用例:单选答案绝对匹配才给分
+**优先级:**
+P0
+**前置条件:**
+表单类型为答题表单
+**操作步骤:**
+1. 设置单选题选项为 A、B、C
+2. 将 C 设置为答案选项
+3. 将单选题分数设置为 10 分 
+4. 小程序答题，选择 A/B/C 提交
+**预期结果:**
+1. 选 C 得 10 分
+2. 选 A / B 不得分<|im_end|>
+[INFO:swift] [REJECTED_LABELS_IDS] [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 104210, 100354, 101042, 3837, 43959, 87752, 98380, 81705, 11622, 26355, 1773, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 43918, 103190, 481, 43614, 112, 8863, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 17714, 16, 15, 17177, 198, 17, 13, 82339, 220, 18, 220, 18947, 23990, 30767, 112516, 110195, 198, 18, 13, 6567, 96, 222, 32876, 110195, 107189, 54021, 31838, 43918, 9370, 103190, 198, 19, 13, 53054, 71971, 33447, 36295, 17714, 112516, 59151, 198, 20, 13, 10236, 23272, 52726, 90447, 198, 21, 13, 58230, 237, 74220, 78882, 71971, 75882, 20742, 23990, 3837, 101071, 100716, 54021, 64471, 88991, 198, 334, 104394, 59151, 25, 1019, 16, 13, 44054, 93437, 17447, 36993, 54021, 104588, 33872, 9370, 103190, 198, 17, 13, 10236, 255, 242, 33872, 117876, 59743, 17177, 88991, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 43918, 103190, 481, 98313, 106, 27442, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 17714, 220, 16, 13, 20, 58657, 608, 659, 20, 58657, 198, 17, 13, 82339, 220, 18, 220, 18947, 23990, 30767, 112516, 110195, 198, 18, 13, 6567, 96, 222, 32876, 110195, 107189, 54021, 31838, 43918, 9370, 103190, 198, 19, 13, 53054, 71971, 33447, 36295, 17714, 112516, 59151, 198, 20, 13, 10236, 23272, 52726, 90447, 198, 21, 13, 58230, 237, 74220, 78882, 71971, 75882, 20742, 23990, 3837, 101071, 100716, 54021, 64471, 88991, 198, 334, 104394, 59151, 25, 1019, 16, 13, 58657, 8863, 91680, 100143, 82587, 111749, 3837, 13, 20, 58657, 43918, 22045, 198, 17, 13, 44054, 93437, 17447, 36993, 54021, 104588, 33872, 9370, 103190, 198, 18, 13, 10236, 255, 242, 33872, 117876, 59743, 17177, 88991, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 104482, 43918, 103190, 481, 8908, 112, 253, 8863, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 17714, 481, 16, 15, 58657, 198, 334, 104394, 59151, 25, 1019, 16, 13, 93685, 38109, 22045, 3837, 91680, 100143, 36556, 8863, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 104482, 43918, 103190, 481, 18137, 251, 252, 82587, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 3837, 31196, 12319, 24048, 715, 17, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 3837, 31196, 16, 14, 18, 198, 18, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 3837, 31196, 3570, 1242, 284, 220, 16, 15, 532, 19, 13, 66521, 243, 30767, 112516, 110195, 43918, 103190, 3837, 31196, 569, 62182, 198, 20, 13, 220, 70589, 43815, 31196, 75768, 109762, 105173, 104957, 99934, 198, 334, 104394, 59151, 25, 1019, 16, 13, 26853, 103, 26232, 31196, 82587, 31905, 198, 17, 13, 220, 101068, 31196, 92894, 31905, 57191, 45139, 31905, 32100, 3837, 101068, 90447, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 112516, 110195, 16530, 43918, 103190, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 101040, 20742, 23990, 85767, 36295, 198, 334, 40090, 105652, 25, 1019, 16, 13, 66521, 243, 30767, 112516, 110195, 16530, 43918, 103190, 198, 17, 13, 10236, 23272, 52726, 71971, 20742, 23990, 198, 334, 104394, 59151, 25, 1019, 16, 13, 93685, 38109, 22045, 198, 17, 13, 10236, 255, 242, 33872, 110195, 103190, 17714, 58514, 68756, 47882, 26, 14374, 98313, 66635, 11622, 26355, 25, 23990, 30767, 102349, 101244, 106188, 99306, 89012, 17177, 198, 334, 104747, 52334, 25, 1019, 47, 15, 198, 334, 115489, 76095, 25, 1019, 20742, 23990, 31905, 17714, 112516, 20742, 23990, 198, 334, 40090, 105652, 25, 1019, 16, 13, 53054, 23990, 30767, 33872, 109487, 17714, 362, 5373, 33, 5373, 34, 198, 17, 13, 58230, 228, 356, 53054, 17714, 102349, 109487, 198, 18, 13, 58230, 228, 23990, 30767, 33872, 103190, 43918, 17714, 220, 16, 15, 58657, 715, 19, 13, 58230, 237, 74220, 112516, 3837, 50404, 362, 16276, 11295, 93685, 38109, 198, 334, 104394, 59151, 25, 1019, 16, 13, 220, 30767, 356, 84141, 245, 220, 16, 15, 58657, 198, 17, 13, 220, 30767, 362, 608, 425, 86009, 108305, 151645]
+[INFO:swift] [REJECTED_LABELS] [-100 * 145]基于需求分析，生成以下功能测试用例。### 测试用例:单选答题组件设置分数 - 整数
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件设置分数为10分
+2. 添加 3 个单选答题组件
+3. 检查组件是否有显示所设置的分数
+4. 设置提交后页面为答题结果
+5. 点击发布
+6. 小程序端提交该表单，检查成绩显示是否正确
+**预期结果:**
+1. 组件上会显示每一题的分数
+2. 答题结果显示总分正确;### 测试用例:单选答题组件设置分数 - 浮点
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件设置分数为 1.5 分 / .5 分
+2. 添加 3 个单选答题组件
+3. 检查组件是否有显示所设置的分数
+4. 设置提交后页面为答题结果
+5. 点击发布
+6. 小程序端提交该表单，检查成绩显示是否正确
+**预期结果:**
+1. 分数只支持数字开头，.5 分设置失败
+2. 组件上会显示每一题的分数
+3. 答题结果显示总分正确;### 测试用例:单选答题组件尝试设置分数 - 负数
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件设置分数为 -10 分
+**预期结果:**
+1. 提交失败，只支持正数;### 测试用例:单选答题组件尝试设置分数 - 非数字
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件设置分数，输入 xxxxxx 
+2. 单选答题组件设置分数，输入1/3
+3. 单选答题组件设置分数，输入 ${sum = 10}
+4. 单选答题组件设置分数，输入 @@@@@
+5. 以上内容输入方式改为复制粘贴
+**预期结果:**
+1. 只能输入数字类型
+2. 无法输入其他类型或提示类型错误，无法发布;### 测试用例:单选答题组件不设置分数
+**优先级:**
+P0
+**前置条件:**
+进入表单配置页面
+**操作步骤:**
+1. 单选答题组件不设置分数
+2. 点击提交表单
+**预期结果:**
+1. 提交失败
+2. 答题组件分数为必填项;### 测试用例:单选答案绝对匹配才给分
+**优先级:**
+P0
+**前置条件:**
+表单类型为答题表单
+**操作步骤:**
+1. 设置单选题选项为 A、B、C
+2. 将 C 设置为答案选项
+3. 将单选题分数设置为 10 分 
+4. 小程序答题，选择 A/B/C 提交
+**预期结果:**
+1. 选 C 得 10 分
+2. 选 A / B 不得分<|im_end|>
+[INFO:swift] Dataset Token Length: 585.677083±121.026899, min=362.000000, max=885.000000, size=96
+[INFO:swift] Dataset Token Length: 594.700000±128.756398, min=423.000000, max=776.000000, size=10
+[INFO:swift] The RLHFArguments will be saved in: /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/args.json
+[INFO:swift] lora_config: LoraConfig(task_type='CAUSAL_LM', peft_type=<PeftType.LORA: 'LORA'>, auto_mapping=None, base_model_name_or_path='/home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2___5-7B-Instruct', revision=None, inference_mode=False, r=4, target_modules={'q_proj', 'o_proj', 'down_proj', 'v_proj', 'gate_proj', 'k_proj', 'up_proj'}, exclude_modules=None, lora_alpha=16, lora_dropout=0.05, fan_in_fan_out=False, bias='none', use_rslora=False, modules_to_save=[], init_lora_weights=True, layers_to_transform=None, layers_pattern=None, rank_pattern={}, alpha_pattern={}, megatron_config=None, megatron_core='megatron.core', loftq_config={}, eva_config=None, use_dora=False, layer_replication=None, runtime_config=LoraRuntimeConfig(ephemeral_gpu_offload=False), lora_bias=False, lora_dtype=None, lorap_lr_ratio=None, lorap_emb_lr=1e-06)
+[INFO:swift] model: PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): Qwen2ForCausalLM(
+      (model): Qwen2Model(
+        (embed_tokens): Embedding(152064, 3584)
+        (layers): ModuleList(
+          (0-27): 28 x Qwen2DecoderLayer(
+            (self_attn): Qwen2Attention(
+              (q_proj): lora.Linear(
+                (base_layer): Linear(in_features=3584, out_features=3584, bias=True)
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=3584, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=3584, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (k_proj): lora.Linear(
+                (base_layer): Linear(in_features=3584, out_features=512, bias=True)
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=3584, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=512, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (v_proj): lora.Linear(
+                (base_layer): Linear(in_features=3584, out_features=512, bias=True)
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=3584, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=512, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (o_proj): lora.Linear(
+                (base_layer): Linear(in_features=3584, out_features=3584, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=3584, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=3584, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+            )
+            (mlp): Qwen2MLP(
+              (gate_proj): lora.Linear(
+                (base_layer): Linear(in_features=3584, out_features=18944, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=3584, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=18944, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (up_proj): lora.Linear(
+                (base_layer): Linear(in_features=3584, out_features=18944, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=3584, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=18944, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (down_proj): lora.Linear(
+                (base_layer): Linear(in_features=18944, out_features=3584, bias=False)
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.05, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=18944, out_features=4, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=4, out_features=3584, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (lora_magnitude_vector): ModuleDict()
+              )
+              (act_fn): SiLU()
+            )
+            (input_layernorm): Qwen2RMSNorm((3584,), eps=1e-06)
+            (post_attention_layernorm): Qwen2RMSNorm((3584,), eps=1e-06)
+          )
+        )
+        (norm): Qwen2RMSNorm((3584,), eps=1e-06)
+        (rotary_emb): Qwen2RotaryEmbedding()
+      )
+      (lm_head): Linear(in_features=3584, out_features=152064, bias=False)
+    )
+  )
+)
+[INFO:swift] model_parameter_info: PeftModelForCausalLM: 7625.7091M Params (10.0925M Trainable [0.1323%]), 0.0001M Buffers.
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/swift/trainers/mixin.py:94: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `KTOTrainer.__init__`. Use `processing_class` instead.
+  super().__init__(
+[2025-11-30 21:54:07,646] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[INFO:swift] use_reentrant: True
+Trainer.tokenizer is now deprecated. You should use Trainer.processing_class instead.
+[INFO:swift] The logging file will be saved in: /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/logging.jsonl
+
+Train:   0%|          | 0/48 [00:00<?, ?it/s]/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+Could not estimate the number of tokens of the input, floating-point operations will not be computed
+
+Train:   2%|▏         | 1/48 [00:12<09:42, 12.40s/it]
+                                                     
+
+Train:   2%|▏         | 1/48 [00:12<09:42, 12.40s/it]
+Train:   2%|▏         | 1/48 [00:12<09:42, 12.40s/it]
+Train:   4%|▍         | 2/48 [00:16<05:47,  7.55s/it]
+                                                     
+
+Train:   4%|▍         | 2/48 [00:16<05:47,  7.55s/it]
+Train:   4%|▍         | 2/48 [00:16<05:47,  7.55s/it]
+Train:   6%|▋         | 3/48 [00:20<04:28,  5.97s/it]
+Train:   8%|▊         | 4/48 [00:24<03:48,  5.19s/it]
+                                                     
+
+Train:   8%|▊         | 4/48 [00:24<03:48,  5.19s/it]
+Train:   8%|▊         | 4/48 [00:24<03:48,  5.19s/it]{'loss': 0.5, 'grad_norm': 12.00119686, 'learning_rate': 2e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.078275, 'rewards/chosen': 0.0, 'logps/chosen': -540.12243652, 'logits/chosen': 92990656.0, 'kl': 0.0, 'epoch': 0.04, 'global_step/max_steps': '1/48', 'percentage': '2.08%', 'elapsed_time': '12s', 'remaining_time': '9m 43s'}
+{'loss': 0.5, 'grad_norm': 10.29323196, 'learning_rate': 4e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.118121, 'rewards/chosen': 0.0, 'logps/chosen': -432.59698486, 'logits/chosen': 53105288.0, 'kl': 0.0, 'epoch': 0.08, 'global_step/max_steps': '2/48', 'percentage': '4.17%', 'elapsed_time': '16s', 'remaining_time': '6m 20s'}
+{'loss': 0.49899474, 'grad_norm': 10.57817078, 'learning_rate': 8e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.159899, 'rewards/chosen': 0.02205582, 'logps/chosen': -412.26724243, 'logits/chosen': 52014520.0, 'kl': 0.18034744, 'epoch': 0.17, 'global_step/max_steps': '4/48', 'percentage': '8.33%', 'elapsed_time': '24s', 'remaining_time': '4m 31s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.33it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.11s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.22s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.20s/it]
+                                                     
+
+                                                  
+
+Train:   8%|▊         | 4/48 [00:32<03:48,  5.19s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.20s/it]
+Train:   8%|▊         | 4/48 [00:32<03:48,  5.19s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.14s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-4
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  10%|█         | 5/48 [00:36<05:28,  7.64s/it]
+Train:  12%|█▎        | 6/48 [00:41<04:38,  6.62s/it]
+                                                     
+
+Train:  12%|█▎        | 6/48 [00:41<04:38,  6.62s/it]
+Train:  12%|█▎        | 6/48 [00:41<04:38,  6.62s/it]
+Train:  15%|█▍        | 7/48 [00:47<04:23,  6.44s/it]
+Train:  17%|█▋        | 8/48 [00:52<03:58,  5.95s/it]
+                                                     
+
+Train:  17%|█▋        | 8/48 [00:52<03:58,  5.95s/it]
+Train:  17%|█▋        | 8/48 [00:52<03:58,  5.95s/it]{'eval_loss': 0.49445686, 'eval_runtime': 7.4579, 'eval_samples_per_second': 1.341, 'eval_steps_per_second': 0.67, 'eval_rewards/chosen': 0.0942041, 'eval_logps/chosen': -496.97792969, 'eval_logits/chosen': 82946067.2, 'eval_kl': 0.7202698, 'epoch': 0.17, 'global_step/max_steps': '4/48', 'percentage': '8.33%', 'elapsed_time': '32s', 'remaining_time': '5m 53s'}
+{'loss': 0.49811903, 'grad_norm': 11.03221035, 'learning_rate': 9.99e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.144074, 'rewards/chosen': 0.20117493, 'logps/chosen': -453.14520264, 'logits/chosen': 62132168.0, 'kl': 1.93652725, 'epoch': 0.25, 'global_step/max_steps': '6/48', 'percentage': '12.50%', 'elapsed_time': '41s', 'remaining_time': '4m 48s'}
+{'loss': 0.48306048, 'grad_norm': 11.59569168, 'learning_rate': 9.88e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.152038, 'rewards/chosen': 0.70102239, 'logps/chosen': -483.62591553, 'logits/chosen': 85259976.0, 'kl': 6.33073807, 'epoch': 0.33, 'global_step/max_steps': '8/48', 'percentage': '16.67%', 'elapsed_time': '52s', 'remaining_time': '4m 21s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.33it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.11s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.22s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                     
+
+                                                  
+
+Train:  17%|█▋        | 8/48 [00:59<03:58,  5.95s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  17%|█▋        | 8/48 [00:59<03:58,  5.95s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.14s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-8
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  19%|█▉        | 9/48 [01:04<05:08,  7.92s/it]
+Train:  21%|██        | 10/48 [01:08<04:13,  6.67s/it]
+                                                      
+
+Train:  21%|██        | 10/48 [01:08<04:13,  6.67s/it]
+Train:  21%|██        | 10/48 [01:08<04:13,  6.67s/it]
+Train:  23%|██▎       | 11/48 [01:12<03:38,  5.91s/it]
+Train:  25%|██▌       | 12/48 [01:17<03:20,  5.57s/it]
+                                                      
+
+Train:  25%|██▌       | 12/48 [01:17<03:20,  5.57s/it]
+Train:  25%|██▌       | 12/48 [01:17<03:20,  5.57s/it]{'eval_loss': 0.46222633, 'eval_runtime': 7.4557, 'eval_samples_per_second': 1.341, 'eval_steps_per_second': 0.671, 'eval_rewards/chosen': 0.96961784, 'eval_logps/chosen': -488.22382813, 'eval_logits/chosen': 84063392.0, 'eval_kl': 8.17875957, 'epoch': 0.33, 'global_step/max_steps': '8/48', 'percentage': '16.67%', 'elapsed_time': '59s', 'remaining_time': '4m 58s'}
+{'loss': 0.48271596, 'grad_norm': 9.80941391, 'learning_rate': 9.67e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.145491, 'rewards/chosen': 1.3790772, 'logps/chosen': -440.61361694, 'logits/chosen': 61494152.0, 'kl': 13.09720612, 'epoch': 0.42, 'global_step/max_steps': '10/48', 'percentage': '20.83%', 'elapsed_time': '1m 8s', 'remaining_time': '4m 19s'}
+{'loss': 0.44333315, 'grad_norm': 11.30362225, 'learning_rate': 9.36e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.15443, 'rewards/chosen': 2.36177349, 'logps/chosen': -500.7633667, 'logits/chosen': 70379624.0, 'kl': 21.32333755, 'epoch': 0.5, 'global_step/max_steps': '12/48', 'percentage': '25.00%', 'elapsed_time': '1m 17s', 'remaining_time': '3m 51s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.33it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.11s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.22s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  25%|██▌       | 12/48 [01:24<03:20,  5.57s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  25%|██▌       | 12/48 [01:24<03:20,  5.57s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.14s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-12
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  27%|██▋       | 13/48 [01:29<04:20,  7.43s/it]
+Train:  29%|██▉       | 14/48 [01:33<03:39,  6.46s/it]
+                                                      
+
+Train:  29%|██▉       | 14/48 [01:33<03:39,  6.46s/it]
+Train:  29%|██▉       | 14/48 [01:33<03:39,  6.46s/it]
+Train:  31%|███▏      | 15/48 [01:37<03:06,  5.64s/it]
+Train:  33%|███▎      | 16/48 [01:41<02:46,  5.19s/it]
+                                                      
+
+Train:  33%|███▎      | 16/48 [01:41<02:46,  5.19s/it]
+Train:  33%|███▎      | 16/48 [01:41<02:46,  5.19s/it]{'eval_loss': 0.41675186, 'eval_runtime': 7.4578, 'eval_samples_per_second': 1.341, 'eval_steps_per_second': 0.67, 'eval_rewards/chosen': 2.22761745, 'eval_logps/chosen': -475.64375, 'eval_logits/chosen': 85370195.2, 'eval_kl': 18.8777523, 'epoch': 0.5, 'global_step/max_steps': '12/48', 'percentage': '25.00%', 'elapsed_time': '1m 24s', 'remaining_time': '4m 14s'}
+{'loss': 0.43692911, 'grad_norm': 10.06426239, 'learning_rate': 8.96e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.149516, 'rewards/chosen': 3.17356825, 'logps/chosen': -400.90570068, 'logits/chosen': 52875160.0, 'kl': 29.16243362, 'epoch': 0.58, 'global_step/max_steps': '14/48', 'percentage': '29.17%', 'elapsed_time': '1m 33s', 'remaining_time': '3m 46s'}
+{'loss': 0.42695445, 'grad_norm': 9.35440731, 'learning_rate': 8.47e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.157609, 'rewards/chosen': 3.68652678, 'logps/chosen': -373.10131836, 'logits/chosen': 46517616.0, 'kl': 33.69418716, 'epoch': 0.67, 'global_step/max_steps': '16/48', 'percentage': '33.33%', 'elapsed_time': '1m 41s', 'remaining_time': '3m 22s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.11s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.22s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  33%|███▎      | 16/48 [01:48<02:46,  5.19s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  33%|███▎      | 16/48 [01:48<02:46,  5.19s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.14s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-16
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  35%|███▌      | 17/48 [01:53<03:47,  7.34s/it]
+Train:  38%|███▊      | 18/48 [01:57<03:13,  6.44s/it]
+                                                      
+
+Train:  38%|███▊      | 18/48 [01:57<03:13,  6.44s/it]
+Train:  38%|███▊      | 18/48 [01:57<03:13,  6.44s/it]
+Train:  40%|███▉      | 19/48 [02:02<02:51,  5.92s/it]
+Train:  42%|████▏     | 20/48 [02:06<02:29,  5.34s/it]
+                                                      
+
+Train:  42%|████▏     | 20/48 [02:06<02:29,  5.34s/it]
+Train:  42%|████▏     | 20/48 [02:06<02:29,  5.34s/it]{'eval_loss': 0.37664968, 'eval_runtime': 7.4633, 'eval_samples_per_second': 1.34, 'eval_steps_per_second': 0.67, 'eval_rewards/chosen': 3.47659912, 'eval_logps/chosen': -463.15395508, 'eval_logits/chosen': 86399072.0, 'eval_kl': 29.60183144, 'epoch': 0.67, 'global_step/max_steps': '16/48', 'percentage': '33.33%', 'elapsed_time': '1m 48s', 'remaining_time': '3m 37s'}
+{'loss': 0.46235108, 'grad_norm': 8.72080326, 'learning_rate': 7.91e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.152254, 'rewards/chosen': 4.42001057, 'logps/chosen': -412.40194702, 'logits/chosen': 65773280.0, 'kl': 42.51455307, 'epoch': 0.75, 'global_step/max_steps': '18/48', 'percentage': '37.50%', 'elapsed_time': '1m 57s', 'remaining_time': '3m 16s'}
+{'loss': 0.43282434, 'grad_norm': 7.44555235, 'learning_rate': 7.29e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.157606, 'rewards/chosen': 5.42081165, 'logps/chosen': -409.28884888, 'logits/chosen': 62263688.0, 'kl': 51.15693665, 'epoch': 0.83, 'global_step/max_steps': '20/48', 'percentage': '41.67%', 'elapsed_time': '2m 6s', 'remaining_time': '2m 57s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.11s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.22s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  42%|████▏     | 20/48 [02:13<02:29,  5.34s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  42%|████▏     | 20/48 [02:13<02:29,  5.34s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.14s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-20
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  44%|████▍     | 21/48 [02:18<03:20,  7.41s/it]
+Train:  46%|████▌     | 22/48 [02:23<02:48,  6.49s/it]
+                                                      
+
+Train:  46%|████▌     | 22/48 [02:23<02:48,  6.49s/it]
+Train:  46%|████▌     | 22/48 [02:23<02:48,  6.49s/it]
+Train:  48%|████▊     | 23/48 [02:27<02:29,  5.98s/it]
+Train:  50%|█████     | 24/48 [02:32<02:14,  5.59s/it]
+                                                      
+
+Train:  50%|█████     | 24/48 [02:32<02:14,  5.59s/it]
+Train:  50%|█████     | 24/48 [02:32<02:14,  5.59s/it]{'eval_loss': 0.35004815, 'eval_runtime': 7.4628, 'eval_samples_per_second': 1.34, 'eval_steps_per_second': 0.67, 'eval_rewards/chosen': 4.52470398, 'eval_logps/chosen': -452.67294922, 'eval_logits/chosen': 87091571.2, 'eval_kl': 38.80460739, 'epoch': 0.83, 'global_step/max_steps': '20/48', 'percentage': '41.67%', 'elapsed_time': '2m 13s', 'remaining_time': '3m 7s'}
+{'loss': 0.47340995, 'grad_norm': 7.30725861, 'learning_rate': 6.61e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.153306, 'rewards/chosen': 5.60587883, 'logps/chosen': -370.30462646, 'logits/chosen': 50540456.0, 'kl': 54.89898682, 'epoch': 0.92, 'global_step/max_steps': '22/48', 'percentage': '45.83%', 'elapsed_time': '2m 23s', 'remaining_time': '2m 49s'}
+{'loss': 0.40359789, 'grad_norm': 8.37826633, 'learning_rate': 5.91e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.156906, 'rewards/chosen': 6.92056608, 'logps/chosen': -446.91558838, 'logits/chosen': 74474080.0, 'kl': 64.95185852, 'epoch': 1.0, 'global_step/max_steps': '24/48', 'percentage': '50.00%', 'elapsed_time': '2m 32s', 'remaining_time': '2m 32s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.12s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.22s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  50%|█████     | 24/48 [02:40<02:14,  5.59s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  50%|█████     | 24/48 [02:40<02:14,  5.59s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.14s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-24
+{'eval_loss': 0.33457628, 'eval_runtime': 7.4812, 'eval_samples_per_second': 1.337, 'eval_steps_per_second': 0.668, 'eval_rewards/chosen': 5.31478653, 'eval_logps/chosen': -444.77207031, 'eval_logits/chosen': 87429081.6, 'eval_kl': 45.87313843, 'epoch': 1.0, 'global_step/max_steps': '24/48', 'percentage': '50.00%', 'elapsed_time': '2m 40s', 'remaining_time': '2m 40s'}
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  52%|█████▏    | 25/48 [02:46<03:02,  7.95s/it]
+Train:  54%|█████▍    | 26/48 [02:50<02:30,  6.82s/it]
+                                                      
+
+Train:  54%|█████▍    | 26/48 [02:50<02:30,  6.82s/it]
+Train:  54%|█████▍    | 26/48 [02:50<02:30,  6.82s/it]
+Train:  56%|█████▋    | 27/48 [02:54<02:06,  6.01s/it]
+Train:  58%|█████▊    | 28/48 [02:58<01:48,  5.41s/it]
+                                                      
+
+Train:  58%|█████▊    | 28/48 [02:58<01:48,  5.41s/it]
+Train:  58%|█████▊    | 28/48 [02:58<01:48,  5.41s/it]{'loss': 0.4641147, 'grad_norm': 7.59201527, 'learning_rate': 5.18e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.152397, 'rewards/chosen': 6.95809746, 'logps/chosen': -416.77874756, 'logits/chosen': 81869136.0, 'kl': 66.57702637, 'epoch': 1.08, 'global_step/max_steps': '26/48', 'percentage': '54.17%', 'elapsed_time': '2m 50s', 'remaining_time': '2m 24s'}
+{'loss': 0.45517209, 'grad_norm': 6.90056467, 'learning_rate': 4.45e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.156642, 'rewards/chosen': 7.34670591, 'logps/chosen': -339.02075195, 'logits/chosen': 59059684.0, 'kl': 71.64341736, 'epoch': 1.17, 'global_step/max_steps': '28/48', 'percentage': '58.33%', 'elapsed_time': '2m 58s', 'remaining_time': '2m 7s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.12s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.22s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  58%|█████▊    | 28/48 [03:05<01:48,  5.41s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  58%|█████▊    | 28/48 [03:05<01:48,  5.41s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.15s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-28
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  60%|██████    | 29/48 [03:10<02:20,  7.39s/it]
+Train:  62%|██████▎   | 30/48 [03:15<01:58,  6.57s/it]
+                                                      
+
+Train:  62%|██████▎   | 30/48 [03:15<01:58,  6.57s/it]
+Train:  62%|██████▎   | 30/48 [03:15<01:58,  6.57s/it]
+Train:  65%|██████▍   | 31/48 [03:21<01:49,  6.43s/it]
+Train:  67%|██████▋   | 32/48 [03:26<01:35,  5.98s/it]
+                                                      
+
+Train:  67%|██████▋   | 32/48 [03:26<01:35,  5.98s/it]
+Train:  67%|██████▋   | 32/48 [03:26<01:35,  5.98s/it]{'eval_loss': 0.33083174, 'eval_runtime': 7.5006, 'eval_samples_per_second': 1.333, 'eval_steps_per_second': 0.667, 'eval_rewards/chosen': 5.87206955, 'eval_logps/chosen': -439.19926758, 'eval_logits/chosen': 87619904.0, 'eval_kl': 51.16799164, 'epoch': 1.17, 'global_step/max_steps': '28/48', 'percentage': '58.33%', 'elapsed_time': '3m 5s', 'remaining_time': '2m 12s'}
+{'loss': 0.44627482, 'grad_norm': 5.82831907, 'learning_rate': 3.74e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.153513, 'rewards/chosen': 7.69035864, 'logps/chosen': -378.25335693, 'logits/chosen': 69297256.0, 'kl': 74.69333649, 'epoch': 1.25, 'global_step/max_steps': '30/48', 'percentage': '62.50%', 'elapsed_time': '3m 15s', 'remaining_time': '1m 57s'}
+{'loss': 0.37984207, 'grad_norm': 6.25373459, 'learning_rate': 3.04e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.154996, 'rewards/chosen': 7.64334488, 'logps/chosen': -414.20269775, 'logits/chosen': 95228184.0, 'kl': 72.14846802, 'epoch': 1.33, 'global_step/max_steps': '32/48', 'percentage': '66.67%', 'elapsed_time': '3m 26s', 'remaining_time': '1m 43s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.12s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.23s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  67%|██████▋   | 32/48 [03:33<01:35,  5.98s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  67%|██████▋   | 32/48 [03:33<01:35,  5.98s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.15s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-32
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  69%|██████▉   | 33/48 [03:38<01:58,  7.88s/it]
+Train:  71%|███████   | 34/48 [03:42<01:33,  6.68s/it]
+                                                      
+
+Train:  71%|███████   | 34/48 [03:42<01:33,  6.68s/it]
+Train:  71%|███████   | 34/48 [03:42<01:33,  6.68s/it]
+Train:  73%|███████▎  | 35/48 [03:46<01:17,  5.93s/it]
+Train:  75%|███████▌  | 36/48 [03:51<01:07,  5.60s/it]
+                                                      
+
+Train:  75%|███████▌  | 36/48 [03:51<01:07,  5.60s/it]
+Train:  75%|███████▌  | 36/48 [03:51<01:07,  5.60s/it]{'eval_loss': 0.32742342, 'eval_runtime': 7.4874, 'eval_samples_per_second': 1.336, 'eval_steps_per_second': 0.668, 'eval_rewards/chosen': 6.25290642, 'eval_logps/chosen': -435.39091797, 'eval_logits/chosen': 87674022.4, 'eval_kl': 54.73114014, 'epoch': 1.33, 'global_step/max_steps': '32/48', 'percentage': '66.67%', 'elapsed_time': '3m 33s', 'remaining_time': '1m 46s'}
+{'loss': 0.48380947, 'grad_norm': 5.40516567, 'learning_rate': 2.4e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.152708, 'rewards/chosen': 7.45819378, 'logps/chosen': -379.82244873, 'logits/chosen': 66732784.0, 'kl': 73.91384888, 'epoch': 1.42, 'global_step/max_steps': '34/48', 'percentage': '70.83%', 'elapsed_time': '3m 42s', 'remaining_time': '1m 31s'}
+{'loss': 0.3902303, 'grad_norm': 6.37810946, 'learning_rate': 1.8e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.155401, 'rewards/chosen': 8.53505898, 'logps/chosen': -439.03051758, 'logits/chosen': 75795072.0, 'kl': 80.32170105, 'epoch': 1.5, 'global_step/max_steps': '36/48', 'percentage': '75.00%', 'elapsed_time': '3m 51s', 'remaining_time': '1m 17s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.12s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.23s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  75%|███████▌  | 36/48 [03:58<01:07,  5.60s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  75%|███████▌  | 36/48 [03:58<01:07,  5.60s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.15s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-36
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  77%|███████▋  | 37/48 [04:03<01:21,  7.45s/it]
+Train:  79%|███████▉  | 38/48 [04:07<01:04,  6.48s/it]
+                                                      
+
+Train:  79%|███████▉  | 38/48 [04:07<01:04,  6.48s/it]
+Train:  79%|███████▉  | 38/48 [04:07<01:04,  6.48s/it]
+Train:  81%|████████▏ | 39/48 [04:11<00:51,  5.67s/it]
+Train:  83%|████████▎ | 40/48 [04:15<00:41,  5.21s/it]
+                                                      
+
+Train:  83%|████████▎ | 40/48 [04:15<00:41,  5.21s/it]
+Train:  83%|████████▎ | 40/48 [04:15<00:41,  5.21s/it]{'eval_loss': 0.32823592, 'eval_runtime': 7.4905, 'eval_samples_per_second': 1.335, 'eval_steps_per_second': 0.668, 'eval_rewards/chosen': 6.48739471, 'eval_logps/chosen': -433.04599609, 'eval_logits/chosen': 87680582.4, 'eval_kl': 57.06522369, 'epoch': 1.5, 'global_step/max_steps': '36/48', 'percentage': '75.00%', 'elapsed_time': '3m 58s', 'remaining_time': '1m 19s'}
+{'loss': 0.40222996, 'grad_norm': 5.18937111, 'learning_rate': 1.28e-06, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.153433, 'rewards/chosen': 8.48535824, 'logps/chosen': -347.78781128, 'logits/chosen': 56364952.0, 'kl': 80.36425781, 'epoch': 1.58, 'global_step/max_steps': '38/48', 'percentage': '79.17%', 'elapsed_time': '4m 7s', 'remaining_time': '1m 5s'}
+{'loss': 0.41598386, 'grad_norm': 5.43960238, 'learning_rate': 8.3e-07, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.15651, 'rewards/chosen': 7.9227581, 'logps/chosen': -330.73895264, 'logits/chosen': 49570120.0, 'kl': 73.96994019, 'epoch': 1.67, 'global_step/max_steps': '40/48', 'percentage': '83.33%', 'elapsed_time': '4m 15s', 'remaining_time': '51s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.12s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.23s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  83%|████████▎ | 40/48 [04:22<00:41,  5.21s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  83%|████████▎ | 40/48 [04:22<00:41,  5.21s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.15s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-40
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  85%|████████▌ | 41/48 [04:27<00:51,  7.37s/it]
+Train:  88%|████████▊ | 42/48 [04:31<00:38,  6.47s/it]
+                                                      
+
+Train:  88%|████████▊ | 42/48 [04:31<00:38,  6.47s/it]
+Train:  88%|████████▊ | 42/48 [04:31<00:38,  6.47s/it]
+Train:  90%|████████▉ | 43/48 [04:36<00:29,  5.94s/it]
+Train:  92%|█████████▏| 44/48 [04:40<00:21,  5.36s/it]
+                                                      
+
+Train:  92%|█████████▏| 44/48 [04:40<00:21,  5.36s/it]
+Train:  92%|█████████▏| 44/48 [04:40<00:21,  5.36s/it]{'eval_loss': 0.32754451, 'eval_runtime': 7.4964, 'eval_samples_per_second': 1.334, 'eval_steps_per_second': 0.667, 'eval_rewards/chosen': 6.61591492, 'eval_logps/chosen': -431.76079102, 'eval_logits/chosen': 87657164.8, 'eval_kl': 58.27986908, 'epoch': 1.67, 'global_step/max_steps': '40/48', 'percentage': '83.33%', 'elapsed_time': '4m 22s', 'remaining_time': '52s'}
+{'loss': 0.46879262, 'grad_norm': 5.59178495, 'learning_rate': 4.7e-07, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.154216, 'rewards/chosen': 7.91408634, 'logps/chosen': -377.46118164, 'logits/chosen': 69082504.0, 'kl': 77.56947327, 'epoch': 1.75, 'global_step/max_steps': '42/48', 'percentage': '87.50%', 'elapsed_time': '4m 31s', 'remaining_time': '38s'}
+{'loss': 0.43544534, 'grad_norm': 3.81516862, 'learning_rate': 2.1e-07, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.156558, 'rewards/chosen': 8.6135788, 'logps/chosen': -377.36120605, 'logits/chosen': 65681008.0, 'kl': 82.57984924, 'epoch': 1.83, 'global_step/max_steps': '44/48', 'percentage': '91.67%', 'elapsed_time': '4m 40s', 'remaining_time': '25s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.12s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.23s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train:  92%|█████████▏| 44/48 [04:48<00:21,  5.36s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train:  92%|█████████▏| 44/48 [04:48<00:21,  5.36s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.15s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-44
+/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+
+Train:  94%|█████████▍| 45/48 [04:52<00:22,  7.44s/it]
+Train:  96%|█████████▌| 46/48 [04:57<00:13,  6.52s/it]
+                                                      
+
+Train:  96%|█████████▌| 46/48 [04:57<00:13,  6.52s/it]
+Train:  96%|█████████▌| 46/48 [04:57<00:13,  6.52s/it]
+Train:  98%|█████████▊| 47/48 [05:02<00:06,  6.01s/it]
+Train: 100%|██████████| 48/48 [05:06<00:00,  5.61s/it]
+                                                      
+
+Train: 100%|██████████| 48/48 [05:06<00:00,  5.61s/it]
+Train: 100%|██████████| 48/48 [05:06<00:00,  5.61s/it]{'eval_loss': 0.32773337, 'eval_runtime': 7.5081, 'eval_samples_per_second': 1.332, 'eval_steps_per_second': 0.666, 'eval_rewards/chosen': 6.66200027, 'eval_logps/chosen': -431.29995117, 'eval_logits/chosen': 87632179.2, 'eval_kl': 58.7366333, 'epoch': 1.83, 'global_step/max_steps': '44/48', 'percentage': '91.67%', 'elapsed_time': '4m 48s', 'remaining_time': '26s'}
+{'loss': 0.48302901, 'grad_norm': 5.4501133, 'learning_rate': 5e-08, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.154507, 'rewards/chosen': 8.00172043, 'logps/chosen': -346.34619141, 'logits/chosen': 51810160.0, 'kl': 79.3363266, 'epoch': 1.92, 'global_step/max_steps': '46/48', 'percentage': '95.83%', 'elapsed_time': '4m 57s', 'remaining_time': '12s'}
+{'loss': 0.42514285, 'grad_norm': 6.93882227, 'learning_rate': 0.0, 'memory(GiB)': 21.91, 'train_speed(iter/s)': 0.156245, 'rewards/chosen': 9.08018112, 'logps/chosen': -425.31945801, 'logits/chosen': 76812488.0, 'kl': 87.37251282, 'epoch': 2.0, 'global_step/max_steps': '48/48', 'percentage': '100.00%', 'elapsed_time': '5m 6s', 'remaining_time': '0s'}
+
+
+Val:   0%|          | 0/5 [00:00<?, ?it/s]
+Val:  40%|████      | 2/5 [00:01<00:02,  1.32it/s]
+Val:  60%|██████    | 3/5 [00:03<00:02,  1.12s/it]
+Val:  80%|████████  | 4/5 [00:04<00:01,  1.23s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+                                                      
+
+                                                  
+
+Train: 100%|██████████| 48/48 [05:14<00:00,  5.61s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.21s/it]
+Train: 100%|██████████| 48/48 [05:14<00:00,  5.61s/it]
+Val: 100%|██████████| 5/5 [00:05<00:00,  1.15s/it]
+[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-48
+
+                                                      
+
+Train: 100%|██████████| 48/48 [05:14<00:00,  5.61s/it]
+Train: 100%|██████████| 48/48 [05:14<00:00,  5.61s/it]
+Train: 100%|██████████| 48/48 [05:14<00:00,  6.56s/it]
+[INFO:swift] last_model_checkpoint: /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-48
+[INFO:swift] best_model_checkpoint: /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/checkpoint-32
+[INFO:swift] images_dir: /home/ubuntu/webtest_rlhf_project/train_script/sft/second_rlhf_sft_model_output/v1-20251130-215355/images
+[INFO:swift] End time of running main: 2025-11-30 21:59:33.467734
+{'eval_loss': 0.32799014, 'eval_runtime': 7.5006, 'eval_samples_per_second': 1.333, 'eval_steps_per_second': 0.667, 'eval_rewards/chosen': 6.66964417, 'eval_logps/chosen': -431.22353516, 'eval_logits/chosen': 87646438.4, 'eval_kl': 58.83149338, 'epoch': 2.0, 'global_step/max_steps': '48/48', 'percentage': '100.00%', 'elapsed_time': '5m 14s', 'remaining_time': '0s'}
+{'train_runtime': 314.7184, 'train_samples_per_second': 0.61, 'train_steps_per_second': 0.153, 'train_loss': 0.44968155, 'epoch': 2.0, 'global_step/max_steps': '48/48', 'percentage': '100.00%', 'elapsed_time': '5m 14s', 'remaining_time': '0s'}

@@ -43,8 +43,8 @@ class RequirementExtractor:
                 if isinstance(item, dict) and "title" in item and "content" in item:
                     requirement_list.append(
                         {
-                            "title": str(item["title"]).strip(),
-                            "content": str(item["content"]).strip(),
+                            "requirement_title": str(item["title"]).strip(),
+                            "requirement_content": str(item["content"]).strip(),
                         }
                     )
             return requirement_list

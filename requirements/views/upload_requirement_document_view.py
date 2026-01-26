@@ -4,7 +4,7 @@ from django.views import View
 from django.views.decorators.http import require_http_methods
 
 from constant.error_code import ErrorCode
-from requirements.serivce import Service
+from requirements.service import Service
 
 
 class UploadRequirementDocumentView(View):

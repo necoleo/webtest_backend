@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 
 from constant.error_code import ErrorCode
 from project_decorator.request_decorators import valid_login_required
-from requirements.serivce import Service
+from requirements.service import Service
 
 
 class DeleteRequirementView(View):

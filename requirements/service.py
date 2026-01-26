@@ -14,6 +14,8 @@ from project_decorator.request_decorators import valid_params_blank
 from requirements.models import RequirementDocumentModel, RequirementModel, RequirementRelationModel
 from requirements.parser.requirement_document_parser import RequirementDocumentParser
 from requirements.parser.requirement_extractor import RequirementExtractor
+from requirements.vector.faiss_manager import FaissManager
+from tasks.requirement_tasks import RequirementTasks
 from utils.cos.cos_client import CosClient
 
 
@@ -23,7 +25,7 @@ class Service:
         # 本地缓存目录
         self.COS_FILE_SAVED_TEMP = "cos_file_temp"
         self.cos_client = CosClient()
-
+        self.faiss_manager = FaissManager()
         self.requirement_extractor = RequirementExtractor()
 
 
@@ -302,6 +304,23 @@ class Service:
                 target_requirement_document = RequirementDocumentModel.objects.get(id=requirement_document_id, deleted_at__isnull=True)
                 target_requirement_document.deleted_at = datetime.now()
                 target_requirement_document.save()
+                # 查询该需求文档关联的已向量化的需求项
+                related_requirements_obj = RequirementModel.objects.filter(
+                    requirement_document_id=requirement_document_id,
+                    deleted_at__isnull=True,
+                    is_vectorized=True
+                )
+                # 待删除向量的需求项列表
+                vectorized_requirement_id_list = list(related_requirements_obj.values_list("id", flat=True))
+                # 批量删除FAISS向量
+                fail_remove_list = []
+                for vectorized_requirement_id in vectorized_requirement_id_list:
+                    if not self.faiss_manager.remove(vectorized_requirement_id):
+                        fail_remove_list.append(vectorized_requirement_id)
+
+                if fail_remove_list:
+                    print(f"向量删除失败: {fail_remove_list}")
+
                 # 删除所有关联的需求项
                 RequirementModel.objects.filter(
                     requirement_document_id=requirement_document_id,
@@ -325,8 +344,11 @@ class Service:
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["requirement_document_id"]))
-    def parse_requirement_document(self, requirement_document_id):
+    @method_decorator(valid_params_blank(required_params_list=["requirement_document_id", "created_user_id", "created_user"]))
+    def parse_requirement_document(self, requirement_document_id, created_user_id, created_user):
+        """
+        异步解析需求文档
+        """
         response = {
             "code": "",
             "message": "",
@@ -343,41 +365,26 @@ class Service:
                 response['status_code'] = 400
                 return response
 
-            local_path = self.cos_client.download_and_read_json_by_url(
-                requirement_document_obj.cos_access_url,
-                self.COS_FILE_SAVED_TEMP
-            )
+            # 提交异步任务
+            task = RequirementTasks.async_parse_requirement_document.delay(requirement_document_id, created_user_id, created_user)
 
-            parser = RequirementDocumentParser(file_path=local_path)
-            content = parser.get_document_content()
-
-            requirement_list = self.requirement_extractor.extract_requirement_document(content)
-
-            with transaction.atomic():
-                # 批量保存到数据库
-                requirement_model_list = []
-                for requirement in requirement_list:
-                    requirement_model = RequirementModel(**requirement)
-                    requirement_model_list.append(requirement_model)
-
-                RequirementModel.objects.bulk_create(requirement_model_list)
-                requirement_document_obj.requirement_count = len(requirement_list)
-                requirement_document_obj.parse_status = 1
-
-            # 清理缓存文件
-            if os.path.exists(local_path):
-                os.remove(local_path)
+            # 更新状态为解析中
+            requirement_document_obj.parse_status = 1
+            requirement_document_obj.save(update_fields=["parse_status"])
 
             response["code"] = ErrorCode.SUCCESS
-            response["message"] = f"需求文档解析完成, 成功导入 {len(requirement_list)} 个需求"
-            response['data']["count"] = len(requirement_list)
+            response["message"] = f"解析任务已提交，请稍后查看结果"
+            response['data'] = {
+                "requirement_document_id": requirement_document_id,
+                "task_id": task.id
+            }
             response["status_code"] = 200
 
             return response
         except Exception as e:
 
             response["code"] = ErrorCode.SERVER_ERROR
-            response["message"] = f"<UNK>{str(e)}"
+            response["message"] = f"<解析需求文档失败：{str(e)}"
             response['status_code'] = 500
             return response
 
@@ -417,7 +424,8 @@ class Service:
                 ).update(requirement_count=F('requirement_count') - 1)
 
                 # 删除该需求项关联的FAISS向量
-                #todo
+                if target_requirement_obj.is_vectorized == True:
+                    self.faiss_manager.remove(target_requirement_obj.id)
 
                 # 删除该需求项的关联关系
                 RequirementRelationModel.objects.filter(
@@ -613,18 +621,24 @@ class Service:
                 requirement_obj.requirement_title = requirement_title
             if requirement_content:
                 requirement_obj.requirement_content = requirement_content
+                # 已向量化的需求项需要删除向量，标记为未向量化
+                if requirement_obj.is_vectorized:
+                    self.faiss_manager.remove(requirement_obj.vector_index)
+                    requirement_obj.is_vectorized = False
+                    requirement_obj.status = RequirementModel.RequirementStatus.PENDING
+
             if module:
                 requirement_obj.module = module
 
-            requirement_obj.save(update_fields=["requirement_title", "requirement_content", "module"])
+            requirement_obj.save(update_fields=["requirement_title", "requirement_content", "module", "is_vectorized", "status"])
 
             response["code"] = ErrorCode.SUCCESS
             response["message"] = "更新成功"
             response["data"] = {
-                "requirement_document_id": requirement_obj.id,
-                "doc_name": requirement_obj.requirement_title,
-                "version": requirement_obj.requirement_content,
-                "comment": requirement_obj.module
+                "requirement_id": requirement_obj.id,
+                "requirement_title": requirement_obj.requirement_title,
+                "requirement_content": requirement_obj.requirement_content,
+                "module": requirement_obj.module
             }
             return response
 
