@@ -1,767 +1,0 @@
-run sh: `/home/ubuntu/webtest_rlhf_project/model_rlhf/bin/python3 /home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/swift/cli/rlhf.py --rlhf_type kto --model Qwen/Qwen2.5-7B-Instruct --train_type lora --dataset /home/ubuntu/webtest_rlhf_project/train_data/first_train_data/first_train_data.jsonl --val_dataset /home/ubuntu/webtest_rlhf_project/train_data/first_train_data/first_dev_data.jsonl --num_train_epochs 2 --per_device_train_batch_size 2 --per_device_eval_batch_size 2 --learning_rate 1e-5 --lora_rank 4 --lora_alpha 16 --target_modules all-linear --gradient_accumulation_steps 2 --eval_steps 3 --save_steps 3 --save_total_limit 3 --logging_steps 2 --max_length 4096 --output_dir first_rlhf_model_output --warmup_ratio 0.1 --dataloader_num_workers 2 --deepspeed zero3 --offload_optimizer true --offload_model true --gradient_checkpointing true`
-[INFO:swift] Successfully registered `/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/swift/llm/dataset/data/dataset_info.json`.
-[INFO:swift] rank: -1, local_rank: -1, world_size: 1, local_world_size: 1
-[INFO:swift] Downloading the model from ModelScope Hub, model_id: Qwen/Qwen2.5-7B-Instruct
-[INFO:modelscope] Target directory already exists, skipping creation.
-[INFO:swift] Loading the model using model_dir: /home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2___5-7B-Instruct
-[INFO:swift] Setting torch_dtype: torch.bfloat16
-[INFO:swift] Because len(args.val_dataset) > 0, setting split_dataset_ratio: 0.0
-[INFO:swift] Setting args.lazy_tokenize: False
-[INFO:swift] Using deepspeed: {'fp16': {'enabled': 'auto', 'loss_scale': 0, 'loss_scale_window': 1000, 'initial_scale_power': 16, 'hysteresis': 2, 'min_loss_scale': 1}, 'bf16': {'enabled': 'auto'}, 'zero_optimization': {'stage': 3, 'offload_optimizer': {'device': 'none', 'pin_memory': True}, 'offload_param': {'device': 'none', 'pin_memory': True}, 'overlap_comm': False, 'contiguous_gradients': True, 'sub_group_size': 1000000000.0, 'reduce_bucket_size': 'auto', 'zero_quantized_weights': False, 'zero_quantized_gradients': False, 'stage3_prefetch_bucket_size': 'auto', 'stage3_param_persistence_threshold': 'auto', 'stage3_max_live_parameters': 1000000000.0, 'stage3_max_reuse_distance': 1000000000.0, 'stage3_gather_16bit_weights_on_model_save': True}, 'gradient_accumulation_steps': 'auto', 'gradient_clipping': 'auto', 'steps_per_print': 2000, 'train_batch_size': 'auto', 'train_micro_batch_size_per_gpu': 'auto', 'wall_clock_breakdown': False}
-[INFO:swift] output_dir: /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211
-[INFO:swift] Global seed set to 42
-[INFO:swift] args: RLHFArguments(
-_n_gpu=-1,
-acc_strategy=token,
-accelerator_config={'dispatch_batches': False},
-adafactor=False,
-adalora_beta1=0.85,
-adalora_beta2=0.85,
-adalora_deltaT=1,
-adalora_init_r=12,
-adalora_orth_reg_weight=0.5,
-adalora_target_r=8,
-adalora_tfinal=0,
-adalora_tinit=0,
-adam_beta1=0.9,
-adam_beta2=0.95,
-adam_epsilon=1e-08,
-adapter_act=gelu,
-adapter_length=128,
-adapters=[],
-add_version=True,
-agent_template=None,
-aligner_lr=None,
-async_generate=False,
-attn_impl=None,
-auto_find_batch_size=False,
-average_tokens_across_devices=True,
-batch_eval_metrics=False,
-beta=0.1,
-bf16=True,
-bf16_full_eval=False,
-bnb_4bit_compute_dtype=torch.bfloat16,
-bnb_4bit_quant_storage=None,
-bnb_4bit_quant_type=nf4,
-bnb_4bit_use_double_quant=True,
-boft_block_num=0,
-boft_block_size=4,
-boft_dropout=0.0,
-boft_n_butterfly_factor=1,
-cached_dataset=[],
-center_rewards_coefficient=None,
-channels=None,
-check_model=True,
-ckpt_dir=None,
-cliprange=0.2,
-cliprange_value=0.2,
-columns={},
-completion_length_limit_scope=per_round,
-cosine_max_len=None,
-cosine_max_len_value_correct=0.5,
-cosine_max_len_value_wrong=0.0,
-cosine_min_len_value_correct=1.0,
-cosine_min_len_value_wrong=-0.5,
-cpo_alpha=1.0,
-create_checkpoint_symlink=False,
-custom_dataset_info=[],
-custom_register_path=[],
-data_parallel_size=None,
-data_seed=42,
-dataloader_drop_last=False,
-dataloader_num_workers=2,
-dataloader_persistent_workers=False,
-dataloader_pin_memory=True,
-dataloader_prefetch_factor=None,
-dataset=['/home/ubuntu/webtest_rlhf_project/train_data/first_train_data/first_train_data.jsonl'],
-dataset_num_proc=1,
-dataset_shuffle=True,
-ddp_backend=None,
-ddp_broadcast_buffers=None,
-ddp_bucket_cap_mb=None,
-ddp_find_unused_parameters=None,
-ddp_timeout=18000000,
-debug=None,
-deepspeed={'fp16': {'enabled': 'auto', 'loss_scale': 0, 'loss_scale_window': 1000, 'initial_scale_power': 16, 'hysteresis': 2, 'min_loss_scale': 1}, 'bf16': {'enabled': 'auto'}, 'zero_optimization': {'stage': 3, 'offload_optimizer': {'device': 'none', 'pin_memory': True}, 'offload_param': {'device': 'none', 'pin_memory': True}, 'overlap_comm': False, 'contiguous_gradients': True, 'sub_group_size': 1000000000.0, 'reduce_bucket_size': 'auto', 'zero_quantized_weights': False, 'zero_quantized_gradients': False, 'stage3_prefetch_bucket_size': 'auto', 'stage3_param_persistence_threshold': 'auto', 'stage3_max_live_parameters': 1000000000.0, 'stage3_max_reuse_distance': 1000000000.0, 'stage3_gather_16bit_weights_on_model_save': True}, 'gradient_accumulation_steps': 'auto', 'gradient_clipping': 'auto', 'steps_per_print': 2000, 'train_batch_size': 'auto', 'train_micro_batch_size_per_gpu': 'auto', 'wall_clock_breakdown': False},
-deepspeed_autotp_size=None,
-delta=None,
-desirable_weight=1.0,
-device_map=None,
-disable_tqdm=None,
-do_eval=False,
-do_predict=False,
-do_train=False,
-download_mode=reuse_dataset_if_exists,
-ds3_gather_for_generation=True,
-dynamic_sample=False,
-epsilon=0.2,
-epsilon_high=None,
-eval_accumulation_steps=None,
-eval_dataset=[],
-eval_dataset_args=None,
-eval_delay=0,
-eval_do_concat_batches=True,
-eval_generation_config=None,
-eval_limit=None,
-eval_on_start=False,
-eval_steps=3.0,
-eval_strategy=steps,
-eval_use_evalscope=False,
-eval_use_gather_object=False,
-external_plugins=[],
-fourier_n_frequency=2000,
-fourier_scaling=300.0,
-fp16=False,
-fp16_backend=auto,
-fp16_full_eval=False,
-fp16_opt_level=O1,
-freeze_aligner=True,
-freeze_llm=False,
-freeze_parameters=[],
-freeze_parameters_ratio=0.0,
-freeze_parameters_regex=None,
-freeze_vit=True,
-fsdp=,
-fsdp_config=None,
-fsdp_min_num_params=0,
-fsdp_transformer_layer_cls_to_wrap=None,
-full_determinism=False,
-galore_cos_threshold=0.4,
-galore_gamma_proj=2,
-galore_optim_per_parameter=False,
-galore_proj_bits=4,
-galore_proj_group_size=256,
-galore_proj_quant=False,
-galore_proj_type=std,
-galore_quantization=False,
-galore_queue_size=5,
-galore_rank=128,
-galore_scale=1.0,
-galore_target_modules=None,
-galore_update_proj_gap=50,
-galore_with_embedding=False,
-gamma=1.0,
-gc_collect_after_offload=False,
-generation_batch_size=None,
-generation_config=None,
-generation_max_length=None,
-generation_num_beams=None,
-gpu_memory_utilization=None,
-gradient_accumulation_steps=2,
-gradient_checkpointing=True,
-gradient_checkpointing_kwargs=None,
-greater_is_better=False,
-group_by_length=False,
-half_precision_backend=auto,
-hqq_axis=None,
-hub_always_push=False,
-hub_model_id=None,
-hub_private_repo=None,
-hub_revision=None,
-hub_strategy=every_save,
-hub_token=<HUB_TOKEN>,
-ignore_args_error=False,
-ignore_data_skip=False,
-importance_sampling_level=token,
-include_for_metrics=[],
-include_inputs_for_metrics=False,
-include_num_input_tokens_seen=False,
-include_tokens_per_second=False,
-init_strategy=None,
-init_weights=True,
-interleave_prob=None,
-jit_mode_eval=False,
-kl_coef=0.05,
-label_names=None,
-label_smoothing=0,
-label_smoothing_factor=0.0,
-lam=0.95,
-lazy_tokenize=False,
-learning_rate=1e-05,
-length_column_name=length,
-liger_kernel_config=None,
-limit_mm_per_prompt=None,
-lisa_activated_layers=0,
-lisa_step_interval=20,
-llamapro_num_groups=None,
-llamapro_num_new_blocks=4,
-lmbda=0.5,
-load_args=False,
-load_best_model_at_end=False,
-load_data_args=False,
-load_from_cache_file=True,
-local_rank=-1,
-local_repo_path=None,
-local_rollout_forward_batch_size=64,
-log_completions=False,
-log_entropy=False,
-log_level=passive,
-log_level_replica=warning,
-log_on_each_node=True,
-logging_dir=/home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/runs,
-logging_first_step=True,
-logging_nan_inf_filter=True,
-logging_steps=2,
-logging_strategy=steps,
-logprobs=False,
-lora_alpha=16,
-lora_bias=none,
-lora_dropout=0.05,
-lora_dtype=None,
-lora_ga_batch_size=2,
-lora_ga_direction=ArB2r,
-lora_ga_iters=2,
-lora_ga_max_length=1024,
-lora_ga_scale=stable,
-lora_ga_stable_gamma=16,
-lora_modules=[],
-lora_rank=4,
-lorap_lr_ratio=None,
-loss_scale=last_round,
-loss_type=kto,
-loss_weights=None,
-lr_scheduler_kwargs=None,
-lr_scheduler_type=cosine,
-max_completion_length=512,
-max_epochs=None,
-max_grad_norm=1.0,
-max_length=4096,
-max_memory={},
-max_model_len=None,
-max_new_tokens=512,
-max_pixels=None,
-max_resample_times=3,
-max_steps=-1,
-max_turns=None,
-metric=None,
-metric_for_best_model=loss,
-missing_eos_penalty=None,
-model=Qwen/Qwen2.5-7B-Instruct,
-model_author=None,
-model_kwargs={},
-model_name=None,
-model_revision=None,
-model_type=qwen2_5,
-modules_to_save=[],
-move_model_batches=None,
-mp_parameters=,
-multi_turn_func=None,
-multi_turn_scheduler=None,
-neftune_noise_alpha=None,
-new_special_tokens=[],
-no_cuda=False,
-norm_bbox=None,
-num_beams=1,
-num_generations=8,
-num_iterations=1,
-num_labels=None,
-num_mini_batches=1,
-num_ppo_epochs=4,
-num_sample_generations=10,
-num_train_epochs=2.0,
-offload_model=True,
-offload_optimizer=True,
-optim=adamw_torch,
-optim_args=None,
-optim_target_modules=None,
-optimizer=None,
-output_dir=/home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211,
-overlong_filter=False,
-overwrite_output_dir=False,
-packing=False,
-padding_free=False,
-padding_side=right,
-past_index=-1,
-per_device_eval_batch_size=2,
-per_device_train_batch_size=2,
-predict_with_generate=False,
-prediction_loss_only=False,
-problem_type=None,
-push_to_hub=False,
-push_to_hub_model_id=None,
-push_to_hub_organization=None,
-push_to_hub_token=<PUSH_TO_HUB_TOKEN>,
-quant_bits=None,
-quant_method=None,
-ray_scope=last,
-ref_model=None,
-ref_model_mixup_alpha=0.6,
-ref_model_revision=None,
-ref_model_sync_steps=512,
-ref_model_type=None,
-reft_args=None,
-reft_intervention_type=LoreftIntervention,
-reft_layer_key=None,
-reft_layers=None,
-reft_rank=4,
-remove_unused_columns=True,
-repetition_max_penalty=-1.0,
-repetition_n_grams=3,
-repetition_penalty=1.0,
-report_to=['tensorboard'],
-response_length=512,
-response_prefix=None,
-restore_callback_states_from_checkpoint=False,
-resume_from_checkpoint=None,
-resume_only_model=False,
-reward_adapters=[],
-reward_funcs=[],
-reward_model=None,
-reward_model_plugin=None,
-reward_model_revision=None,
-reward_model_type=None,
-reward_weights=None,
-rlhf_type=kto,
-rope_scaling=None,
-router_aux_loss_coef=0.0,
-rpo_alpha=1.0,
-run_name=/home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211,
-save_on_each_node=False,
-save_only_model=False,
-save_safetensors=True,
-save_steps=3.0,
-save_strategy=steps,
-save_total_limit=3,
-scale_rewards=True,
-seed=42,
-seq_kd=False,
-sequence_parallel_size=1,
-sft_alpha=0,
-shuffle_buffer_size=1000,
-simpo_gamma=1,
-skip_memory_metrics=True,
-sleep_level=0,
-soft_cache_length=None,
-soft_max_length=None,
-sortish_sampler=False,
-split_dataset_ratio=0.0,
-steps_per_generation=None,
-stop_words=[],
-stopping_strategy=first_exhausted,
-stream=False,
-streaming=False,
-strict=False,
-swanlab_exp_name=None,
-swanlab_lark_secret=None,
-swanlab_lark_webhook_url=None,
-swanlab_mode=cloud,
-swanlab_project=None,
-swanlab_token=<SWANLAB_TOKEN>,
-swanlab_workspace=None,
-sync_ref_model=False,
-system=None,
-target_modules=['all-linear'],
-target_parameters=None,
-target_regex=None,
-task_type=causal_lm,
-teacher_adapters=[],
-teacher_model=None,
-teacher_model_revision=None,
-teacher_model_type=None,
-temperature=0.9,
-template=qwen2_5,
-template_backend=swift,
-tensor_parallel_size=None,
-tf32=None,
-top_entropy_quantile=1.0,
-top_k=50,
-top_logprobs=None,
-top_p=0.9,
-torch_compile=False,
-torch_compile_backend=None,
-torch_compile_mode=None,
-torch_dtype=torch.bfloat16,
-torch_empty_cache_steps=None,
-torchdynamo=None,
-tpu_metrics_debug=False,
-tpu_num_cores=None,
-train_dataloader_shuffle=True,
-train_type=lora,
-trainable_parameters=[],
-trainable_parameters_regex=None,
-truncation_strategy=delete,
-tuner_backend=peft,
-undesirable_weight=1.0,
-use_async_engine=None,
-use_chat_template=True,
-use_cpu=False,
-use_dora=False,
-use_galore=False,
-use_hf=False,
-use_ipex=False,
-use_legacy_prediction_loop=False,
-use_liger_kernel=False,
-use_logits_to_keep=None,
-use_mps_device=False,
-use_rslora=False,
-use_swift_lora=False,
-use_vllm=False,
-val_dataset=['/home/ubuntu/webtest_rlhf_project/train_data/first_train_data/first_dev_data.jsonl'],
-val_dataset_shuffle=False,
-vera_d_initial=0.1,
-vera_dropout=0.0,
-vera_projection_prng_key=0,
-vera_rank=256,
-vf_coef=0.1,
-vit_gradient_checkpointing=None,
-vit_lr=None,
-vllm_data_parallel_size=1,
-vllm_disable_custom_all_reduce=True,
-vllm_enable_expert_parallel=False,
-vllm_enable_prefix_caching=True,
-vllm_enforce_eager=False,
-vllm_gpu_memory_utilization=0.9,
-vllm_limit_mm_per_prompt={},
-vllm_max_lora_rank=16,
-vllm_max_model_len=None,
-vllm_max_num_seqs=256,
-vllm_mode=colocate,
-vllm_pipeline_parallel_size=1,
-vllm_quantization=None,
-vllm_server_base_url=None,
-vllm_server_host=None,
-vllm_server_port=[8000],
-vllm_server_timeout=240.0,
-vllm_tensor_parallel_size=1,
-vllm_use_async_engine=False,
-wandb_log_unique_prompts=None,
-warmup_ratio=0.1,
-warmup_steps=0,
-weight_decay=0.1,
-whiten_rewards=False,
-zero_hpz_partition_size=None,
-)
-[INFO:swift] Downloading the model from ModelScope Hub, model_id: Qwen/Qwen2.5-7B-Instruct
-[INFO:modelscope] Target directory already exists, skipping creation.
-[INFO:swift] Loading the model using model_dir: /home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2___5-7B-Instruct
-[INFO:swift] model_kwargs: {'device_map': None}
-Downloading Model from https://www.modelscope.cn to directory: /home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2.5-7B-Instruct
-Downloading Model from https://www.modelscope.cn to directory: /home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2.5-7B-Instruct
-[2025-11-06 15:22:13,737] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-[2025-11-06 15:22:15,287] [INFO] [config.py:735:__init__] Config mesh_device None world_size = 1
-[2025-11-06 15:22:15,288] [INFO] [comm.py:669:init_distributed] cdb=None
-[2025-11-06 15:22:15,288] [INFO] [comm.py:684:init_distributed] Not using the DeepSpeed or dist launchers, attempting to detect MPI environment...
-[2025-11-06 15:22:15,675] [INFO] [comm.py:739:mpi_discovery] Discovered MPI settings of world_rank=0, local_rank=0, world_size=1, master_addr=10.3.0.13, master_port=29500
-[2025-11-06 15:22:15,676] [INFO] [comm.py:700:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
-[2025-11-06 15:22:16,282] [INFO] [partition_parameters.py:348:__exit__] finished initializing model - num_params = 339, num_elems = 7.62B
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:03,  1.25s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:02<00:02,  1.25s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:03<00:01,  1.24s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:04<00:00,  1.20s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:04<00:00,  1.22s/it]
-[INFO:swift] model_info: ModelInfo(model_type='qwen2_5', model_dir='/home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2___5-7B-Instruct', torch_dtype=torch.bfloat16, max_model_len=32768, quant_method=None, quant_bits=None, rope_scaling=None, is_moe_model=False, config=Qwen2Config {
-  "architectures": [
-    "Qwen2ForCausalLM"
-  ],
-  "attention_dropout": 0.0,
-  "bos_token_id": 151643,
-  "eos_token_id": 151645,
-  "hidden_act": "silu",
-  "hidden_size": 3584,
-  "initializer_range": 0.02,
-  "intermediate_size": 18944,
-  "layer_types": [
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention",
-    "full_attention"
-  ],
-  "max_position_embeddings": 32768,
-  "max_window_layers": 28,
-  "model_type": "qwen2",
-  "num_attention_heads": 28,
-  "num_hidden_layers": 28,
-  "num_key_value_heads": 4,
-  "pad_token_id": 151643,
-  "rms_norm_eps": 1e-06,
-  "rope_scaling": null,
-  "rope_theta": 1000000.0,
-  "sliding_window": null,
-  "tie_word_embeddings": false,
-  "torch_dtype": "bfloat16",
-  "transformers_version": "4.55.4",
-  "use_cache": true,
-  "use_sliding_window": false,
-  "vocab_size": 152064
-}
-, task_type='causal_lm', num_labels=None)
-[INFO:swift] model.generation_config: GenerationConfig {
-  "bos_token_id": 151643,
-  "do_sample": true,
-  "eos_token_id": [
-    151645,
-    151643
-  ],
-  "max_new_tokens": 512,
-  "pad_token_id": 151643,
-  "temperature": 0.9,
-  "top_p": 0.9
-}
-
-[INFO:swift] default_system: 'You are Qwen, created by Alibaba Cloud. You are a helpful assistant.'
-[INFO:swift] max_length: 4096
-[INFO:swift] response_prefix: ''
-[INFO:swift] agent_template: hermes
-[INFO:swift] Start time of running main: 2025-11-06 15:22:21.183541
-[INFO:swift] swift.__version__: 3.7.2
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py:4631: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
-  warnings.warn(  # warn only once
-[INFO:swift] train_dataset: Dataset({
-    features: ['messages', 'label'],
-    num_rows: 35
-})
-[INFO:swift] val_dataset: Dataset({
-    features: ['messages', 'label'],
-    num_rows: 3
-})
-[INFO:swift] desirable_weight: 1.0, undesirable_weight: 1.0
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/swift/llm/train/kto.py:68: UserWarning: 
-        You have different amounts of desirable/positive and undesirable/negative examples but the
-        weights on the desirable and undesirable losses don't seem to be in an ideal range. Based
-        on your data, we recommend EITHER desirable_weight in [0.25, '0.33]
-        or undesirable_weight in [3.01, 4.0] (but NOT BOTH).
-        See the documentation on how to optimally set these weights.
-  warnings.warn(
-[INFO:swift] Dataset filtered, origin length: 35, filtered dataset length: 33
-Map:   0%|          | 0/3 [00:00<?, ? examples/s]Map: 100%|██████████| 3/3 [00:00<00:00, 191.83 examples/s]
-[INFO:swift] [CHOSEN_INPUT_IDS] [151644, 8948, 198, 56568, 110124, 107505, 9370, 103951, 81705, 105503, 1773, 112735, 108965, 21287, 19108, 26232, 81705, 11622, 26355, 3837, 118976, 100873, 104378, 43815, 36407, 101128, 103923, 102802, 33108, 104913, 3837, 101889, 100374, 56568, 32664, 103923, 108894, 101092, 105146, 104378, 43815, 43959, 85106, 9370, 81705, 11622, 26355, 3837, 85106, 101118, 81705, 11622, 26355, 100795, 26381, 3837, 99322, 102844, 100148, 43959, 105444, 9370, 81705, 11622, 26355, 3837, 100148, 100211, 100354, 151645, 198, 151644, 872, 198, 108422, 89656, 36993, 61755, 92374, 100143, 40090, 17340, 60548, 99559, 62, 100155, 36993, 61755, 92374, 102802, 20742, 23990, 3837, 36993, 61755, 99559, 100080, 100237, 15946, 58362, 54021, 40090, 103947, 12881, 36667, 71971, 58612, 38342, 71971, 10429, 44091, 1773, 151645, 198, 151644, 77091, 198, 104210, 100354, 101042, 3837, 43959, 87752, 98380, 81705, 11622, 26355, 1773, 81705, 11622, 26355, 25, 102802, 20742, 23990, 36993, 61755, 92374, 89656, 54021, 62, 104747, 52334, 92411, 15, 62, 115489, 76095, 25, 36993, 61755, 92374, 102802, 34187, 20742, 23990, 62, 40090, 105652, 25, 16, 13, 72651, 102802, 20742, 23990, 9370, 36993, 61755, 92374, 1, 117130, 1, 84184, 62, 104394, 59151, 25, 16, 13, 100080, 100237, 54021, 36993, 61755, 99653, 44177, 9480, 29, 17, 13, 44091, 31118, 54021, 1, 36667, 71971, 1, 57191, 1, 38342, 71971, 22476, 1323, 29, 18, 13, 20742, 64355, 100630, 64429, 915, 5373, 99204, 99262, 17340, 66187, 5373, 102303, 17340, 9480, 29, 19, 13, 102303, 17340, 54021, 100873, 3837, 42192, 114078, 26, 98313, 66635, 11622, 26355, 25, 83002, 110, 71971, 44091, 54021, 62, 104747, 52334, 92411, 15, 62, 115489, 76095, 25, 102802, 20742, 23990, 9370, 36993, 61755, 92374, 3837, 47606, 36667, 71971, 107631, 17340, 62, 40090, 105652, 25, 16, 13, 100111, 36993, 61755, 89656, 100080, 100237, 62, 104394, 59151, 25, 16, 13, 36667, 71971, 20742, 23990, 107631, 17340, 44091, 17714, 1, 36667, 71971, 22476, 1323, 29, 17, 13, 44091, 87335, 104542, 86744, 100975, 99334, 26, 98313, 66635, 11622, 26355, 25, 38342, 71971, 44091, 54021, 62, 104747, 52334, 92411, 15, 62, 115489, 76095, 25, 102802, 20742, 23990, 9370, 36993, 61755, 92374, 3837, 47606, 38342, 71971, 107631, 17340, 62, 40090, 105652, 25, 16, 13, 100111, 36993, 61755, 89656, 100080, 100237, 62, 104394, 59151, 25, 16, 13, 38342, 71971, 20742, 23990, 107631, 17340, 44091, 17714, 1, 38342, 71971, 22476, 1323, 29, 17, 13, 44091, 87335, 104542, 86744, 100975, 99334, 26, 151645]
-[INFO:swift] [CHOSEN_INPUT] <|im_start|>system
-你是一名资深的软件测试工程师。你需要帮我生成功能测试用例，需要用完整的需求内容来理解业务关联和逻辑，然后结合你对业务的理解针对指定的需求内容生成需要的测试用例，需要考虑测试用例覆盖度，切忌不要生成重复的测试用例，不要创造需求<|im_end|>
-<|im_start|>user
-批次详情会签节点支持操作人完成情况_若会签节点关联表单，会签情况弹窗中需显示操作人的「已提交」「未提交」状态。<|im_end|>
-<|im_start|>assistant
-基于需求分析，生成以下功能测试用例。测试用例:关联表单会签节点详情显示_优先级:P0_前置条件:会签节点关联了表单_操作步骤:1.点击关联表单的会签节点"查看详情"按钮_预期结果:1.弹窗显示会签人员列表<br>2.状态列显示"已提交"或"未提交"<br>3.表头包括对象ID、受助人姓名、审批人<br>4.审批人显示完整，无遗漏; 测试用例: 已提交状态显示_优先级:P0_前置条件:关联表单的会签节点，存在已提交的操作人_操作步骤:1.查看会签详情弹窗_预期结果:1.已提交表单的操作人状态为"已提交"<br>2.状态文字清晰易辨识; 测试用例:未提交状态显示_优先级:P0_前置条件:关联表单的会签节点，存在未提交的操作人_操作步骤:1.查看会签详情弹窗_预期结果:1.未提交表单的操作人状态为"未提交"<br>2.状态文字清晰易辨识;<|im_end|>
-[INFO:swift] [CHOSEN_LABELS_IDS] [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 104210, 100354, 101042, 3837, 43959, 87752, 98380, 81705, 11622, 26355, 1773, 81705, 11622, 26355, 25, 102802, 20742, 23990, 36993, 61755, 92374, 89656, 54021, 62, 104747, 52334, 92411, 15, 62, 115489, 76095, 25, 36993, 61755, 92374, 102802, 34187, 20742, 23990, 62, 40090, 105652, 25, 16, 13, 72651, 102802, 20742, 23990, 9370, 36993, 61755, 92374, 1, 117130, 1, 84184, 62, 104394, 59151, 25, 16, 13, 100080, 100237, 54021, 36993, 61755, 99653, 44177, 9480, 29, 17, 13, 44091, 31118, 54021, 1, 36667, 71971, 1, 57191, 1, 38342, 71971, 22476, 1323, 29, 18, 13, 20742, 64355, 100630, 64429, 915, 5373, 99204, 99262, 17340, 66187, 5373, 102303, 17340, 9480, 29, 19, 13, 102303, 17340, 54021, 100873, 3837, 42192, 114078, 26, 98313, 66635, 11622, 26355, 25, 83002, 110, 71971, 44091, 54021, 62, 104747, 52334, 92411, 15, 62, 115489, 76095, 25, 102802, 20742, 23990, 9370, 36993, 61755, 92374, 3837, 47606, 36667, 71971, 107631, 17340, 62, 40090, 105652, 25, 16, 13, 100111, 36993, 61755, 89656, 100080, 100237, 62, 104394, 59151, 25, 16, 13, 36667, 71971, 20742, 23990, 107631, 17340, 44091, 17714, 1, 36667, 71971, 22476, 1323, 29, 17, 13, 44091, 87335, 104542, 86744, 100975, 99334, 26, 98313, 66635, 11622, 26355, 25, 38342, 71971, 44091, 54021, 62, 104747, 52334, 92411, 15, 62, 115489, 76095, 25, 102802, 20742, 23990, 9370, 36993, 61755, 92374, 3837, 47606, 38342, 71971, 107631, 17340, 62, 40090, 105652, 25, 16, 13, 100111, 36993, 61755, 89656, 100080, 100237, 62, 104394, 59151, 25, 16, 13, 38342, 71971, 20742, 23990, 107631, 17340, 44091, 17714, 1, 38342, 71971, 22476, 1323, 29, 17, 13, 44091, 87335, 104542, 86744, 100975, 99334, 26, 151645]
-[INFO:swift] [CHOSEN_LABELS] [-100 * 117]基于需求分析，生成以下功能测试用例。测试用例:关联表单会签节点详情显示_优先级:P0_前置条件:会签节点关联了表单_操作步骤:1.点击关联表单的会签节点"查看详情"按钮_预期结果:1.弹窗显示会签人员列表<br>2.状态列显示"已提交"或"未提交"<br>3.表头包括对象ID、受助人姓名、审批人<br>4.审批人显示完整，无遗漏; 测试用例: 已提交状态显示_优先级:P0_前置条件:关联表单的会签节点，存在已提交的操作人_操作步骤:1.查看会签详情弹窗_预期结果:1.已提交表单的操作人状态为"已提交"<br>2.状态文字清晰易辨识; 测试用例:未提交状态显示_优先级:P0_前置条件:关联表单的会签节点，存在未提交的操作人_操作步骤:1.查看会签详情弹窗_预期结果:1.未提交表单的操作人状态为"未提交"<br>2.状态文字清晰易辨识;<|im_end|>
-[INFO:swift] [REJECTED_INPUT_IDS] [151644, 8948, 198, 56568, 110124, 107505, 9370, 103951, 81705, 105503, 1773, 112735, 108965, 21287, 19108, 26232, 81705, 11622, 26355, 3837, 118976, 100873, 104378, 43815, 36407, 101128, 103923, 102802, 33108, 104913, 3837, 101889, 100374, 56568, 32664, 103923, 108894, 101092, 105146, 104378, 43815, 43959, 85106, 9370, 81705, 11622, 26355, 3837, 85106, 101118, 81705, 11622, 26355, 100795, 26381, 3837, 99322, 102844, 100148, 43959, 105444, 9370, 81705, 11622, 26355, 3837, 100148, 100211, 100354, 151645, 198, 151644, 872, 198, 108422, 89656, 36993, 61755, 92374, 100143, 40090, 17340, 60548, 99559, 62, 100155, 36993, 61755, 92374, 102802, 20742, 23990, 3837, 36993, 61755, 99559, 100080, 100237, 15946, 58362, 54021, 40090, 103947, 12881, 36667, 71971, 58612, 38342, 71971, 10429, 44091, 1773, 151645, 198, 151644, 77091, 198, 104210, 100354, 101042, 3837, 43959, 87752, 98380, 81705, 11622, 26355, 1773, 81705, 11622, 26355, 25, 30767, 15946, 2105, 40090, 17340, 81217, 59151, 2105, 44931, 64720, 20221, 20055, 112611, 62, 104747, 52334, 92411, 15, 62, 115489, 76095, 25, 16, 13, 47606, 36993, 61755, 30918, 33108, 92374, 100136, 20742, 23990, 17714, 67338, 95355, 31905, 26, 17, 13, 36993, 61755, 47606, 101213, 40090, 17340, 62, 40090, 105652, 25, 16, 13, 101040, 110469, 64720, 20221, 36295, 9480, 29, 17, 13, 105170, 30767, 2105, 40090, 17340, 81217, 59151, 2105, 44931, 9480, 29, 18, 13, 72651, 64720, 20221, 62, 104394, 59151, 25, 16, 76342, 112611, 101047, 103991, 40090, 17340, 106249, 102024, 31118, 9480, 29, 17, 13, 40090, 17340, 66187, 100622, 31118, 60396, 9480, 29, 18, 13, 59151, 100622, 40090, 17340, 31118, 9370, 111944, 9480, 29, 19, 13, 117876, 2105, 67338, 2105, 5373, 2105, 16530, 67338, 2105, 5373, 2105, 74193, 22382, 2105, 14, 34794, 9480, 29, 20, 13, 112611, 100166, 104542, 88991, 26, 220, 151645]
-[INFO:swift] [REJECTED_INPUT] <|im_start|>system
-你是一名资深的软件测试工程师。你需要帮我生成功能测试用例，需要用完整的需求内容来理解业务关联和逻辑，然后结合你对业务的理解针对指定的需求内容生成需要的测试用例，需要考虑测试用例覆盖度，切忌不要生成重复的测试用例，不要创造需求<|im_end|>
-<|im_start|>user
-批次详情会签节点支持操作人完成情况_若会签节点关联表单，会签情况弹窗中需显示操作人的「已提交」「未提交」状态。<|im_end|>
-<|im_start|>assistant
-基于需求分析，生成以下功能测试用例。测试用例:选中\"操作人及结果\"字段导出Excel表格_优先级:P0_前置条件:1.存在会签求和节点且表单为通过率类型;2.会签存在多个操作人_操作步骤:1.进入批量导出页面<br>2.勾选\"操作人及结果\"字段<br>3.点击导出_预期结果:1.Excel表格中的每个操作人作为一个独立列<br>2.操作人姓名作为列标题<br>3.结果作为操作人列的数值<br>4.结果显示\"通过\"、\"不通过\"、\"待定\"/空<br>5.表格结构清晰正确; <|im_end|>
-[INFO:swift] [REJECTED_LABELS_IDS] [-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 104210, 100354, 101042, 3837, 43959, 87752, 98380, 81705, 11622, 26355, 1773, 81705, 11622, 26355, 25, 30767, 15946, 2105, 40090, 17340, 81217, 59151, 2105, 44931, 64720, 20221, 20055, 112611, 62, 104747, 52334, 92411, 15, 62, 115489, 76095, 25, 16, 13, 47606, 36993, 61755, 30918, 33108, 92374, 100136, 20742, 23990, 17714, 67338, 95355, 31905, 26, 17, 13, 36993, 61755, 47606, 101213, 40090, 17340, 62, 40090, 105652, 25, 16, 13, 101040, 110469, 64720, 20221, 36295, 9480, 29, 17, 13, 105170, 30767, 2105, 40090, 17340, 81217, 59151, 2105, 44931, 9480, 29, 18, 13, 72651, 64720, 20221, 62, 104394, 59151, 25, 16, 76342, 112611, 101047, 103991, 40090, 17340, 106249, 102024, 31118, 9480, 29, 17, 13, 40090, 17340, 66187, 100622, 31118, 60396, 9480, 29, 18, 13, 59151, 100622, 40090, 17340, 31118, 9370, 111944, 9480, 29, 19, 13, 117876, 2105, 67338, 2105, 5373, 2105, 16530, 67338, 2105, 5373, 2105, 74193, 22382, 2105, 14, 34794, 9480, 29, 20, 13, 112611, 100166, 104542, 88991, 26, 220, 151645]
-[INFO:swift] [REJECTED_LABELS] [-100 * 117]基于需求分析，生成以下功能测试用例。测试用例:选中\"操作人及结果\"字段导出Excel表格_优先级:P0_前置条件:1.存在会签求和节点且表单为通过率类型;2.会签存在多个操作人_操作步骤:1.进入批量导出页面<br>2.勾选\"操作人及结果\"字段<br>3.点击导出_预期结果:1.Excel表格中的每个操作人作为一个独立列<br>2.操作人姓名作为列标题<br>3.结果作为操作人列的数值<br>4.结果显示\"通过\"、\"不通过\"、\"待定\"/空<br>5.表格结构清晰正确; <|im_end|>
-[INFO:swift] Dataset Token Length: 897.030303±706.130235, min=243.000000, max=2231.000000, size=33
-[INFO:swift] Dataset Token Length: 449.666667±115.891712, min=286.000000, max=539.000000, size=3
-[INFO:swift] The RLHFArguments will be saved in: /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/args.json
-[INFO:swift] lora_config: LoraConfig(task_type='CAUSAL_LM', peft_type=<PeftType.LORA: 'LORA'>, auto_mapping=None, base_model_name_or_path='/home/ubuntu/.cache/modelscope/hub/models/Qwen/Qwen2___5-7B-Instruct', revision=None, inference_mode=False, r=4, target_modules={'q_proj', 'down_proj', 'k_proj', 'gate_proj', 'o_proj', 'up_proj', 'v_proj'}, exclude_modules=None, lora_alpha=16, lora_dropout=0.05, fan_in_fan_out=False, bias='none', use_rslora=False, modules_to_save=[], init_lora_weights=True, layers_to_transform=None, layers_pattern=None, rank_pattern={}, alpha_pattern={}, megatron_config=None, megatron_core='megatron.core', loftq_config={}, eva_config=None, use_dora=False, layer_replication=None, runtime_config=LoraRuntimeConfig(ephemeral_gpu_offload=False), lora_bias=False, lora_dtype=None, lorap_lr_ratio=None, lorap_emb_lr=1e-06)
-[INFO:swift] model: PeftModelForCausalLM(
-  (base_model): LoraModel(
-    (model): Qwen2ForCausalLM(
-      (model): Qwen2Model(
-        (embed_tokens): Embedding(152064, 3584)
-        (layers): ModuleList(
-          (0-27): 28 x Qwen2DecoderLayer(
-            (self_attn): Qwen2Attention(
-              (q_proj): lora.Linear(
-                (base_layer): Linear(in_features=3584, out_features=3584, bias=True)
-                (lora_dropout): ModuleDict(
-                  (default): Dropout(p=0.05, inplace=False)
-                )
-                (lora_A): ModuleDict(
-                  (default): Linear(in_features=3584, out_features=4, bias=False)
-                )
-                (lora_B): ModuleDict(
-                  (default): Linear(in_features=4, out_features=3584, bias=False)
-                )
-                (lora_embedding_A): ParameterDict()
-                (lora_embedding_B): ParameterDict()
-                (lora_magnitude_vector): ModuleDict()
-              )
-              (k_proj): lora.Linear(
-                (base_layer): Linear(in_features=3584, out_features=512, bias=True)
-                (lora_dropout): ModuleDict(
-                  (default): Dropout(p=0.05, inplace=False)
-                )
-                (lora_A): ModuleDict(
-                  (default): Linear(in_features=3584, out_features=4, bias=False)
-                )
-                (lora_B): ModuleDict(
-                  (default): Linear(in_features=4, out_features=512, bias=False)
-                )
-                (lora_embedding_A): ParameterDict()
-                (lora_embedding_B): ParameterDict()
-                (lora_magnitude_vector): ModuleDict()
-              )
-              (v_proj): lora.Linear(
-                (base_layer): Linear(in_features=3584, out_features=512, bias=True)
-                (lora_dropout): ModuleDict(
-                  (default): Dropout(p=0.05, inplace=False)
-                )
-                (lora_A): ModuleDict(
-                  (default): Linear(in_features=3584, out_features=4, bias=False)
-                )
-                (lora_B): ModuleDict(
-                  (default): Linear(in_features=4, out_features=512, bias=False)
-                )
-                (lora_embedding_A): ParameterDict()
-                (lora_embedding_B): ParameterDict()
-                (lora_magnitude_vector): ModuleDict()
-              )
-              (o_proj): lora.Linear(
-                (base_layer): Linear(in_features=3584, out_features=3584, bias=False)
-                (lora_dropout): ModuleDict(
-                  (default): Dropout(p=0.05, inplace=False)
-                )
-                (lora_A): ModuleDict(
-                  (default): Linear(in_features=3584, out_features=4, bias=False)
-                )
-                (lora_B): ModuleDict(
-                  (default): Linear(in_features=4, out_features=3584, bias=False)
-                )
-                (lora_embedding_A): ParameterDict()
-                (lora_embedding_B): ParameterDict()
-                (lora_magnitude_vector): ModuleDict()
-              )
-            )
-            (mlp): Qwen2MLP(
-              (gate_proj): lora.Linear(
-                (base_layer): Linear(in_features=3584, out_features=18944, bias=False)
-                (lora_dropout): ModuleDict(
-                  (default): Dropout(p=0.05, inplace=False)
-                )
-                (lora_A): ModuleDict(
-                  (default): Linear(in_features=3584, out_features=4, bias=False)
-                )
-                (lora_B): ModuleDict(
-                  (default): Linear(in_features=4, out_features=18944, bias=False)
-                )
-                (lora_embedding_A): ParameterDict()
-                (lora_embedding_B): ParameterDict()
-                (lora_magnitude_vector): ModuleDict()
-              )
-              (up_proj): lora.Linear(
-                (base_layer): Linear(in_features=3584, out_features=18944, bias=False)
-                (lora_dropout): ModuleDict(
-                  (default): Dropout(p=0.05, inplace=False)
-                )
-                (lora_A): ModuleDict(
-                  (default): Linear(in_features=3584, out_features=4, bias=False)
-                )
-                (lora_B): ModuleDict(
-                  (default): Linear(in_features=4, out_features=18944, bias=False)
-                )
-                (lora_embedding_A): ParameterDict()
-                (lora_embedding_B): ParameterDict()
-                (lora_magnitude_vector): ModuleDict()
-              )
-              (down_proj): lora.Linear(
-                (base_layer): Linear(in_features=18944, out_features=3584, bias=False)
-                (lora_dropout): ModuleDict(
-                  (default): Dropout(p=0.05, inplace=False)
-                )
-                (lora_A): ModuleDict(
-                  (default): Linear(in_features=18944, out_features=4, bias=False)
-                )
-                (lora_B): ModuleDict(
-                  (default): Linear(in_features=4, out_features=3584, bias=False)
-                )
-                (lora_embedding_A): ParameterDict()
-                (lora_embedding_B): ParameterDict()
-                (lora_magnitude_vector): ModuleDict()
-              )
-              (act_fn): SiLU()
-            )
-            (input_layernorm): Qwen2RMSNorm((0,), eps=1e-06)
-            (post_attention_layernorm): Qwen2RMSNorm((0,), eps=1e-06)
-          )
-        )
-        (norm): Qwen2RMSNorm((0,), eps=1e-06)
-        (rotary_emb): Qwen2RotaryEmbedding()
-      )
-      (lm_head): Linear(in_features=3584, out_features=152064, bias=False)
-    )
-  )
-)
-[INFO:swift] model_parameter_info: PeftModelForCausalLM: 7625.7091M Params (10.0925M Trainable [0.1323%]), 0.0001M Buffers.
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/swift/trainers/mixin.py:94: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `KTOTrainer.__init__`. Use `processing_class` instead.
-  super().__init__(
-[INFO:swift] use_reentrant: True
-Trainer.tokenizer is now deprecated. You should use Trainer.processing_class instead.
-[INFO:swift] The logging file will be saved in: /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/logging.jsonl
-Gradient accumulation steps mismatch: GradientAccumulationPlugin has 1, DeepSpeed config has 2. Using DeepSpeed's value.
-Parameter Offload: Total persistent parameters: 4060672 in 449 params
-Train:   0%|          | 0/18 [00:00<?, ?it/s]/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
-  warnings.warn(
-Could not estimate the number of tokens of the input, floating-point operations will not be computed
-Train:   6%|▌         | 1/18 [00:34<09:46, 34.51s/it]                                                     Train:   6%|▌         | 1/18 [00:34<09:46, 34.51s/it]Train:   6%|▌         | 1/18 [00:34<09:46, 34.51s/it]Train:  11%|█         | 2/18 [00:52<06:32, 24.54s/it]                                                     Train:  11%|█         | 2/18 [00:52<06:32, 24.54s/it]Train:  11%|█         | 2/18 [00:52<06:32, 24.54s/it]Train:  17%|█▋        | 3/18 [01:17<06:15, 25.01s/it]{'loss': 0.5, 'grad_norm': 10.66764103, 'learning_rate': 5e-06, 'memory(GiB)': 20.76, 'train_speed(iter/s)': 0.025747, 'rewards/chosen': 0.0, 'logps/chosen': -618.0, 'logits/chosen': 34144256.0, 'kl': 0.0, 'epoch': 0.12, 'global_step/max_steps': '1/18', 'percentage': '5.56%', 'elapsed_time': '34s', 'remaining_time': '9m 46s'}
-{'loss': 0.5, 'grad_norm': 7.84068102, 'learning_rate': 1e-05, 'memory(GiB)': 20.76, 'train_speed(iter/s)': 0.035463, 'rewards/chosen': 0.0, 'logps/chosen': -318.0, 'logits/chosen': 11452416.0, 'kl': 0.0, 'epoch': 0.24, 'global_step/max_steps': '2/18', 'percentage': '11.11%', 'elapsed_time': '52s', 'remaining_time': '6m 56s'}
-
-Val:   0%|          | 0/2 [00:00<?, ?it/s]Val: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]                                                                                                       Train:  17%|█▋        | 3/18 [01:28<06:15, 25.01s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]Train:  17%|█▋        | 3/18 [01:28<06:15, 25.01s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]
-[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/checkpoint-3
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
-  warnings.warn(
-Train:  22%|██▏       | 4/18 [02:08<08:14, 35.32s/it]                                                     Train:  22%|██▏       | 4/18 [02:08<08:14, 35.32s/it]Train:  22%|██▏       | 4/18 [02:08<08:14, 35.32s/it]Train:  28%|██▊       | 5/18 [02:38<07:13, 33.38s/it]Train:  33%|███▎      | 6/18 [03:34<08:11, 41.00s/it]                                                     Train:  33%|███▎      | 6/18 [03:34<08:11, 41.00s/it]Train:  33%|███▎      | 6/18 [03:34<08:11, 41.00s/it]{'eval_loss': 0.515625, 'eval_runtime': 10.4877, 'eval_samples_per_second': 0.286, 'eval_steps_per_second': 0.191, 'eval_rewards/chosen': 0.0, 'eval_logps/chosen': -458.66666667, 'eval_logits/chosen': 20665685.33333333, 'eval_kl': 0.5, 'epoch': 0.35, 'global_step/max_steps': '3/18', 'percentage': '16.67%', 'elapsed_time': '1m 28s', 'remaining_time': '7m 20s'}
-{'loss': 0.48779297, 'grad_norm': 4.94956422, 'learning_rate': 9.62e-06, 'memory(GiB)': 24.51, 'train_speed(iter/s)': 0.030055, 'rewards/chosen': 0.0, 'logps/chosen': -584.8, 'logits/chosen': 33161216.0, 'rewards/rejected': -0.13346354, 'logps/rejected': -385.33333333, 'logits/rejected': 63362389.33333334, 'rewards/margins': 0.13346354, 'kl': 0.0, 'epoch': 0.47, 'global_step/max_steps': '4/18', 'percentage': '22.22%', 'elapsed_time': '2m 8s', 'remaining_time': '7m 30s'}
-{'loss': 0.51269531, 'grad_norm': 7.38200362, 'learning_rate': 8.54e-06, 'memory(GiB)': 29.57, 'train_speed(iter/s)': 0.02742, 'rewards/chosen': -0.05719866, 'logps/chosen': -503.42857143, 'logits/chosen': 42205184.0, 'rewards/rejected': 0.0, 'logps/rejected': -156.0, 'logits/rejected': -260046848.0, 'rewards/margins': -0.05719866, 'kl': 0.0, 'epoch': 0.71, 'global_step/max_steps': '6/18', 'percentage': '33.33%', 'elapsed_time': '3m 34s', 'remaining_time': '7m 8s'}
-
-Val:   0%|          | 0/2 [00:00<?, ?it/s]Val: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]                                                                                                       Train:  33%|███▎      | 6/18 [03:45<08:11, 41.00s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]Train:  33%|███▎      | 6/18 [03:45<08:11, 41.00s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py:4631: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
-  warnings.warn(  # warn only once
-[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/checkpoint-6
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
-  warnings.warn(
-Train:  39%|███▉      | 7/18 [05:03<10:24, 56.80s/it]Train:  44%|████▍     | 8/18 [05:32<07:58, 47.90s/it]                                                     Train:  44%|████▍     | 8/18 [05:32<07:58, 47.90s/it]Train:  44%|████▍     | 8/18 [05:32<07:58, 47.90s/it]Train:  50%|█████     | 9/18 [05:38<05:11, 34.63s/it]{'eval_loss': 0.53255206, 'eval_runtime': 10.527, 'eval_samples_per_second': 0.285, 'eval_steps_per_second': 0.19, 'eval_rewards/chosen': 0.06673177, 'eval_logps/chosen': -457.33333333, 'eval_logits/chosen': 20709376.0, 'eval_kl': 1.5, 'epoch': 0.71, 'global_step/max_steps': '6/18', 'percentage': '33.33%', 'elapsed_time': '3m 45s', 'remaining_time': '7m 30s'}
-{'loss': 0.50634766, 'grad_norm': 10.14229976, 'learning_rate': 6.91e-06, 'memory(GiB)': 29.57, 'train_speed(iter/s)': 0.02374, 'rewards/chosen': 0.16682943, 'logps/chosen': -522.0, 'logits/chosen': 21082453.33333333, 'rewards/rejected': 0.30029297, 'logps/rejected': -410.0, 'logits/rejected': 100401152.0, 'rewards/margins': -0.13346354, 'kl': 1.25, 'epoch': 0.94, 'global_step/max_steps': '8/18', 'percentage': '44.44%', 'elapsed_time': '5m 32s', 'remaining_time': '6m 55s'}
-
-Val:   0%|          | 0/2 [00:00<?, ?it/s]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]                                                                                                       Train:  50%|█████     | 9/18 [05:48<05:11, 34.63s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]Train:  50%|█████     | 9/18 [05:48<05:11, 34.63s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py:4631: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
-  warnings.warn(  # warn only once
-[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/checkpoint-9
-{'eval_loss': 0.53385419, 'eval_runtime': 10.5672, 'eval_samples_per_second': 0.284, 'eval_steps_per_second': 0.189, 'eval_rewards/chosen': 0.20052083, 'eval_logps/chosen': -456.0, 'eval_logits/chosen': 20447232.0, 'eval_kl': 3.0, 'epoch': 1.0, 'global_step/max_steps': '9/18', 'percentage': '50.00%', 'elapsed_time': '5m 48s', 'remaining_time': '5m 48s'}
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
-  warnings.warn(
-Train:  56%|█████▌    | 10/18 [06:22<05:01, 37.73s/it]                                                      Train:  56%|█████▌    | 10/18 [06:22<05:01, 37.73s/it]Train:  56%|█████▌    | 10/18 [06:22<05:01, 37.73s/it]Train:  61%|██████    | 11/18 [06:40<03:41, 31.60s/it]Train:  67%|██████▋   | 12/18 [07:06<02:59, 29.87s/it]                                                      Train:  67%|██████▋   | 12/18 [07:06<02:59, 29.87s/it]Train:  67%|██████▋   | 12/18 [07:06<02:59, 29.87s/it]{'loss': 0.48144531, 'grad_norm': 11.25629488, 'learning_rate': 5e-06, 'memory(GiB)': 29.57, 'train_speed(iter/s)': 0.025833, 'rewards/chosen': 0.40019531, 'logps/chosen': -566.4, 'logits/chosen': 30552883.2, 'kl': 2.66666675, 'epoch': 1.12, 'global_step/max_steps': '10/18', 'percentage': '55.56%', 'elapsed_time': '6m 22s', 'remaining_time': '5m 6s'}
-{'loss': 0.46337891, 'grad_norm': 8.1144763, 'learning_rate': 3.09e-06, 'memory(GiB)': 29.57, 'train_speed(iter/s)': 0.027859, 'rewards/chosen': 0.42912946, 'logps/chosen': -446.28571429, 'logits/chosen': 22272877.71428571, 'rewards/rejected': 0.0, 'logps/rejected': -268.0, 'logits/rejected': 7077888.0, 'rewards/margins': 0.42912946, 'kl': 2.75, 'epoch': 1.35, 'global_step/max_steps': '12/18', 'percentage': '66.67%', 'elapsed_time': '7m 6s', 'remaining_time': '3m 33s'}
-
-Val:   0%|          | 0/2 [00:00<?, ?it/s]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]                                                                                                        Train:  67%|██████▋   | 12/18 [07:16<02:59, 29.87s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]Train:  67%|██████▋   | 12/18 [07:16<02:59, 29.87s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.17s/it]
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py:4631: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
-  warnings.warn(  # warn only once
-[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/checkpoint-12
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
-  warnings.warn(
-Train:  72%|███████▏  | 13/18 [07:58<03:02, 36.53s/it]Train:  78%|███████▊  | 14/18 [08:28<02:18, 34.61s/it]                                                      Train:  78%|███████▊  | 14/18 [08:28<02:18, 34.61s/it]Train:  78%|███████▊  | 14/18 [08:28<02:18, 34.61s/it]Train:  83%|████████▎ | 15/18 [09:24<02:03, 41.13s/it]{'eval_loss': 0.48307291, 'eval_runtime': 10.568, 'eval_samples_per_second': 0.284, 'eval_steps_per_second': 0.189, 'eval_rewards/chosen': 0.40039062, 'eval_logps/chosen': -454.66666667, 'eval_logits/chosen': 20490922.66666667, 'eval_kl': 3.0, 'epoch': 1.35, 'global_step/max_steps': '12/18', 'percentage': '66.67%', 'elapsed_time': '7m 16s', 'remaining_time': '3m 38s'}
-{'loss': 0.46972656, 'grad_norm': 10.07117873, 'learning_rate': 1.46e-06, 'memory(GiB)': 29.57, 'train_speed(iter/s)': 0.027303, 'rewards/chosen': 0.50065104, 'logps/chosen': -487.33333333, 'logits/chosen': 40763392.0, 'rewards/rejected': 0.10009766, 'logps/rejected': -442.0, 'logits/rejected': 91226112.0, 'rewards/margins': 0.40055339, 'kl': 4.25, 'epoch': 1.59, 'global_step/max_steps': '14/18', 'percentage': '77.78%', 'elapsed_time': '8m 28s', 'remaining_time': '2m 25s'}
-
-Val:   0%|          | 0/2 [00:00<?, ?it/s]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]                                                                                                        Train:  83%|████████▎ | 15/18 [09:35<02:03, 41.13s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]Train:  83%|████████▎ | 15/18 [09:35<02:03, 41.13s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.16s/it]
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py:4631: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
-  warnings.warn(  # warn only once
-[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/checkpoint-15
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/utils/checkpoint.py:86: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
-  warnings.warn(
-Train:  89%|████████▉ | 16/18 [10:54<01:51, 55.74s/it]                                                      Train:  89%|████████▉ | 16/18 [10:54<01:51, 55.74s/it]Train:  89%|████████▉ | 16/18 [10:54<01:51, 55.74s/it]Train:  94%|█████████▍| 17/18 [11:23<00:47, 47.66s/it]Train: 100%|██████████| 18/18 [11:28<00:00, 34.97s/it]                                                      Train: 100%|██████████| 18/18 [11:28<00:00, 34.97s/it]Train: 100%|██████████| 18/18 [11:28<00:00, 34.97s/it]{'eval_loss': 0.54947919, 'eval_runtime': 10.5736, 'eval_samples_per_second': 0.284, 'eval_steps_per_second': 0.189, 'eval_rewards/chosen': 0.40039062, 'eval_logps/chosen': -454.66666667, 'eval_logits/chosen': 20534613.33333333, 'eval_kl': 5.5, 'epoch': 1.71, 'global_step/max_steps': '15/18', 'percentage': '83.33%', 'elapsed_time': '9m 35s', 'remaining_time': '1m 55s'}
-{'loss': 0.45947266, 'grad_norm': 6.42204148, 'learning_rate': 3.8e-07, 'memory(GiB)': 29.57, 'train_speed(iter/s)': 0.024292, 'rewards/chosen': 0.56054688, 'logps/chosen': -640.8, 'logits/chosen': 42028236.8, 'rewards/rejected': 0.2335612, 'logps/rejected': -325.0, 'logits/rejected': -19245738.66666667, 'rewards/margins': 0.32698568, 'kl': 3.875, 'epoch': 1.82, 'global_step/max_steps': '16/18', 'percentage': '88.89%', 'elapsed_time': '10m 54s', 'remaining_time': '1m 21s'}
-{'loss': 0.51269531, 'grad_norm': 13.68437235, 'learning_rate': 0.0, 'memory(GiB)': 29.57, 'train_speed(iter/s)': 0.025976, 'rewards/chosen': 0.48085937, 'logps/chosen': -374.0, 'logits/chosen': 8139571.2, 'kl': 4.66666651, 'epoch': 2.0, 'global_step/max_steps': '18/18', 'percentage': '100.00%', 'elapsed_time': '11m 28s', 'remaining_time': '0s'}
-
-Val:   0%|          | 0/2 [00:00<?, ?it/s]Val: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]                                                                                                        Train: 100%|██████████| 18/18 [11:39<00:00, 34.97s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]Train: 100%|██████████| 18/18 [11:39<00:00, 34.97s/it]Val: 100%|██████████| 2/2 [00:04<00:00,  2.15s/it]
-/home/ubuntu/webtest_rlhf_project/model_rlhf/lib/python3.10/site-packages/torch/distributed/distributed_c10d.py:4631: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
-  warnings.warn(  # warn only once
-[INFO:swift] Saving model checkpoint to /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/checkpoint-18
-                                                      Train: 100%|██████████| 18/18 [11:40<00:00, 34.97s/it]Train: 100%|██████████| 18/18 [11:40<00:00, 34.97s/it]Train: 100%|██████████| 18/18 [11:40<00:00, 38.89s/it]
-[INFO:swift] last_model_checkpoint: /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/checkpoint-18
-[INFO:swift] best_model_checkpoint: /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/checkpoint-12
-[INFO:swift] images_dir: /home/ubuntu/webtest_rlhf_project/train_script/first_rlhf_model_output/v0-20251106-152211/images
-[INFO:swift] End time of running main: 2025-11-06 15:34:13.170833
-{'eval_loss': 0.54947919, 'eval_runtime': 10.5355, 'eval_samples_per_second': 0.285, 'eval_steps_per_second': 0.19, 'eval_rewards/chosen': 0.40039062, 'eval_logps/chosen': -454.66666667, 'eval_logits/chosen': 20534613.33333333, 'eval_kl': 5.5, 'epoch': 2.0, 'global_step/max_steps': '18/18', 'percentage': '100.00%', 'elapsed_time': '11m 39s', 'remaining_time': '0s'}
-{'train_runtime': 700.1083, 'train_samples_per_second': 0.094, 'train_steps_per_second': 0.026, 'train_loss': 0.48817274, 'epoch': 2.0, 'global_step/max_steps': '18/18', 'percentage': '100.00%', 'elapsed_time': '11m 40s', 'remaining_time': '0s'}
