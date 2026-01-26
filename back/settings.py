@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'users',
     'api_auto_test',
     'projects',
-    'requirements'
+    'requirements',
+    'functional_test'
 ]
 
 MIDDLEWARE = [

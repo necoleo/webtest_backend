@@ -1,6 +1,6 @@
 from django.db import models
 
-class ApiDocuments(models.Model):
+class ApiDocumentsModel(models.Model):
 
     # id
     id = models.AutoField(
@@ -84,3 +84,9 @@ class ApiDocuments(models.Model):
         null=True,
         db_comment="删除时间"
     )
+
+    class Meta:
+        db_table = 'api_documents'
+        verbose_name = '接口文档'
+        verbose_name_plural = '接口文档'
+        ordering = ['-created_at']

@@ -1,0 +1,20 @@
+
+# 需求文档向量库配置
+REQUIREMENT_FAISS_PATH: "requirements_vectors.faiss"
+
+# 测试用例向量库配置
+TEST_CASES_FAISS_PATH: "test_cases_vectors.faiss"
+
+# 需求文档-测试用例统一向量库配置
+UNIFIED_FAISS_PATH: "unified_vectors.faiss"
+
+
+# 匹配策略配置
+# 需求相似度阈值
+REQUIREMENT_SIMILARITY_THRESHOLD: 0.3
+
+# 测试用例相似度阈值
+TEST_CASES_SIMILARITY_THRESHOLD: 0.7
+
+# 需求匹配测试用例相似度阈值
+UNIFIED_SIMILARITY_THRESHOLD: 0.4

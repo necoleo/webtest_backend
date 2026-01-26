@@ -49,3 +49,9 @@ class RequirementRelationModel(models.Model):
         null=True,
         db_comment="删除时间"
     )
+
+    class Meta:
+        db_table = 'requirement_relation'
+        verbose_name = "关联需求"
+        verbose_name_plural = verbose_name
+        ordering = ['-created_at']

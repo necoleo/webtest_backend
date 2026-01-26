@@ -95,3 +95,9 @@ class RequirementModel(models.Model):
         null=True,
         db_comment="删除时间"
     )
+
+    class Meta:
+        db_table = 'requirement'
+        verbose_name = "需求项"
+        verbose_name_plural = verbose_name
+        ordering = ['-created_at']

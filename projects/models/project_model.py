@@ -90,3 +90,9 @@ class ProjectModel(models.Model):
         null=True,
         db_comment="删除时间"
     )
+
+    class Meta:
+        db_table = 'project'
+        verbose_name = "项目"
+        verbose_name_plural = verbose_name
+        ordering = ['-created_at']

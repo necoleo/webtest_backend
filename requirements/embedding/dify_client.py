@@ -40,4 +40,4 @@ class DifyClient:
             response = session.post(url=embedding_workflow_url, json=json_data)
             return response.json()["data"]["outputs"]["json"][0]["vector"][0]
         except Exception as e:
-            raise Exception(f"智谱向量化失败: {str(e)}")
+            raise Exception(f"向量化失败: {str(e)}")

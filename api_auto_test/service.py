@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from qcloud_cos import CosClientError
 
 from api_auto_test.models import (
-    ApiDocuments,
+    ApiDocumentsModel,
     ApiInterfaceModel,
     ApiTestCaseModel,
     ApiTestEnvironmentModel,
@@ -82,7 +82,7 @@ class Service:
             upload_file.delete(saved_filename)
 
             # 创建接口文档记录
-            api_document = ApiDocuments.objects.create(
+            api_document = ApiDocumentsModel.objects.create(
                 project_id=project_id,
                 doc_name=file.name,
                 version=version,
@@ -142,7 +142,7 @@ class Service:
             return response
 
         try:
-            api_document = ApiDocuments.objects.get(id=api_document_id, deleted_at__isnull=True)
+            api_document = ApiDocumentsModel.objects.get(id=api_document_id, deleted_at__isnull=True)
 
             if not api_document:
                 response["code"] = ErrorCode.PARAM_INVALID
@@ -227,7 +227,7 @@ class Service:
                 # 模糊查询
                 filter_map["version__contains"] = version
 
-            query_set = ApiDocuments.objects.filter(**filter_map)
+            query_set = ApiDocumentsModel.objects.filter(**filter_map)
 
             paginator = Paginator(query_set, page_size)
             page_obj = paginator.get_page(page)
@@ -304,7 +304,7 @@ class Service:
         try:
             with transaction.atomic():
                 # 删除接口文档
-                target_api_document = ApiDocuments.objects.get(id=api_document_id, deleted_at__isnull=True)
+                target_api_document = ApiDocumentsModel.objects.get(id=api_document_id, deleted_at__isnull=True)
                 target_api_document.deleted_at = timezone.now()
                 target_api_document.save()
                 # 删除所有关联的接口
@@ -318,7 +318,7 @@ class Service:
                 response['data']['api_document_id'] = api_document_id
                 return response
 
-        except ApiDocuments.DoesNotExist:
+        except ApiDocumentsModel.DoesNotExist:
             response["code"] = ErrorCode.PARAM_INVALID
             response["message"] = "该接口文档不存在"
             response['status_code'] = 400
@@ -348,7 +348,7 @@ class Service:
         try:
 
             # 获取接口文档
-            api_document = ApiDocuments.objects.get(id=api_document_id, deleted_at__isnull=True)
+            api_document = ApiDocumentsModel.objects.get(id=api_document_id, deleted_at__isnull=True)
 
             # 判断是否已解析
             if api_document.is_parsed:

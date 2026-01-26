@@ -1,0 +1,95 @@
+# 训练方式 KTO
+
+2*32G
+
+# 数据集
+{'label': true/false} 
+
+# 版本
+ms-swift==3.0.0
+
+# 脚本
+第一步
+nproc_per_node=2
+
+第二步
+CUDA_VISIBLE_DEVICES=0,1 \
+NPROC_PER_NODE=$nproc_per_node \
+swift rlhf \
+    --rlhf_type kto \
+    --model ZhipuAI/glm-4-9b-chat \
+    --dataset /root/data/new_train.jsonl \
+    --train_type lora \
+    --val_dataset /root/data/new_dev.jsonl \
+    --gradient_accumulation_steps $(expr 16 / $nproc_per_node) \
+    --gradient_checkpointing_kwargs '{"use_reentrant": false}' \
+    --num_train_epochs 2 \
+    --learning_rate 5e-4 \
+    --lora_rank 8 \
+    --lora_alpha 32 \
+    --max_steps 1000 \
+    --eval_steps 500 \
+    --save_steps 500 \
+    --save_total_limit 2 \
+    --logging_steps 2
+	
+	
+推理	
+CUDA_VISIBLE_DEVICES=0,1 swift infer \
+    --model_type glm4 \
+    --ckpt_dir /root/output/glm-4-9b-chat/v0-20241221-080056/checkpoint-200 \
+    --infer_backend pt \
+    --stream false 
+	
+未合并部署
+CUDA_VISIBLE_DEVICES=0,1 \
+swift deploy \
+    --model_type glm4 \
+    --ckpt_dir /root/output/glm-4-9b-chat/v0-20241221-080056/checkpoint-200 \
+    --stream false \
+	--port 3389 \
+    --max_batch_size 10 \
+    --infer_backend pt
+	
+合并
+CUDA_VISIBLE_DEVICES=0,1 swift export \
+    --ckpt_dir /root/output/glm-4-9b-chat/v1-20250309-141658/checkpoint-1000 --merge_lora true
+
+中间可能缺少库，需要按照
+pip install git+https://github.com/huggingface/trl.git
+pip install --upgrade torch
+pip install --upgrade triton
+apt-get install libgl1-mesa-glx
+pip install --upgrade vllm==0.6.1
+pip install --upgrade transformers==4.46.0
+
+
+	
+合并后部署
+RAY_memory_monitor_refresh_ms=0 CUDA_VISIBLE_DEVICES=0,1 \
+swift deploy \
+--ckpt_dir /root/output/glm-4-9b-chat/v1-20250309-141658/checkpoint-1000-merged \
+--stream false \
+--port 3389 \
+--max_batch_size 10 \
+--tensor_parallel_size 2 \
+--infer_backend vllm \  (建议用pt)
+--torch_dtype float16
+
+测试例子
+[{"role": "system","content": "你是一名软件测试工程师。你的任务是根据需求内容生成测试用例。"}, {"role": "user","content": "你需要用完整的需求内容来理解业务关联和逻辑，然后结合你对业务的理解针对指定的需求内容生成需要的测试用例，需要考虑测试用例覆盖度，切忌不要生成重复的测试用例，不要创造需求"}, {"role": "assistant","content": "好的，我将生成符合要求的测试用例，同时严格按照python list包含dict的 [{\"testpoint\": \"此处为测试点\", \"operation\": \"此处为操作步骤\", \"expectedresult\": \"此处为预期结果\"},{\"testpoint\": \"此处为测试点\", \"operation\": \"此处为操作步骤\", \"expectedresult\": \"此处为预期结果\"}]格式生成"}, {"role": "user","content": "{‘功能需求’:[‘实现“我的订单”功能，用户可以查看自己的订单详情。’,‘用户可以对订单进行取消操作。’],‘业务规则’:[‘用户只能取消未发货的订单。’,‘取消订单后，系统应自动退款至用户原支付渠道。’],‘界面和交互’:[‘“我的订单”页面布局合理，信息展示清晰。’,‘取消订单操作简单明了，用户易于理解。’],‘异常处理’:[‘处理用户尝试取消已发货订单的情况。’,‘处理退款失败时的错误提示。’],‘性能需求’:[‘“我的订单”页面加载速度快，用户体验良好。’,‘取消订单和退款操作响应时间短。’],‘安全需求’:[‘确保用户订单信息的安全传输和存储。’,‘防止未授权用户访问“我的订单”功能。’]}，测试模块为：我的订单，测试方向为：性能需求，指定需要生成测试用例的需求为：取消订单和退款操作响应时间短。”}"}]
+
+http://81.68.254.173:3389/v1/chat/completions
+
+部署后API调用
+headers = {
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "model": "checkpoint-200-merged",
+            "messages": messages[1],
+            "temperature": 0.4
+        }
+
+
