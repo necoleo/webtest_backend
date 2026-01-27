@@ -30,7 +30,7 @@ class Vectorization:
             # 获取需求
             requirement_obj = RequirementModel.objects.get(
                 id=requirement_id,
-                delete_at__isnull=True
+                deleted_at__isnull=True
             )
 
             # 检查该需求是否向量化
@@ -44,7 +44,7 @@ class Vectorization:
             vector = self.client.get_embedding(requirement_obj.requirement_content)
 
             # 存入faiss
-            self.faiss_manager.add_vector(vector)
+            self.faiss_manager.add_vector(requirement_obj.id, vector,)
 
             # 更新数据库标记
             requirement_obj.is_vectorized = True
@@ -108,7 +108,7 @@ class Vectorization:
         requirements_obj = RequirementModel.objects.get(
             requirement_document_id = requirement_document_id,
             is_vectorized = False,
-            delete_at__isnull=True
+            deleted_at__isnull=True
         ).values_list("id", flat=True)
 
         requirement_list = list(requirements_obj)
@@ -135,7 +135,7 @@ class Vectorization:
         try:
             requirement_obj = RequirementModel.objects.get(
                 id = requirement_id,
-                delete_at__isnull=True
+                deleted_at__isnull=True
             )
 
             vector = self.client.get_embedding(requirement_obj.requirement_content)

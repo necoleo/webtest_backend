@@ -11,10 +11,12 @@ from qcloud_cos import CosClientError
 
 from constant.error_code import ErrorCode
 from project_decorator.request_decorators import valid_params_blank
+from projects.models import ProjectModel
 from requirements.models import RequirementDocumentModel, RequirementModel, RequirementRelationModel
 from requirements.parser.requirement_document_parser import RequirementDocumentParser
 from requirements.parser.requirement_extractor import RequirementExtractor
 from requirements.vector.faiss_manager import FaissManager
+from requirements.vector.vectorization import Vectorization
 from tasks.requirement_tasks import RequirementTasks
 from utils.cos.cos_client import CosClient
 
@@ -27,6 +29,8 @@ class Service:
         self.cos_client = CosClient()
         self.faiss_manager = FaissManager()
         self.requirement_extractor = RequirementExtractor()
+        self.vectorization = Vectorization()
+        self.tasks = RequirementTasks()
 
 
     @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user_id", "created_user"]))
@@ -271,7 +275,14 @@ class Service:
             }
             return response
 
+        except RequirementDocumentModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "该需求文档不存在"
+            response["status_code"] = 400
+            return response
+
         except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
             response["message"] = f"错误信息: {str(e)}"
             response['status_code'] = 500
             return response
@@ -384,7 +395,7 @@ class Service:
         except Exception as e:
 
             response["code"] = ErrorCode.SERVER_ERROR
-            response["message"] = f"<解析需求文档失败：{str(e)}"
+            response["message"] = f"解析需求文档失败：{str(e)}"
             response['status_code'] = 500
             return response
 
@@ -617,20 +628,18 @@ class Service:
                 response['status_code'] = 400
                 return response
 
+            update_fields_list = []
             if requirement_title:
                 requirement_obj.requirement_title = requirement_title
+                update_fields_list.append("requirement_title")
             if requirement_content:
                 requirement_obj.requirement_content = requirement_content
-                # 已向量化的需求项需要删除向量，标记为未向量化
-                if requirement_obj.is_vectorized:
-                    self.faiss_manager.remove(requirement_obj.vector_index)
-                    requirement_obj.is_vectorized = False
-                    requirement_obj.status = RequirementModel.RequirementStatus.PENDING
-
+                update_fields_list.append("requirement_content")
             if module:
                 requirement_obj.module = module
+                update_fields_list.append("module")
 
-            requirement_obj.save(update_fields=["requirement_title", "requirement_content", "module", "is_vectorized", "status"])
+            requirement_obj.save(update_fields=update_fields_list)
 
             response["code"] = ErrorCode.SUCCESS
             response["message"] = "更新成功"
@@ -642,13 +651,150 @@ class Service:
             }
             return response
 
+        except RequirementModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "该需求项不存在"
+            response["status_code"] = 400
+            return response
+
         except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
             response["message"] = f"错误信息: {str(e)}"
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id","requirement_document_id", "requirement_content", "module", "created_user_id", "created_user"]))
+    @method_decorator(valid_params_blank(required_params_list=["project_id","requirement_document_id", "requirement_content", "created_user_id", "created_user"]))
     def upload_requirement(self, project_id, requirement_document_id, requirement_title,
                            requirement_content, module, created_user_id, created_user):
-        # todo
-        pass
+        """
+        上传需求项
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+
+        try:
+            # 校验该项目是否存在
+            project_obj = ProjectModel.objects.get(id=project_id, deleted_at__isnull=True)
+            # 校验该需求文档是否存在
+            requirement_document_obj = RequirementDocumentModel.objects.get(
+                id=requirement_document_id,
+                project_id=project_id,
+                deleted_at__isnull=True
+            )
+            with transaction.atomic():
+                # 创建需求项
+                requirement_obj = RequirementModel.objects.create(
+                    project_id=project_id,
+                    requirement_document_id=requirement_document_id,
+                    requirement_title=requirement_title,
+                    requirement_content=requirement_content,
+                    module=module,
+                    created_user_id=created_user_id,
+                    created_user=created_user,
+                )
+
+                # 更新需求文档解析需求项数量 +1
+                current_count = requirement_document_obj.requirement_count or 0
+                requirement_document_obj.requirement_count = current_count + 1
+                requirement_document_obj.save(update_fields=["requirement_count"])
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "需求项创建成功"
+            response["data"] = {
+                "id": requirement_obj.id,
+                "project_id": requirement_obj.project_id,
+                "requirement_id": requirement_obj.id,
+                "requirement_title": requirement_obj.requirement_title,
+                "requirement_content": requirement_obj.requirement_content,
+                "module": requirement_obj.module,
+                "status": requirement_obj.status,
+                "is_vectorized": requirement_obj.is_vectorized,
+                "created_user_id": requirement_obj.created_user_id,
+                "created_user": requirement_obj.created_user,
+                "created_at":  requirement_obj.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            }
+            return response
+        except ProjectModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "不存在该项目"
+            response["status_code"] = 400
+            return response
+
+        except RequirementDocumentModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "不存在该需求文档"
+            response["status_code"] = 400
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = str(e)
+            response["status_code"] = 500
+            return response
+
+    @method_decorator(valid_params_blank(required_params_list=["requirement_id_list"]))
+    def audit_requirement(self, requirement_id_list):
+        """
+        审核需求项
+        支持批量, 状态变更为处理中，异步触发向量化，完成后更新为已审核
+        :param: requirement_id_list 需求项id列表
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+        try:
+            if not isinstance(requirement_id_list, list) or len(requirement_id_list) < 1:
+                response["code"] = ErrorCode.PARAM_MISSING
+                response["message"] = "需求项参数为空"
+                response["status_code"] = 400
+                return response
+
+            process_list = []
+            for requirement_id in requirement_id_list:
+                requirement_obj = RequirementModel.objects.get(id=requirement_id, deleted_at__isnull=True)
+                # 存在非待审核状态的需求项
+                if requirement_obj.status != RequirementModel.RequirementStatus.PENDING:
+                    response["code"] = ErrorCode.PARAM_INVALID
+                    response["message"] = "存在非待审核状态的需求项"
+                    response["status_code"] = 400
+                    return response
+
+                # 状态更新为 处理中
+                requirement_obj.status = RequirementModel.RequirementStatus.PROCESSING
+                requirement_obj.save(update_fields=["status"])
+                process_list.append(
+                    {
+                        "id": requirement_obj.id,
+                        "message": "审核提交成功，处理中"
+                    }
+                )
+
+            # 提交异步任务
+            if process_list:
+                process_requirement_id_list = []
+                for process in process_list:
+                    process_requirement_id_list.append(process["id"])
+
+                RequirementTasks.async_vectorize_requirement_list.delay(process_requirement_id_list)
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "审核提交成功"
+            response["data"]["list"] = process_list
+            return response
+        except RequirementModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "该需求项不存在"
+            response["status_code"] = 400
+            return response
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = str(e)
+            response["status_code"] = 500
+            return response

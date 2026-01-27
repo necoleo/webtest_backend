@@ -18,7 +18,7 @@ class ZhipuClient:
         self.chat_model = "GLM-4-Flash"
         self.embedding_model = "embedding-3"
 
-    def chat(self, message):
+    def chat(self, messages):
         """
         调用对话模型
         :param message:
@@ -27,7 +27,7 @@ class ZhipuClient:
         try:
             response = self.client.chat.completions.create(
                 model=self.chat_model,
-                message=message,
+                messages=messages,
                 temperature=0.3
             )
             return response.choices[0].message.content

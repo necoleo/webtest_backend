@@ -5,10 +5,11 @@ class RequirementModel(models.Model):
 
     class RequirementStatus(models.IntegerChoices):
         PENDING = 0, "待审核"
-        CONFIRMED = 1, "已审核"
-        GENERATING = 2, "测试用例生成中"
-        COVERED = 3, "测试用例已覆盖"
-        DEPRECATED = 4, "已废弃"
+        PROCESSING = 1, "处理中" # 向量化，异步操作时前台显示状态
+        CONFIRMED = 2, "已审核"
+        GENERATING = 3, "测试用例生成中"
+        COVERED = 4, "测试用例已覆盖"
+        DEPRECATED = 5, "已废弃"
 
     # id
     id = models.AutoField(
@@ -49,7 +50,7 @@ class RequirementModel(models.Model):
     status = models.SmallIntegerField(
         choices=RequirementStatus.choices,
         default=RequirementStatus.PENDING,
-        db_comment="需求状态: 0-待审核，1-已审核，2-测试用例生成中，3-测试用例已覆盖，4-已废弃"
+        db_comment="需求状态: 0-待审核，1-处理中（向量化），2-已审核，3-测试用例生成中，4-测试用例已覆盖，5-已废弃"
     )
 
     # 向量索引
