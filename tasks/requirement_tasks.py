@@ -14,7 +14,7 @@ from constant.error_code import ErrorCode
 from requirements.models import RequirementDocumentModel, RequirementModel, RequirementRelationModel
 from requirements.parser.requirement_document_parser import RequirementDocumentParser
 from requirements.parser.requirement_extractor import RequirementExtractor
-from requirements.vector.vector_matcher import VectorMatcher
+from requirements.service import Service
 from requirements.vector.vectorization import Vectorization
 from utils.cos.cos_client import CosClient
 
@@ -193,7 +193,7 @@ class RequirementTasks:
             "data": {},
             "status_code": 200
         }
-
+        service = Service()
         logger.info(f"开始处理 {len(requirement_id_list)} 个需求项：{requirement_id_list}")
         success_list = []
         fail_list = []
@@ -221,18 +221,21 @@ class RequirementTasks:
                     logger.warning(f"需求项 {requirement_id} 向量化失败：{item.get('message')}")
 
             # 向量化完成后，建立双向相似关联
+            relations_count = 0
+            relations_list = []
             if success_list:
-                relations_count = RequirementRelationModel
+                service_response = service.build_similar_relations(success_list)
+                relations_count = len(service_response['data']['list'])
+                relations_list = service_response['data']['list']
 
-            logger.info(f"批量处理完成，成功 {results['success_count']} 个， 失败 {results['fail_count']} 个")
+            logger.info(f"批量处理完成，成功 {results['success_count']} 个， 失败 {results['fail_count']} 个, 关联 {relations_count}")
 
             response["code"] = ErrorCode.SUCCESS
             response["message"] = f"处理完成，成功 {len(success_list)} 个，失败 {len(fail_list)} 个"
             response["data"] = {
                 "success_count": len(success_list),
                 "fail_count": len(fail_list),
-                "success_list": success_list,
-                "fail_list": fail_list
+                "relations_list": relations_list
             }
             return response
 
@@ -244,6 +247,7 @@ class RequirementTasks:
                 logger.info(f"准备重试，当前第 {task.request.retries + 1} 次")
                 raise task.retry(exc=e)
 
+            # 重试失败，回滚状态
             RequirementModel.objects.filter(
                 id__in=requirement_id_list,
                 status=RequirementModel.RequirementStatus.PROCESSING
@@ -253,14 +257,3 @@ class RequirementTasks:
             response["message"] = f"处理失败：{str(e)}"
             response["status_code"] = 500
             return response
-
-    @staticmethod
-    def build_similar_relations(requirement_id_list):
-        """为需求项列表建立双向相似关联"""
-        vector_matcher = VectorMatcher()
-        relation_list = []
-
-        for requirement_id in requirement_id_list:
-            try:
-                # 查找相似需求
-                similar_requirements = vector_matcher.find_similar_by_requirement_id(requirement_id, )

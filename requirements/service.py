@@ -10,12 +10,13 @@ from django.utils.decorators import method_decorator
 from qcloud_cos import CosClientError
 
 from constant.error_code import ErrorCode
+from functional_test.models.functional_test_case_model import FunctionalTestCaseModel
 from project_decorator.request_decorators import valid_params_blank
 from projects.models import ProjectModel
 from requirements.models import RequirementDocumentModel, RequirementModel, RequirementRelationModel
-from requirements.parser.requirement_document_parser import RequirementDocumentParser
 from requirements.parser.requirement_extractor import RequirementExtractor
 from requirements.vector.faiss_manager import FaissManager
+from requirements.vector.vector_matcher import VectorMatcher
 from requirements.vector.vectorization import Vectorization
 from tasks.requirement_tasks import RequirementTasks
 from utils.cos.cos_client import CosClient
@@ -31,6 +32,7 @@ class Service:
         self.requirement_extractor = RequirementExtractor()
         self.vectorization = Vectorization()
         self.tasks = RequirementTasks()
+        self.vector_matcher = VectorMatcher()
 
 
     @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user_id", "created_user"]))
@@ -446,7 +448,10 @@ class Service:
                 ).update(deleted_at=timezone.now())
 
                 # 删除该需求项相关的测试用例
-                # todo
+                FunctionalTestCaseModel.objects.filter(
+                        requirement_id=target_requirement_obj.id,
+                        deleted_at__isnull=True
+                ).update(deleted_at=timezone.now())
 
                 response["code"] = ErrorCode.SUCCESS
                 response["message"] = "删除成功"
@@ -794,6 +799,72 @@ class Service:
             response["status_code"] = 400
             return response
         except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = str(e)
+            response["status_code"] = 500
+            return response
+
+
+    @method_decorator(valid_params_blank(required_params_list=["requirement_id_list"]))
+    def build_similar_relations(self, requirement_id_list):
+        """为需求项列表建立双向相似关联"""
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+        relation_list = []
+        try:
+            for requirement_id in requirement_id_list:
+                similarity_threshold = os.environ.get("SIMILARITY_THRESHOLD")
+                match_number = os.environ.get("MATCH_NUMBER")
+                # 获取与requirement_id相似的需求项
+                similar_requirements_list = self.vector_matcher.find_similar_by_requirement_id(requirement_id, similarity_threshold, match_number)
+
+                for similar_requirement in similar_requirements_list:
+                    similar_requirement_id = similar_requirement["id"]
+                    similarity_score = similar_requirement["similarity_score"]
+
+                    # 正向关联
+                    if not RequirementRelationModel.objects.filter(
+                        source_requirement_id=requirement_id,
+                        target_requirement_id=similar_requirement_id,
+                        deleted_at__isnull=True
+                    ).exists():
+                        relation_list.append(
+                            RequirementRelationModel(
+                                source_requirement_id=requirement_id,
+                                target_requirement_id=similar_requirement_id,
+                                similarity_score=similarity_score,
+                                match_method="vector"
+                            )
+                        )
+
+                    # 反向关联
+                    if not RequirementRelationModel.objects.filter(
+                        source_requirement_id=similar_requirement_id,
+                        target_requirement_id=requirement_id,
+                        deleted_at__isnull=True
+                    ).exists():
+                        relation_list.append(
+                            RequirementRelationModel(
+                                source_requirement_id=similar_requirement_id,
+                                target_requirement_id=requirement_id,
+                                similarity_score=similarity_score,
+                                match_method="vector"
+                            )
+                        )
+            if relation_list:
+                RequirementRelationModel.objects.bulk_create(relation_list, ignore_conflicts=True)
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "需求项建立相似关联成功"
+            response["data"]["list"] = relation_list
+            return response
+
+        except Exception as e:
+
             response["code"] = ErrorCode.SERVER_ERROR
             response["message"] = str(e)
             response["status_code"] = 500
