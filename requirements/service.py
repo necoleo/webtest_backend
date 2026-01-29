@@ -14,7 +14,6 @@ from functional_test.models.functional_test_case_model import FunctionalTestCase
 from project_decorator.request_decorators import valid_params_blank
 from projects.models import ProjectModel
 from requirements.models import RequirementDocumentModel, RequirementModel, RequirementRelationModel
-from requirements.parser.requirement_extractor import RequirementExtractor
 from requirements.vector.faiss_manager import FaissManager
 from requirements.vector.vector_matcher import VectorMatcher
 from requirements.vector.vectorization import Vectorization
@@ -27,9 +26,8 @@ class Service:
     def __init__(self):
         # 本地缓存目录
         self.COS_FILE_SAVED_TEMP = "cos_file_temp"
-        self.cos_client = CosClient()
         self.faiss_manager = FaissManager()
-        self.requirement_extractor = RequirementExtractor()
+        self.cos_client = CosClient()
         self.vectorization = Vectorization()
         self.tasks = RequirementTasks()
         self.vector_matcher = VectorMatcher()
@@ -68,6 +66,7 @@ class Service:
             temp_dir = os.path.abspath(self.COS_FILE_SAVED_TEMP)
             temp_file_path = os.path.join(temp_dir, saved_filename)
             # 上传需求文档到 COS
+
             cos_res = self.cos_client.upload_file_to_cos_bucket(target_dir, saved_filename, temp_file_path)
 
             # 判断上传是否成功（SDK 通常返回包含 ETag 的响应头）
@@ -123,7 +122,7 @@ class Service:
             return response
 
     @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
-    def get_requirement_document(self, page, page_size, requirement_document_id=None, project_id=None, doc_name=None, version=None):
+    def get_requirement_document(self, page, page_size, requirement_document_id=None, project_id=None, doc_name=None, parse_status=None ,version=None):
         """
        获取需求文档
        :param page: 页码（必填）
@@ -170,6 +169,10 @@ class Service:
             if doc_name:
                 # 模糊查询
                 filter_map["doc_name__contains"] = doc_name
+
+            if parse_status is not None:
+                # 精确查询
+                filter_map["parse_status"] = parse_status
 
             if version is not None:
                 # 模糊查询
@@ -372,7 +375,7 @@ class Service:
             requirement_document_obj = RequirementDocumentModel.objects.get(id=requirement_document_id, deleted_at__isnull=True)
 
             # "解析状态: 0-未解析, 1-解析中, 2-已解析, 3-解析失败"
-            if requirement_document_obj.parse_status != 0:
+            if requirement_document_obj.parse_status not in [0, 3]:
                 response["code"] = ErrorCode.PARAM_INVALID
                 response["message"] = "该文件已解析"
                 response['status_code'] = 400

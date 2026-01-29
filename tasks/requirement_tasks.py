@@ -72,16 +72,11 @@ class RequirementTasks:
 
             # 从cos下载文件
             cos_client = CosClient()
-            local_path = cos_client.download_and_read_json_by_url(
+            content = cos_client.download_and_read_text_by_url(
                 requirement_document_obj.cos_access_url,
                 RequirementTasks.COS_FILE_SAVED_TEMP
             )
-            logger.info(f"文件下载成功: {local_path}")
-
-            # 解析文档内容
-            parser = RequirementDocumentParser(file_path=local_path)
-            content = parser.get_document_content()
-            logger.info("需求文档解析成功")
+            logger.info(f"文件下载成功,内容为 {content}")
 
             # 使用AI提取需求项
             requirement_extractor = RequirementExtractor()

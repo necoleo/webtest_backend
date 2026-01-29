@@ -40,8 +40,11 @@ class GetRequirementDocumentListView(View):
                 project_id = int(project_id)
             doc_name = request.GET.get("doc_name")
             version = request.GET.get("version")
+            parse_status = request.GET.get("parse_status")
+            if parse_status:
+                parse_status = int(parse_status)
 
-            service_response = self.service.get_requirement_document(page, page_size, requirement_document_id, project_id, doc_name, version)
+            service_response = self.service.get_requirement_document(page, page_size, requirement_document_id, project_id, doc_name, parse_status, version)
             response['code'] = service_response['code']
             response['message'] = service_response['message']
             response['data'] = service_response['data']
