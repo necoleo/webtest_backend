@@ -11,10 +11,10 @@ from celery.utils.log import get_task_logger
 from django.db import transaction
 
 from constant.error_code import ErrorCode
-from requirements.models import RequirementDocumentModel, RequirementModel, RequirementRelationModel
+from requirements.models import RequirementDocumentModel, RequirementModel
 from requirements.parser.requirement_document_parser import RequirementDocumentParser
 from requirements.parser.requirement_extractor import RequirementExtractor
-from requirements.service import Service
+
 from requirements.vector.vectorization import Vectorization
 from utils.cos.cos_client import CosClient
 
@@ -193,6 +193,7 @@ class RequirementTasks:
             "data": {},
             "status_code": 200
         }
+        from requirements.service import Service
         service = Service()
         logger.info(f"开始处理 {len(requirement_id_list)} 个需求项：{requirement_id_list}")
         success_list = []

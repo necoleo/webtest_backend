@@ -37,7 +37,7 @@ class FunctionalTestCaseModel(models.Model):
         db_comment="用例标题"
     )
 
-    # 优先级
+    # 前置条件
     precondition = models.TextField(
         null=True,
         blank=True,
@@ -49,39 +49,45 @@ class FunctionalTestCaseModel(models.Model):
         db_comment="测试步骤"
     )
 
-    #
+    # 预期结果
     expected_result = models.TextField(
         db_comment="预期结果"
     )
 
+    # 所属模块
     module = models.CharField(
         null=True,
         max_length=100,
         db_comment="所属模块"
     )
 
+    # 优先级
     priority = models.SmallIntegerField(
         choices=PriorityChoices.choices,
         default=PriorityChoices.P0,
         db_comment="优先级，P0-最高，P1-高，P2-中，P3-低"
     )
 
+    # 备注
     comment = models.TextField(
         null=True,
         blank=True,
         db_comment="备注"
     )
 
+    # 来源
     case_source = models.SmallIntegerField(
         choices=CaseSourceChoices.choices,
         default=CaseSourceChoices.MANUAL,
         db_comment="用例来源，0-手动，1-AI生成，2-导入"
     )
 
+    # 所属需求项id
     requirement_id = models.IntegerField(
         db_comment="所属需求id"
     )
 
+    # 执行情况
     execution_status = models.SmallIntegerField(
         choices=ExecutionStatusChoices.choices,
         default=ExecutionStatusChoices.NOT_EXECUTED,

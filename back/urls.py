@@ -50,6 +50,11 @@ from api_auto_test.views.update_api_test_schedule_view import UpdateApiTestSched
 from api_auto_test.views.toggle_api_test_schedule_view import ToggleApiTestScheduleView
 from api_auto_test.views.delete_api_test_schedule_view import DeleteApiTestScheduleView
 from api_auto_test.views.trigger_api_test_schedule_view import TriggerApiTestScheduleView
+from functional_test.views.create_functional_test_case_view import CreateFunctionalTestCaseView
+from functional_test.views.delete_functional_test_case_view import DeleteFunctionalTestCaseView
+from functional_test.views.get_functional_test_case_detail_view import GetFunctionalTestCaseDetailView
+from functional_test.views.get_functional_test_case_list_view import GetFunctionalTestCaseListView
+from functional_test.views.update_functional_test_case_view import UpdateFunctionalTestCaseView
 
 # 项目管理相关视图
 from projects.views.create_project_view import CreateProjectView
@@ -92,6 +97,13 @@ urlpatterns = [
     path("api/requirement/list/", GetRequirementListView.as_view()),
     path("api/requirement/upload/", UploadRequirementView.as_view()),
     path("api/requirement/audit/", AuditRequirementView.as_view()),
+
+    # 测试用例相关接口
+    path("api/functional_test_case/create/", CreateFunctionalTestCaseView.as_view()),
+    path("api/functional_test_case/list/", GetFunctionalTestCaseListView.as_view()),
+    path("api/functional_test_case/detail/", GetFunctionalTestCaseDetailView.as_view()),
+    path("api/functional_test_case/update/", UpdateFunctionalTestCaseView.as_view()),
+    path("api/functional_test_case/delete/", DeleteFunctionalTestCaseView.as_view()),
 
     # 接口文档相关接口
     path("api/api_document/upload/", UploadApiDocumentView.as_view()),
