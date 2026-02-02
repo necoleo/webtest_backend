@@ -9,7 +9,7 @@ from users import models as users_model
 
 class UserService:
 
-    @method_decorator(valid_params_blank(required_params_list=["username", "password"]))
+    @valid_params_blank(required_params_list=["username", "password"])
     def user_login(self, request, username, password):
         """用户登录"""
         response = {
@@ -46,7 +46,7 @@ class UserService:
                 return response
         return response
 
-    @method_decorator(valid_params_blank(required_params_list=["username","password","check_password"]))
+    @valid_params_blank(required_params_list=["username","password","check_password"])
     def user_register(self, username, password, check_password):
         """用户注册"""
         response = {}

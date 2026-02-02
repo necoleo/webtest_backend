@@ -39,18 +39,18 @@ def valid_params_blank(required_params_list):
             sig = inspect.signature(func)
             param_names = list(sig.parameters.keys())
             # 构建参数字典：位置参数 + 关键字参数
-            params = {}
-            if param_names and param_names[0] in ["self", "cls"]:
-                param_names = param_names[1:]
 
-            count = 0
-            for param in param_names:
-                if param in required_params_list:
-                    params[param] = args[count]
-                count += 1
+            skip_count = 1 if param_names and param_names[0] in ['self', 'cls'] else 0
+            param_names = param_names[skip_count:]
+            params = {}
+            args_without_self = args[skip_count:]
+            for i, param in enumerate(param_names):
+                if i < len(args_without_self):
+                    params[param] = args_without_self[i]
+
             # 关键字参数覆盖位置参数
             params.update(kwargs)
-
+            print(params)
             # 校验每个参数是否为blank
             blank_params_list = []
             for param in required_params_list:
@@ -65,18 +65,10 @@ def valid_params_blank(required_params_list):
                         blank_params_list.append(param)
                     continue
                 # 判断列表/字典是否为空
-                if isinstance(value, (list, dict)):
+                if isinstance(value, (list, dict, set, tuple)):
                     if not value:
                         blank_params_list.append(param)
                     continue
-
-                #  解析JSON字符串
-                try:
-                    json_param = json.loads(value)
-                    if not json_param or json_param is None:
-                        blank_params_list.append(param)
-                except:
-                    pass
 
             if blank_params_list:
                 response['code'] = ErrorCode.PARAM_BLANK

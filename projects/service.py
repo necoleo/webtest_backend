@@ -17,7 +17,7 @@ class Service:
         self.COS_FILE_SAVED_TEMP = "cos_file_temp"
         self.cos_client = CosClient()
 
-    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    @valid_params_blank(required_params_list=["page", "page_size"])
     def get_project_list(self, page, page_size, project_id=None, project_name=None, project_type=None, project_status=None, start_date=None, end_date=None  ):
         """
         获取项目列表
@@ -131,7 +131,7 @@ class Service:
 
             return response
 
-
+    @valid_params_blank(required_params_list=["project_param_dict"])
     def create_project(self, project_param_dict):
         """
         创建项目
@@ -186,7 +186,8 @@ class Service:
             response["status_code"] = 500
             return response
 
-    def update_project(self, project_param_dict: dict):
+    @valid_params_blank(required_params_list=["project_param_dict"])
+    def update_project(self, project_param_dict):
         """
         更新项目
         :param project_param_dict: {
@@ -263,7 +264,7 @@ class Service:
             return response
 
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id"]))
+    @valid_params_blank(required_params_list=["project_id"])
     def delete_project(self, project_id):
         """
         删除项目

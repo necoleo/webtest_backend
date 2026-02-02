@@ -31,7 +31,7 @@ class Service:
         self.COS_FILE_SAVED_TEMP = "cos_file_temp"
         self.cos_client = CosClient()
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user_id", "created_user"]))
+    @valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user_id", "created_user"])
     def upload_api_document(self, project_id, version, file, comment, created_user_id, created_user):
         """
         上传接口文档
@@ -118,7 +118,7 @@ class Service:
 
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["api_document_id"]))
+    @valid_params_blank(required_params_list=["api_document_id"])
     def update_api_document(self, api_document_id, doc_name=None, version=None, comment=None):
         """
         编辑接口文档
@@ -174,7 +174,7 @@ class Service:
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    @valid_params_blank(required_params_list=["page", "page_size"])
     def get_api_document(self, page, page_size, api_document_id=None, project_id=None, doc_name=None, version=None):
         """
         获取接口文档
@@ -279,7 +279,7 @@ class Service:
             return response
 
 
-    @method_decorator(valid_params_blank(required_params_list=["api_document_id"]))
+    @valid_params_blank(required_params_list=["api_document_id"])
     def delete_api_document(self, api_document_id):
         """
         删除接口文档
@@ -330,7 +330,7 @@ class Service:
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["api_document_id"]))
+    @valid_params_blank(required_params_list=["api_document_id"])
     def parse_api_document(self, api_document_id):
         """
         将接口文档解析成接口列表并保存到数据库
@@ -407,7 +407,7 @@ class Service:
 
     # ==================== 接口测试用例管理 ====================
 
-    # @method_decorator(valid_params_blank(required_params_list=["project_id", "case_name", "file", "created_user_id", "created_user"]))
+    @valid_params_blank(required_params_list=["project_id", "case_name", "file", "created_user_id", "created_user"])
     def upload_api_test_case(self, project_id, case_name, file, created_user_id, created_user, description=None):
         """
         上传接口测试用例
@@ -527,7 +527,7 @@ class Service:
                 except Exception:
                     pass
 
-    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    @valid_params_blank(required_params_list=["page", "page_size"])
     def get_api_test_case_list(self, page, page_size, project_id=None, case_name=None, source=None):
         """
         获取接口测试用例列表
@@ -618,7 +618,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["test_case_id"]))
+    @valid_params_blank(required_params_list=["test_case_id"])
     def get_api_test_case_yaml_content(self, test_case_id):
         """
         获取接口测试用例的 YAML 内容
@@ -669,7 +669,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["test_case_id"]))
+    @valid_params_blank(required_params_list=["test_case_id"])
     def get_api_test_case_detail(self, test_case_id):
         """
         获取接口测试用例详情
@@ -723,7 +723,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["test_case_id"]))
+    @valid_params_blank(required_params_list=["test_case_id"])
     def delete_api_test_case(self, test_case_id):
         """
         删除接口测试用例（软删除），同时删除关联的定时任务
@@ -774,7 +774,7 @@ class Service:
 
     # ==================== 接口测试环境配置管理 ====================
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id", "env_name", "base_url", "created_user_id", "created_user"]))
+    @valid_params_blank(required_params_list=["project_id", "env_name", "base_url", "created_user_id", "created_user"])
     def create_api_test_environment(self, project_id, env_name, base_url, created_user_id, created_user,
                                      description=None, timeout=30, headers=None, variables=None, is_default=False):
         """
@@ -838,7 +838,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    @valid_params_blank(required_params_list=["page", "page_size"])
     def get_api_test_environment_list(self, page, page_size, project_id=None, env_name=None):
         """
         获取接口测试环境配置列表
@@ -921,7 +921,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["environment_id"]))
+    @valid_params_blank(required_params_list=["environment_id"])
     def update_api_test_environment(self, environment_id, env_name=None, description=None, base_url=None,
                                      timeout=None, headers=None, variables=None, is_default=None):
         """
@@ -1014,7 +1014,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["environment_id"]))
+    @valid_params_blank(required_params_list=["environment_id"])
     def delete_api_test_environment(self, environment_id):
         """
         删除接口测试环境配置（软删除）
@@ -1055,7 +1055,7 @@ class Service:
 
     # ==================== 接口测试执行管理 ====================
 
-    @method_decorator(valid_params_blank(required_params_list=["test_case_id", "env_id", "executed_user_id", "executed_user"]))
+    @valid_params_blank(required_params_list=["test_case_id", "env_id", "executed_user_id", "executed_user"])
     def execute_api_test_case(self, test_case_id, env_id, executed_user_id, executed_user):
         """
         执行接口测试用例（创建执行记录并提交异步任务）
@@ -1129,7 +1129,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["execution_id"]))
+    @valid_params_blank(required_params_list=["execution_id"])
     def get_api_test_execution_status(self, execution_id):
         """
         获取执行任务状态
@@ -1177,7 +1177,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    @valid_params_blank(required_params_list=["page", "page_size"])
     def get_api_test_execution_history(self, page, page_size, test_case_id=None, project_id=None, status=None, trigger_type=None, has_report=None):
         """
         获取执行历史记录列表
@@ -1312,7 +1312,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["execution_id"]))
+    @valid_params_blank(required_params_list=["execution_id"])
     def get_api_test_execution_detail(self, execution_id):
         """
         获取执行记录详情
@@ -1394,10 +1394,10 @@ class Service:
 
     # ==================== 接口测试定时任务管理 ====================
 
-    @method_decorator(valid_params_blank(required_params_list=[
+    @valid_params_blank(required_params_list=[
         "project_id", "task_name", "test_case_id", "env_id",
         "schedule_type", "schedule_time", "created_user_id", "created_user"
-    ]))
+    ])
     def create_api_test_schedule(self, project_id, task_name, test_case_id, env_id,
                                   schedule_type, schedule_time, created_user_id, created_user,
                                   description=None, schedule_weekday=None, is_enabled=True):
@@ -1514,7 +1514,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    @valid_params_blank(required_params_list=["page", "page_size"])
     def get_api_test_schedule_list(self, page, page_size, project_id=None, task_name=None, is_enabled=None):
         """
         获取定时任务列表
@@ -1633,7 +1633,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["schedule_id"]))
+    @valid_params_blank(required_params_list=["schedule_id"])
     def update_api_test_schedule(self, schedule_id, task_name=None, description=None, test_case_id=None,
                                   env_id=None, schedule_type=None, schedule_time=None, schedule_weekday=None):
         """
@@ -1764,7 +1764,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["schedule_id", "is_enabled"]))
+    @valid_params_blank(required_params_list=["schedule_id", "is_enabled"])
     def toggle_api_test_schedule(self, schedule_id, is_enabled):
         """
         启用/禁用定时任务
@@ -1835,7 +1835,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["schedule_id"]))
+    @valid_params_blank(required_params_list=["schedule_id"])
     def delete_api_test_schedule(self, schedule_id):
         """
         删除定时任务（软删除）
@@ -1874,7 +1874,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["schedule_id", "executed_user_id", "executed_user"]))
+    @valid_params_blank(required_params_list=["schedule_id", "executed_user_id", "executed_user"])
     def trigger_api_test_schedule(self, schedule_id, executed_user_id, executed_user):
         """
         手动触发定时任务（立即执行一次）

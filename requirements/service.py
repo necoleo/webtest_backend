@@ -33,7 +33,7 @@ class Service:
         self.vector_matcher = VectorMatcher()
 
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id", "version", "file", "comment", "created_user_id", "created_user"]))
+    @valid_params_blank(required_params_list=["project_id", "version", "file",  "created_user_id", "created_user"])
     def upload_requirement_document(self, project_id, version, file, comment, created_user_id, created_user):
         """
         上传需求文档
@@ -121,7 +121,7 @@ class Service:
 
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    @valid_params_blank(required_params_list=["page", "page_size"])
     def get_requirement_document(self, page, page_size, requirement_document_id=None, project_id=None, doc_name=None, parse_status=None ,version=None):
         """
        获取需求文档
@@ -229,7 +229,7 @@ class Service:
 
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["requirement_document_id"]))
+    @valid_params_blank(required_params_list=["requirement_document_id"])
     def update_requirement_document(self, requirement_document_id, doc_name=None, version=None, comment=None):
         """
         编辑需求文档
@@ -292,7 +292,7 @@ class Service:
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["requirement_document_id"]))
+    @valid_params_blank(required_params_list=["requirement_document_id"])
     def delete_requirement_document(self, requirement_document_id):
         """
         删除需求文档
@@ -360,7 +360,7 @@ class Service:
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["requirement_document_id", "created_user_id", "created_user"]))
+    @valid_params_blank(required_params_list=["requirement_document_id", "created_user_id", "created_user"])
     def parse_requirement_document(self, requirement_document_id, created_user_id, created_user):
         """
         异步解析需求文档
@@ -404,7 +404,7 @@ class Service:
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["requirement_id"]))
+    @valid_params_blank(required_params_list=["requirement_id"])
     def delete_requirement(self, requirement_id):
         """
          删除需求项
@@ -473,7 +473,7 @@ class Service:
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["page","page_size"]))
+    @valid_params_blank(required_params_list=["page","page_size"])
     def get_requirement(self,page,page_size,requirement_id=None, project_id=None, requirement_document_id=None,
                         requirement_title=None, requirement_content=None, module=None, status=None, is_vectorized=None):
         """
@@ -599,7 +599,7 @@ class Service:
 
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["requirement_id"]))
+    @valid_params_blank(required_params_list=["requirement_id"])
     def update_requirement(self, requirement_id, requirement_title=None, requirement_content=None, module=None):
         """
         编辑需求项（只有待审核的需求项才能编辑）
@@ -671,7 +671,7 @@ class Service:
             response['status_code'] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id","requirement_document_id", "requirement_content", "created_user_id", "created_user"]))
+    @valid_params_blank(required_params_list=["project_id","requirement_document_id", "requirement_content", "created_user_id", "created_user"])
     def upload_requirement(self, project_id, requirement_document_id, requirement_title,
                            requirement_content, module, created_user_id, created_user):
         """
@@ -744,7 +744,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["requirement_id_list"]))
+    @valid_params_blank(required_params_list=["requirement_id_list"])
     def audit_requirement(self, requirement_id_list):
         """
         审核需求项
@@ -808,7 +808,7 @@ class Service:
             return response
 
 
-    @method_decorator(valid_params_blank(required_params_list=["requirement_id_list"]))
+    @valid_params_blank(required_params_list=["requirement_id_list"])
     def build_similar_relations(self, requirement_id_list):
         """为需求项列表建立双向相似关联"""
         response = {
@@ -820,8 +820,8 @@ class Service:
         relation_list = []
         try:
             for requirement_id in requirement_id_list:
-                similarity_threshold = os.environ.get("SIMILARITY_THRESHOLD")
-                match_number = os.environ.get("MATCH_NUMBER")
+                similarity_threshold = float(os.environ.get("SIMILARITY_THRESHOLD"))
+                match_number = int(os.environ.get("MATCH_NUMBER"))
                 # 获取与requirement_id相似的需求项
                 similar_requirements_list = self.vector_matcher.find_similar_by_requirement_id(requirement_id, similarity_threshold, match_number)
 
@@ -861,9 +861,20 @@ class Service:
             if relation_list:
                 RequirementRelationModel.objects.bulk_create(relation_list, ignore_conflicts=True)
 
+            # 将模型对象转换为可序列化的字典格式
+            serializable_list = [
+                {
+                    "source_requirement_id": r.source_requirement_id,
+                    "target_requirement_id": r.target_requirement_id,
+                    "similarity_score": r.similarity_score,
+                    "match_method": r.match_method
+                }
+                for r in relation_list
+            ]
+
             response["code"] = ErrorCode.SUCCESS
             response["message"] = "需求项建立相似关联成功"
-            response["data"]["list"] = relation_list
+            response["data"]["list"] = serializable_list
             return response
 
         except Exception as e:

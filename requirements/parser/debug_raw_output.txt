@@ -1,0 +1,956 @@
+[
+  {
+    "requirement_title": "创建对象类型-填写中文名称",
+    "requirement_content": "创建对象类型时，用户需要填写中文名称字段，该字段为必填项，用于前端显示名称",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-中文名称长度校验",
+    "requirement_content": "中文名称字段长度限制为2-50字符",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-填写英文名称",
+    "requirement_content": "创建对象类型时，用户需要填写英文名称字段，该字段为必填项，用于数据库标识",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-英文名称长度校验",
+    "requirement_content": "英文名称字段长度限制为2-50字符",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-英文名称格式校验",
+    "requirement_content": "英文名称仅允许字母、数字、下划线，首字母必须为字母",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-英文名称不可修改",
+    "requirement_content": "英文名称创建后不可修改",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-选择分类",
+    "requirement_content": "创建对象类型时，用户可以选择分类字段，该字段为非必填项，用于对象分组，可从已有分类中选择或新建",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-选择图标",
+    "requirement_content": "创建对象类型时，用户可以选择图标字段，该字段为非必填项，用于界面显示图标，支持Emoji或图标库",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-填写简介",
+    "requirement_content": "创建对象类型时，用户可以填写简介字段，该字段为非必填项，用于对象类型说明",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-简介长度校验",
+    "requirement_content": "简介字段最多200字符",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-选择角色类型",
+    "requirement_content": "创建对象类型时，用户需要选择角色类型字段，该字段为必填项，选项包括Principal（主体）、Actor（操作者）、Data（数据）",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-Principal角色说明",
+    "requirement_content": "Principal（主体对象）可作为工作流的被处理对象，示例：申请人、患者、学生，特点：通常需要被审核、处理、转换",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-Actor角色说明",
+    "requirement_content": "Actor（操作者对象）可处理工作流节点（审批、操作），示例：志愿者、医生、教师，特点：具有操作权限，能处理任务",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-Data角色说明",
+    "requirement_content": "Data（数据对象）纯数据，不参与工作流，示例：音频文件、订单、记录，特点：被操作的数据实体",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-选择访问渠道",
+    "requirement_content": "创建对象类型时，用户需要选择访问渠道字段，该字段为必填项，选项包括Web（PC端）、MiniProgram（小程序）、Mobile",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-选择能力标识",
+    "requirement_content": "创建对象类型时，用户可以选择能力标识字段，该字段为非必填项，选项包括canLogin（可登录）、canManage（可管理数据）、canApprove（可审批）",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-Actor角色默认配置",
+    "requirement_content": "当角色类型选择Actor时，能力标识默认勾选canManage和canApprove，访问渠道默认勾选Web",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-Principal角色默认配置",
+    "requirement_content": "当角色类型选择Principal时，能力标识默认勾选canLogin，访问渠道默认勾选MiniProgram",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-Data角色配置禁用",
+    "requirement_content": "当角色类型选择Data时，能力标识全部禁用，访问渠道全部禁用",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-保存草稿功能",
+    "requirement_content": "用户可以点击保存草稿按钮，保存但不立即生效，可以继续编辑",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-保存并发布功能",
+    "requirement_content": "用户可以点击保存并发布按钮，立即生效，在Neo4j中创建对应的ObjectType节点",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-取消功能",
+    "requirement_content": "用户可以点击取消按钮，返回列表页",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-前置条件检查",
+    "requirement_content": "创建对象类型前，用户需已登录且拥有超级管理员权限，已选择当前项目",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-英文名称唯一性校验",
+    "requirement_content": "系统验证英文名称唯一性，如果英文名称已存在，提示「英文名称已被使用，请更换」，高亮错误字段",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-必填项校验",
+    "requirement_content": "系统验证必填项，如果必填项未填写，提示「请填写必填项」，高亮所有未填写的必填字段",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-英文名称格式错误提示「,
+    」requirement_content": "如果英文名称格式不正确，提示「英文名称只能包含字母、数字、下划线，且必须以字母开头」",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-网络异常处理",
+    "requirement_content": "如果网络异常，提示「保存失败，请稍后重试」，保留用户已填写的数据",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "创建对象类型-成功后跳转",
+    "requirement_content": "创建成功后，系统提示「创建成功」，跳转到对象类型详情页，引导用户添加属性",
+    "module": "对象类型管理",
+    "source": "1.1.1 创建对象类型"
+  },
+  {
+    "requirement_title": "查看对象类型列表-卡片信息展示",
+    "requirement_content": "对象类型列表以卡片形式展示，包含图标、中文名称（英文名称）、对象角色标签、访问渠道、实例数量统计、操作按钮",
+    "module": "对象类型管理",
+    "source": "1.1.2 查看对象类型列表"
+  },
+  {
+    "requirement_title": "查看对象类型列表-操作菜单",
+    "requirement_content": "对象类型卡片的操作菜单包含：查看详情、编辑、添加属性、配置关系、删除",
+    "module": "对象类型管理",
+    "source": "1.1.2 查看对象类型列表"
+  },
+  {
+    "requirement_title": "查看对象类型列表-删除按钮可用条件",
+    "requirement_content": "删除操作仅当实例数为0时可用",
+    "module": "对象类型管理",
+    "source": "1.1.2 查看对象类型列表"
+  },
+  {
+    "requirement_title": "查看对象类型列表-按分类筛选",
+    "requirement_content": "对象类型列表支持按分类筛选（下拉选择）",
+    "module": "对象类型管理",
+    "source": "1.1.2 查看对象类型列表"
+  },
+  {
+    "requirement_title": "查看对象类型列表-按角色筛选",
+    "requirement_content": "对象类型列表支持按角色筛选（Principal / Actor / Data）",
+    "module": "对象类型管理",
+    "source": "1.1.2 查看对象类型列表"
+  },
+  {
+    "requirement_title": "查看对象类型列表-搜索功能",
+    "requirement_content": "对象类型列表支持搜索（中文名称或英文名称）",
+    "module": "对象类型管理",
+    "source": "1.1.2 查看对象类型列表"
+  },
+  {
+    "requirement_title": "查看对象类型列表-默认排序",
+    "requirement_content": "对象类型列表默认按创建时间倒序排列",
+    "module": "对象类型管理",
+    "source": "1.1.2 查看对象类型列表"
+  },
+  {
+    "requirement_title": "查看对象类型列表-排序选项",
+    "requirement_content": "对象类型列表可按中文名称、英文名称、实例数量排序",
+    "module": "对象类型管理",
+    "source": "1.1.2 查看对象类型列表"
+  },
+  {
+    "requirement_title": "查看对象类型详情-基本信息展示",
+    "requirement_content": "对象类型详情页展示基本信息，包括对象角色、访问渠道、能力、创建时间、实例数量",
+    "module": "对象类型管理",
+    "source": "1.1.3 查看对象类型详情"
+  },
+  {
+    "requirement_title": "查看对象类型详情-属性列表展示",
+    "requirement_content": "对象类型详情页展示属性列表，包含属性名称、类型、约束条件、操作按钮",
+    "module": "对象类型管理",
+    "source": "1.1.3 查看对象类型详情"
+  },
+  {
+    "requirement_title": "查看对象类型详情-关系定义展示",
+    "requirement_content": "对象类型详情页展示关系定义，包含关系名称、方向、基数、操作按钮",
+    "module": "对象类型管理",
+    "source": "1.1.3 查看对象类型详情"
+  },
+  {
+    "requirement_title": "查看对象类型详情-关联项目展示",
+    "requirement_content": "对象类型详情页展示关联项目信息",
+    "module": "对象类型管理",
+    "source": "1.1.3 查看对象类型详情"
+  },
+  {
+    "requirement_title": "查看对象类型详情-Tab切换",
+    "requirement_content": "对象类型详情页支持Tab切换，包括概览（默认）、属性管理、关系管理、实例列表（跳转到实例管理页面）、权限配置",
+    "module": "对象类型管理",
+    "source": "1.1.3 查看对象类型详情"
+  },
+  {
+    "requirement_title": "编辑对象类型-可编辑字段",
+    "requirement_content": "编辑对象类型时，可编辑的字段包括：中文名称、图标、简介、对象角色、访问渠道、能力标识、分类",
+    "module": "对象类型管理",
+    "source": "1.1.4 编辑对象类型"
+  },
+  {
+    "requirement_title": "编辑对象类型-英文名称不可编辑",
+    "requirement_content": "编辑对象类型时，英文名称（唯一标识）不可编辑",
+    "module": "对象类型管理",
+    "source": "1.1.4 编辑对象类型"
+  },
+  {
+    "requirement_title": "编辑对象类型-修改角色提示「,
+    」requirement_content": "如果修改了对象角色，提示：此操作可能影响已有的工作流配置，请谨慎操作，需要二次确认",
+    "module": "对象类型管理",
+    "source": "1.1.4 编辑对象类型"
+  },
+  {
+    "requirement_title": "编辑对象类型-修改访问渠道提示「,
+    」requirement_content": "如果修改了访问渠道，提示：此操作会影响用户的访问权限，需要二次确认",
+    "module": "对象类型管理",
+    "source": "1.1.4 编辑对象类型"
+  },
+  {
+    "requirement_title": "编辑对象类型-保存成功提示「,
+    」requirement_content": "编辑对象类型保存成功后，提示「保存成功」，刷新详情页",
+    "module": "对象类型管理",
+    "source": "1.1.4 编辑对象类型"
+  },
+  {
+    "requirement_title": "删除对象类型-前置条件检查",
+    "requirement_content": "删除对象类型的前置条件：该对象类型的实例数为0、该对象类型未被任何工作流引用、该对象类型未被其他对象类型关联",
+    "module": "对象类型管理",
+    "source": "1.1.5 删除对象类型"
+  },
+  {
+    "requirement_title": "删除对象类型-有实例时提示「,
+    」requirement_content": "如果对象类型有实例，提示「该对象类型下还有N个实例，无法删除」",
+    "module": "对象类型管理",
+    "source": "1.1.5 删除对象类型"
+  },
+  {
+    "requirement_title": "删除对象类型-有关联时提示「,
+    」requirement_content": "如果对象类型有关联，提示「该对象类型被其他对象类型关联，无法删除」",
+    "module": "对象类型管理",
+    "source": "1.1.5 删除对象类型"
+  },
+  {
+    "requirement_title": "删除对象类型-确认弹窗",
+    "requirement_content": "删除对象类型时弹出确认对话框，显示：您确定要删除对象类型"XXX"吗？删除后无法恢复，请谨慎操作！",
+    "module": "对象类型管理",
+    "source": "1.1.5 删除对象类型"
+  },
+  {
+    "requirement_title": "删除对象类型-成功后跳转",
+    "requirement_content": "删除对象类型成功后，提示「删除成功」，返回对象类型列表",
+    "module": "对象类型管理",
+    "source": "1.1.5 删除对象类型"
+  },
+  {
+    "requirement_title": "对象类型分组-新建分组",
+    "requirement_content": "用户可以新建对象类型分组",
+    "module": "对象类型管理",
+    "source": "1.1.6 对象类型分组"
+  },
+  {
+    "requirement_title": "对象类型分组-重命名分组",
+    "requirement_content": "用户可以重命名对象类型分组",
+    "module": "对象类型管理",
+    "source": "1.1.6 对象类型分组"
+  },
+  {
+    "requirement_title": "对象类型分组-删除分组条件",
+    "requirement_content": "删除分组仅当分组下无对象类型时可用",
+    "module": "对象类型管理",
+    "source": "1.1.6 对象类型分组"
+  },
+  {
+    "requirement_title": "对象类型分组-拖拽排序",
+    "requirement_content": "用户可以通过拖拽对分组进行排序",
+    "module": "对象类型管理",
+    "source": "1.1.6 对象类型分组"
+  },
+  {
+    "requirement_title": "对象类型分组-折叠显示「,
+    」requirement_content": "在对象类型列表页按分组折叠显示，支持展开/收起，显示每个分组下的对象类型数量",
+    "module": "对象类型管理",
+    "source": "1.1.6 对象类型分组"
+  },
+  {
+    "requirement_title": "添加属性-填写属性名称",
+    "requirement_content": "添加属性时，用户需要填写属性名称字段（英文），该字段为必填项",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-属性名称格式校验",
+    "requirement_content": "属性名称字段长度限制为2-50字符，仅允许字母、数字、下划线，首字母必须为字母",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-填写显示名称",
+    "requirement_content": "添加属性时，用户需要填写显示名称字段，该字段为必填项，用于前端显示标签",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-显示名称长度校验",
+    "requirement_content": "显示名称字段长度限制为2-50字符",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-选择属性类型",
+    "requirement_content": "添加属性时，用户需要选择属性类型字段，该字段为必填项",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-填写简介",
+    "requirement_content": "添加属性时，用户可以填写简介字段，该字段为非必填项，用于字段说明",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-简介长度校验",
+    "requirement_content": "属性简介字段最多200字符",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-设置必填约束",
+    "requirement_content": "添加属性时，用户可以设置必填约束（开关），默认关闭",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-设置唯一约束",
+    "requirement_content": "添加属性时，用户可以设置唯一约束（开关），默认关闭，仅部分类型支持",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-设置默认值",
+    "requirement_content": "添加属性时，用户可以设置默认值，根据类型动态显示「,
+    」module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-设置占位符",
+    "requirement_content": "添加属性时，用户可以设置占位符，用于输入框占位提示，最多100字符",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-设置帮助文本",
+    "requirement_content": "添加属性时，用户可以设置帮助文本，用于字段说明文字，最多200字符",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-String类型支持最小长度校验",
+    "requirement_content": "String类型属性支持设置最小长度校验规则",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-String类型支持最大长度校验",
+    "requirement_content": "String类型属性支持设置最大长度校验规则",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-String类型支持正则表达式校验",
+    "requirement_content": "String类型属性支持设置正则表达式校验规则",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-Number类型支持最小值校验",
+    "requirement_content": "Number类型属性支持设置最小值校验规则",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-Number类型支持最大值校验",
+    "requirement_content": "Number类型属性支持设置最大值校验规则",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-选择类型必须设置选项列表",
+    "requirement_content": "Select、Radio、Checkbox类型属性必须设置选项列表（每行一个）",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持String类型",
+    "requirement_content": "属性类型支持String（文本），单行文本输入，支持最小/最大长度、正则表达式、唯一性",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持Number类型",
+    "requirement_content": "属性类型支持Number（数字），数字输入，支持最小/最大值、小数位数",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持Boolean类型",
+    "requirement_content": "属性类型支持Boolean（布尔），开关/复选框，值为true/false",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持Date类型",
+    "requirement_content": "属性类型支持Date（日期），日期选择器，格式为YYYY-MM-DD",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持DateTime类型",
+    "requirement_content": "属性类型支持DateTime（日期时间），日期时间选择器，格式为YYYY-MM-DD HH:mm:ss",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持Select类型",
+    "requirement_content": "属性类型支持Select（下拉选择），单选下拉，需要定义选项列表",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持Radio类型",
+    "requirement_content": "属性类型支持Radio（单选框），单选按钮组，需要定义选项列表",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持Checkbox类型",
+    "requirement_content": "属性类型支持Checkbox（多选框），多选框组，值为数组",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持Image类型",
+    "requirement_content": "属性类型支持Image（图片），图片上传，支持文件大小限制、数量限制",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-支持File类型",
+    "requirement_content": "属性类型支持File（文件），文件上传，支持文件类型限制、大小限制、数量限制",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-类型选择联动显示配置项",
+    "requirement_content": "选择属性类型后，系统根据类型动态显示相应的配置项",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-属性名称唯一性校验",
+    "requirement_content": "系统验证属性名称在同一对象类型下的唯一性",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "添加属性-成功后刷新列表",
+    "requirement_content": "添加属性成功后，系统提示「添加成功」，刷新属性列表，新属性出现在列表末尾",
+    "module": "属性定义",
+    "source": "1.2.1 添加属性"
+  },
+  {
+    "requirement_title": "编辑属性-可编辑字段",
+    "requirement_content": "编辑属性时，可编辑的字段包括：显示名称、简介、约束条件（必填、唯一、默认值）、显示配置（占位符、帮助文本）、校验规则",
+    "module": "属性定义",
+    "source": "1.2.2 编辑属性"
+  },
+  {
+    "requirement_title": "编辑属性-属性名称不可编辑",
+    "requirement_content": "编辑属性时，属性名称（唯一标识）不可编辑",
+    "module": "属性定义",
+    "source": "1.2.2 编辑属性"
+  },
+  {
+    "requirement_title": "编辑属性-属性类型不可编辑",
+    "requirement_content": "编辑属性时，属性类型（数据类型）不可编辑",
+    "module": "属性定义",
+    "source": "1.2.2 编辑属性"
+  },
+  {
+    "requirement_title": "编辑属性-必填改为true时提示「,
+    」requirement_content": "如果修改必填从false改为true，提示：已有的对象实例可能缺少该字段的值，建议先检查数据完整性",
+    "module": "属性定义",
+    "source": "1.2.2 编辑属性"
+  },
+  {
+    "requirement_title": "编辑属性-唯一改为true时检查重复",
+    "requirement_content": "如果修改唯一从false改为true，系统将检查已有数据是否存在重复值，如果有重复，不允许保存，提示「已有N个实例存在重复值，请先处理」",
+    "module": "属性定义",
+    "source": "1.2.2 编辑属性"
+  },
+  {
+    "requirement_title": "编辑属性-修改默认值提示「,
+    」requirement_content": "如果修改了默认值，提示：仅对新创建的实例生效，已有实例不受影响",
+    "module": "属性定义",
+    "source": "1.2.2 编辑属性"
+  },
+  {
+    "requirement_title": "删除属性-前置条件检查",
+    "requirement_content": "删除属性的前置条件：该属性未被任何工作流引用、该属性未被任何界面配置引用",
+    "module": "属性定义",
+    "source": "1.2.3 删除属性"
+  },
+  {
+    "requirement_title": "删除属性-被引用时提示「,
+    」requirement_content": "如果属性被引用，提示「该属性被N个工作流引用，无法删除」",
+    "module": "属性定义",
+    "source": "1.2.3 删除属性"
+  },
+  {
+    "requirement_title": "删除属性-确认弹窗",
+    "requirement_content": "删除属性时弹出确认对话框，显示：您确定要删除属性"XXX"吗？删除后，该字段的数据将从所有实例中清除且无法恢复！",
+    "module": "属性定义",
+    "source": "1.2.3 删除属性"
+  },
+  {
+    "requirement_title": "删除属性-删除实例数据",
+    "requirement_content": "删除属性时，系统从所有该对象类型的实例中删除该字段",
+    "module": "属性定义",
+    "source": "1.2.3 删除属性"
+  },
+  {
+    "requirement_title": "删除属性-成功后刷新列表",
+    "requirement_content": "删除属性成功后，提示「删除成功」，刷新属性列表",
+    "module": "属性定义",
+    "source": "1.2.3 删除属性"
+  },
+  {
+    "requirement_title": "调整属性顺序-拖拽排序",
+    "requirement_content": "用户可以通过鼠标拖动属性行来调整属性顺序",
+    "module": "属性定义",
+    "source": "1.2.4 调整属性顺序"
+  },
+  {
+    "requirement_title": "调整属性顺序-上移下移按钮",
+    "requirement_content": "用户可以通过上移/下移按钮来调整属性顺序",
+    "module": "属性定义",
+    "source": "1.2.4 调整属性顺序"
+  },
+  {
+    "requirement_title": "调整属性顺序-实时保存",
+    "requirement_content": "属性顺序调整后实时保存（拖拽结束后自动保存）",
+    "module": "属性定义",
+    "source": "1.2.4 调整属性顺序"
+  },
+  {
+    "requirement_title": "创建关系-填写关系名称",
+    "requirement_content": "创建关系时，用户需要填写关系名称字段（英文），该字段为必填项",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-关系名称格式校验",
+    "requirement_content": "关系名称字段长度限制为2-50字符，驼峰命名，如：places",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-填写显示名称",
+    "requirement_content": "创建关系时，用户需要填写显示名称字段（中文描述），该字段为必填项",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-显示名称长度校验",
+    "requirement_content": "关系显示名称字段长度限制为2-50字符",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-源对象类型不可修改",
+    "requirement_content": "创建关系时，源对象类型为当前对象类型，不可修改",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-选择目标对象类型",
+    "requirement_content": "创建关系时，用户需要选择目标对象类型，该字段为必填项，从已有对象类型中选择",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-选择基数约束",
+    "requirement_content": "创建关系时，用户需要选择基数约束，该字段为必填项",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-一对一基数约束",
+    "requirement_content": "一对一（1:1）基数约束：一个源对象只能关联一个目标对象，源对象最多有1个此关系，目标对象最多被1个源对象关联",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-一对多基数约束",
+    "requirement_content": "一对多（1:N）基数约束：一个源对象可以关联多个目标对象，源对象可以有多个此关系，目标对象最多被1个源对象关联",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-多对一基数约束",
+    "requirement_content": "多对一（N:1）基数约束：多个源对象可以关联一个目标对象，源对象最多有1个此关系，目标对象可以被多个源对象关联",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-MVP不支持多对多",
+    "requirement_content": "MVP阶段暂不支持多对多（M:N）基数约束，替代方案：通过中间对象+两个1:N关系实现",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-填写逆关系名称",
+    "requirement_content": "创建关系时，用户可以填写逆关系名称字段，该字段为非必填项",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-填写逆关系显示名称",
+    "requirement_content": "创建关系时，用户可以填写逆关系显示名称字段，该字段为非必填项",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-填写简介",
+    "requirement_content": "创建关系时，用户可以填写简介字段，该字段为非必填项，用于关系说明",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-简介长度校验",
+    "requirement_content": "关系简介字段最多200字符",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-关系方向图动态显示「,
+    」requirement_content": "用户选择目标对象类型后，系统在关系方向图中动态显示：源→目标",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-关系名称唯一性校验",
+    "requirement_content": "系统验证关系名称在同一源对象类型下的唯一性",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-不允许自关联",
+    "requirement_content": "源对象类型和目标对象类型不能相同，不允许自关联",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-创建逆关系",
+    "requirement_content": "如果勾选创建逆关系，系统创建对应的逆关系节点和关联",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "创建关系-成功提示「,
+    」requirement_content": "创建关系成功后，提示「创建成功」，刷新关系列表",
+    "module": "关系定义",
+    "source": "1.3.1 创建关系"
+  },
+  {
+    "requirement_title": "查看关系列表-列表字段展示",
+    "requirement_content": "关系列表展示字段包括：关系名称（英文名称和中文显示名称）、方向（源→目标）、目标对象类型、基数（1:1/1:N/N:1）、逆关系、实例数量、操作（查看、删除）",
+    "module": "关系定义",
+    "source": "1.3.2 查看关系列表"
+  },
+  {
+    "requirement_title": "查看关系详情-基本信息展示",
+    "requirement_content": "关系详情页展示基本信息，包括关系名称、显示名称、源对象类型、目标对象类型、基数约束、逆关系、创建时间、实例数量",
+    "module": "关系定义",
+    "source": "1.3.3 查看关系详情"
+  },
+  {
+    "requirement_title": "查看关系详情-关系实例展示",
+    "requirement_content": "关系详情页展示关系实例（前10条），可点击查看全部",
+    "module": "关系定义",
+    "source": "1.3.3 查看关系详情"
+  },
+  {
+    "requirement_title": "删除关系定义-前置条件检查",
+    "requirement_content": "删除关系定义的前置条件：该关系的实例数为0、该关系未被任何工作流引用",
+    "module": "关系定义",
+    "source": "1.3.4 删除关系定义"
+  },
+  {
+    "requirement_title": "删除关系定义-被引用时提示「,
+    」requirement_content": "如果关系被工作流引用，提示「该关系被N个工作流引用，无法删除」",
+    "module": "关系定义",
+    "source": "1.3.4 删除关系定义"
+  },
+  {
+    "requirement_title": "删除关系定义-确认弹窗显示实例数",
+    "requirement_content": "删除关系时弹出确认对话框，显示实例数量：该关系下有N个关系实例，删除后将一并清除！此操作无法撤销，请谨慎操作！",
+    "module": "关系定义",
+    "source": "1.3.4 删除关系定义"
+  },
+  {
+    "requirement_title": "删除关系定义-二次确认",
+    "requirement_content": "删除关系时，用户需要输入「确认删除」进行二次确认",
+    "module": "关系定义",
+    "source": "1.3.4 删除关系定义"
+  },
+  {
+    "requirement_title": "删除关系定义-删除关系实例",
+    "requirement_content": "删除关系定义时，系统删除所有该类型的关系实例",
+    "module": "关系定义",
+    "source": "1.3.4 删除关系定义"
+  },
+  {
+    "requirement_title": "删除关系定义-删除逆关系",
+    "requirement_content": "删除关系定义时，如果有逆关系，一并删除",
+    "module": "关系定义",
+    "source": "1.3.4 删除关系定义"
+  },
+  {
+    "requirement_title": "删除关系定义-成功提示「,
+    」requirement_content": "删除关系成功后，提示「删除成功，已清除N个关系实例」，刷新关系列表",
+    "module": "关系定义",
+    "source": "1.3.4 删除关系定义"
+  },
+  {
+    "requirement_title": "本体关系图-节点样式按角色区分颜色",
+    "requirement_content": "本体关系图节点颜色根据对象角色区分：Principal为蓝色、Actor为绿色、Data为灰色",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-节点内容展示",
+    "requirement_content": "本体关系图节点内容包括：第一行英文名称、第二行中文名称、对象类型的图标",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-边样式按基数区分颜色",
+    "requirement_content": "本体关系图边（关系）颜色根据基数区分：1:1为橙色、1:N为蓝色、N:1为绿色",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-边标签展示",
+    "requirement_content": "本体关系图边标签显示关系名称和基数",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-点击节点显示详情",
+    "requirement_content": "点击本体关系图节点，显示对象类型详情",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-双击节点跳转详情页",
+    "requirement_content": "双击本体关系图节点，跳转到对象类型详情页",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-悬停节点显示摘要",
+    "requirement_content": "悬停本体关系图节点，显示对象类型摘要信息",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-点击边显示关系详情",
+    "requirement_content": "点击本体关系图边，显示关系详情",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-双击边跳转关系详情页",
+    "requirement_content": "双击本体关系图边，跳转到关系详情页",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-悬停边显示关系信息",
+    "requirement_content": "悬停本体关系图边，显示关系名称和基数",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-拖拽节点调整位置",
+    "requirement_content": "本体关系图支持拖拽节点调整位置",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-滚轮缩放",
+    "requirement_content": "本体关系图支持滚轮缩放",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-拖拽空白处平移画布",
+    "requirement_content": "本体关系图支持拖拽空白处平移画布",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-框选批量选择节点",
+    "requirement_content": "本体关系图支持框选批量选择节点",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-自动布局功能",
+    "requirement_content": "本体关系图工具栏提供自动布局功能，一键整理节点位置",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-导出图片功能",
+    "requirement_content": "本体关系图工具栏提供导出图片功能，导出为PNG/SVG",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-全屏功能",
+    "requirement_content": "本体关系图工具栏提供全屏显示功能",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-缩放控制",
+    "requirement_content": "本体关系图工具栏提供缩放控制（+/-按钮）",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "本体关系图-适应画布功能",
+    "requirement_content": "本体关系图工具栏提供适应画布功能，一键调整到最佳视图",
+    "module": "本体可视化",
+    "source": "1.4.1 本体关系图"
+  },
+  {
+    "requirement_title": "快速创建关系-拖拽连线操作",
+    "requirement_content": "在关系图中，按住Shift键，从源对象节点拖拽到目标对象节点，松开鼠标后弹出创建关系对话框",
+    "module": "本体可视化",
+    "source": "1.4.2 快速创建关系（拖拽连线）"
+  },
+  {
+    "requirement_title": "快速创建关系-自动填充源和目标",
+    "requirement_content": "通过拖拽连线创建关系时，表单中源和目标已自动填充",
+    "module": "本体可视化",
+    "source": "1.4.2 快速创建关系（拖拽连线）"
+  },
+  {
+    "requirement_title": "快速创建关系-保存后立即显示「,
+    」requirement_content": "通过拖拽连线创建关系成功后，图中立即显示新边",
+    "module": "本体可视化",
+    "source": "1.4.2 快速创建关系（拖拽连线）"
+  },
+  {
+    "requirement_title": "导出关系图-支持PNG格式",
+    "requirement_content": "导出关系图支持PNG图片格式（用于文档、PPT）",
+    "module": "本体可视化",
+    "source": "1.4.3 导出关系图"
+  },
+  {
+    "requirement_title": "导出关系图-支持SVG格式",
+    "requirement_content": "导出关系图支持SVG矢量图格式（用于编辑）",
+    "module": "本体可视化",
+    "source": "1.4.3 导出关系图"
+  },
+  {
+    "requirement_title": "导出关系图-支持JSON格式",
+    "requirement_content": "导出关系图支持JSON数据格式（用于备份、导入）",
+    "module": "本体可视化",
+    "source": "1.4.3 导出关系图"
+  },
+  {
+    "requirement_title": "导出关系图-分辨率选项",
+    "requirement_content": "导出关系图支持分辨率选项：标准（1920x1080）、高清（3840x2160）、自定义",
+    "module": "本体可视化",
+    "source": "1.4.3 导出关系图"
+  },
+  {
+    "requirement_title": "导出关系图-背景选项",
+    "requirement_content": "导出关系图支持背景选项：透明、白色、自定义颜色",
+    "module": "本体可视化",
+    "source": "1.4.3 导出关系图"
+  },
+  {
+    "requirement_title": "导出关系图-包含内容选项",
+    "requirement_content": "导出关系图支持包含内容选项：对象类型、关系、实例数量统计、创建时间",
+    "module": "本体可视化",
+    "source": "1.4.3 导出关系图"
+  }
+]

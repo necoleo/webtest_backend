@@ -88,7 +88,8 @@ class FaissManager:
             query_vector = np.array([vector], dtype=np.float32)
             # 数组归一化
             faiss.normalize_L2(query_vector)
-
+            if not isinstance(number, int):
+                number = int(number)
             number = min(number, self.index.ntotal)
             # 按相似度排行，输出两个数组，分别是相似度数组、向量id数组
             # 数组格式为 [[123, 234]]

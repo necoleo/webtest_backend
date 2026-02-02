@@ -26,7 +26,7 @@ class AuditRequirementView(View):
         }
         try:
             request_data = json.loads(request.body)
-            requirement_id_list = request_data.get("requirement_list")
+            requirement_id_list = request_data.get("requirement_id_list")
 
             service_response = self.service.audit_requirement(requirement_id_list)
 

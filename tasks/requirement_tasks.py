@@ -70,17 +70,9 @@ class RequirementTasks:
 
             logger.info(f"开始解析需求文档: {requirement_document_id}")
 
-            # 从cos下载文件
-            cos_client = CosClient()
-            content = cos_client.download_and_read_text_by_url(
-                requirement_document_obj.cos_access_url,
-                RequirementTasks.COS_FILE_SAVED_TEMP
-            )
-            logger.info(f"文件下载成功,内容为 {content}")
-
             # 使用AI提取需求项
             requirement_extractor = RequirementExtractor()
-            requirement_list = requirement_extractor.extract_requirement_document(content)
+            requirement_list = requirement_extractor.extract_requirement_document_by_dify(requirement_document_obj.cos_access_url)
             logger.info(f"AI 提取完成，共提取 {len(requirement_list)} 个需求项")
 
             # 批量保存到数据库
@@ -92,6 +84,7 @@ class RequirementTasks:
                         requirement_document_id=requirement_document_obj.id,
                         requirement_title=requirement.get("requirement_title"),
                         requirement_content=requirement.get("requirement_content"),
+                        module=requirement.get("module"),
                         created_user_id=created_user_id,
                         created_user=created_user,
                     )
@@ -218,20 +211,18 @@ class RequirementTasks:
 
             # 向量化完成后，建立双向相似关联
             relations_count = 0
-            relations_list = []
             if success_list:
                 service_response = service.build_similar_relations(success_list)
                 relations_count = len(service_response['data']['list'])
-                relations_list = service_response['data']['list']
 
             logger.info(f"批量处理完成，成功 {results['success_count']} 个， 失败 {results['fail_count']} 个, 关联 {relations_count}")
 
             response["code"] = ErrorCode.SUCCESS
-            response["message"] = f"处理完成，成功 {len(success_list)} 个，失败 {len(fail_list)} 个"
+            response["message"] = f"处理完成，成功 {len(success_list)} 个，失败 {len(fail_list)} 个，建立关联 {relations_count} 个"
             response["data"] = {
                 "success_count": len(success_list),
                 "fail_count": len(fail_list),
-                "relations_list": relations_list
+                "relations_count": relations_count
             }
             return response
 

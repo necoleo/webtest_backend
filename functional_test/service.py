@@ -16,7 +16,7 @@ class Service:
     def __init__(self):
         pass
 
-    @method_decorator(valid_params_blank(required_params_list=["project_id", "requirement_id", "case_title", "test_steps", "expected_result", "created_user_id", "created_user"]))
+    @valid_params_blank(required_params_list=["project_id", "requirement_id", "case_title", "test_steps", "expected_result", "created_user_id", "created_user"])
     def create_functional_test_case(self, project_id, requirement_id, case_title, test_steps,
                                      expected_result, created_user_id, created_user,
                                      precondition=None, module=None, priority=FunctionalTestCaseModel.PriorityChoices.P0,
@@ -114,7 +114,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["page", "page_size"]))
+    @valid_params_blank(required_params_list=["page", "page_size"])
     def get_functional_test_case_list(self, page, page_size, test_case_id=None, project_id=None,
                                       case_title=None, module=None, priority=None, case_source=None,
                                       requirement_id=None, execution_status=None):
@@ -217,7 +217,7 @@ class Service:
 
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["test_case_id"]))
+    @valid_params_blank(required_params_list=["test_case_id"])
     def get_functional_test_case_detail(self, test_case_id):
         """
         获取功能测试用例详情
@@ -267,7 +267,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["test_case_id"]))
+    @valid_params_blank(required_params_list=["test_case_id"])
     def update_functional_test_case(self, test_case_id, case_title=None, precondition=None,
                                     test_steps=None, expected_result=None, module=None, priority=None,
                                     comment=None, execution_status=None):
@@ -364,7 +364,7 @@ class Service:
             response["status_code"] = 500
             return response
 
-    @method_decorator(valid_params_blank(required_params_list=["test_case_id"]))
+    @valid_params_blank(required_params_list=["test_case_id"])
     def delete_functional_test_case(self, test_case_id):
         """
         删除功能测试用例（软删除）
