@@ -93,7 +93,7 @@ class Service:
                 "case_title": test_case.case_title,
                 "priority": test_case.priority,
                 "case_source": test_case.case_source,
-                "created_at": test_case.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                "created_at": timezone.localtime(test_case.created_at).strftime("%Y-%m-%d %H:%M:%S")
             }
             return response
 
@@ -193,7 +193,7 @@ class Service:
                     "execution_status": test_case_obj.execution_status,
                     "created_user_id": test_case_obj.created_user_id,
                     "created_user": test_case_obj.created_user,
-                    "created_at": test_case_obj.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                    "created_at": timezone.localtime(test_case_obj.created_at).strftime("%Y-%m-%d %H:%M:%S")
                 }
 
                 results.append(test_case_info)
@@ -251,7 +251,7 @@ class Service:
                 "execution_status": test_case_obj.execution_status,
                 "created_user_id": test_case_obj.created_user_id,
                 "created_user": test_case_obj.created_user,
-                "created_at": test_case_obj.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                "created_at": timezone.localtime(test_case_obj.created_at).strftime("%Y-%m-%d %H:%M:%S")
             }
             return response
 

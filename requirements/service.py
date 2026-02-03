@@ -202,9 +202,9 @@ class Service:
                     "updated_at": requirement_document_obj.updated_at
                 }
                 if requirement_document_info["created_at"]:
-                    requirement_document_info["created_at"] = requirement_document_info["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+                    requirement_document_info["created_at"] = timezone.localtime(requirement_document_info["created_at"]).strftime("%Y-%m-%d %H:%M:%S")
                 if requirement_document_info["updated_at"]:
-                    requirement_document_info["updated_at"] = requirement_document_info["updated_at"].strftime("%Y-%m-%d %H:%M:%S")
+                    requirement_document_info["updated_at"] = timezone.localtime(requirement_document_info["updated_at"]).strftime("%Y-%m-%d %H:%M:%S")
 
                 results.append(requirement_document_info)
 
@@ -570,11 +570,9 @@ class Service:
                     "updated_at": requirement_obj.updated_at
                 }
                 if requirement_info["created_at"]:
-                    requirement_info["created_at"] = requirement_info["created_at"].strftime(
-                        "%Y-%m-%d %H:%M:%S")
+                    requirement_info["created_at"] = timezone.localtime(requirement_info["created_at"]).strftime("%Y-%m-%d %H:%M:%S")
                 if requirement_info["updated_at"]:
-                    requirement_info["updated_at"] = requirement_info["updated_at"].strftime(
-                        "%Y-%m-%d %H:%M:%S")
+                    requirement_info["updated_at"] = timezone.localtime(requirement_info["updated_at"]).strftime("%Y-%m-%d %H:%M:%S")
 
                 results.append(requirement_info)
 
@@ -723,7 +721,7 @@ class Service:
                 "is_vectorized": requirement_obj.is_vectorized,
                 "created_user_id": requirement_obj.created_user_id,
                 "created_user": requirement_obj.created_user,
-                "created_at":  requirement_obj.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "created_at":  timezone.localtime(requirement_obj.created_at).strftime("%Y-%m-%d %H:%M:%S"),
             }
             return response
         except ProjectModel.DoesNotExist:

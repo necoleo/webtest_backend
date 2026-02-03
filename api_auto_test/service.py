@@ -6,7 +6,6 @@ from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.utils import timezone
-from django.utils.decorators import method_decorator
 from qcloud_cos import CosClientError
 
 from api_auto_test.models import (
@@ -250,9 +249,9 @@ class Service:
                     "updated_at": api_document_obj.updated_at
                 }
                 if api_document_info["created_at"]:
-                    api_document_info["created_at"] = api_document_info["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+                    api_document_info["created_at"] = timezone.localtime(api_document_info["created_at"]).strftime("%Y-%m-%d %H:%M:%S")
                 if api_document_info["updated_at"]:
-                    api_document_info["updated_at"] = api_document_info["updated_at"].strftime("%Y-%m-%d %H:%M:%S")
+                    api_document_info["updated_at"] = timezone.localtime(api_document_info["updated_at"]).strftime("%Y-%m-%d %H:%M:%S")
 
                 results.append(api_document_info)
 
@@ -590,13 +589,13 @@ class Service:
                     "source_label": obj.get_source_display(),
                     "last_execution_status": obj.last_execution_status,
                     "last_execution_status_label": obj.get_last_execution_status_display() if obj.last_execution_status is not None else None,
-                    "last_execution_time": obj.last_execution_time.strftime("%Y-%m-%d %H:%M:%S") if obj.last_execution_time else None,
+                    "last_execution_time": timezone.localtime(obj.last_execution_time).strftime("%Y-%m-%d %H:%M:%S") if obj.last_execution_time else None,
                     "total_executions": obj.total_executions,
                     "success_count": obj.success_count,
                     "created_user_id": obj.created_user_id,
                     "created_user": obj.created_user,
-                    "created_at": obj.created_at.strftime("%Y-%m-%d %H:%M:%S") if obj.created_at else None,
-                    "updated_at": obj.updated_at.strftime("%Y-%m-%d %H:%M:%S") if obj.updated_at else None
+                    "created_at": timezone.localtime(obj.created_at).strftime("%Y-%m-%d %H:%M:%S") if obj.created_at else None,
+                    "updated_at": timezone.localtime(obj.updated_at).strftime("%Y-%m-%d %H:%M:%S") if obj.updated_at else None
                 }
                 results.append(item)
 
@@ -700,13 +699,13 @@ class Service:
                 "ai_source_interface_ids": test_case.ai_source_interface_ids,
                 "last_execution_status": test_case.last_execution_status,
                 "last_execution_status_label": test_case.get_last_execution_status_display() if test_case.last_execution_status is not None else None,
-                "last_execution_time": test_case.last_execution_time.strftime("%Y-%m-%d %H:%M:%S") if test_case.last_execution_time else None,
+                "last_execution_time": timezone.localtime(test_case.last_execution_time).strftime("%Y-%m-%d %H:%M:%S") if test_case.last_execution_time else None,
                 "total_executions": test_case.total_executions,
                 "success_count": test_case.success_count,
                 "created_user_id": test_case.created_user_id,
                 "created_user": test_case.created_user,
-                "created_at": test_case.created_at.strftime("%Y-%m-%d %H:%M:%S") if test_case.created_at else None,
-                "updated_at": test_case.updated_at.strftime("%Y-%m-%d %H:%M:%S") if test_case.updated_at else None
+                "created_at": timezone.localtime(test_case.created_at).strftime("%Y-%m-%d %H:%M:%S") if test_case.created_at else None,
+                "updated_at": timezone.localtime(test_case.updated_at).strftime("%Y-%m-%d %H:%M:%S") if test_case.updated_at else None
             }
 
             return response
@@ -898,8 +897,8 @@ class Service:
                     "is_default": obj.is_default,
                     "created_user_id": obj.created_user_id,
                     "created_user": obj.created_user,
-                    "created_at": obj.created_at.strftime("%Y-%m-%d %H:%M:%S") if obj.created_at else None,
-                    "updated_at": obj.updated_at.strftime("%Y-%m-%d %H:%M:%S") if obj.updated_at else None
+                    "created_at": timezone.localtime(obj.created_at).strftime("%Y-%m-%d %H:%M:%S") if obj.created_at else None,
+                    "updated_at": timezone.localtime(obj.updated_at).strftime("%Y-%m-%d %H:%M:%S") if obj.updated_at else None
                 }
                 results.append(item)
 
@@ -1158,8 +1157,8 @@ class Service:
                 "pass_rate": float(execution.pass_rate) if execution.pass_rate else None,
                 "report_url": execution.report_url,
                 "error_message": execution.error_message,
-                "started_at": execution.started_at.strftime("%Y-%m-%d %H:%M:%S") if execution.started_at else None,
-                "finished_at": execution.finished_at.strftime("%Y-%m-%d %H:%M:%S") if execution.finished_at else None,
+                "started_at": timezone.localtime(execution.started_at).strftime("%Y-%m-%d %H:%M:%S") if execution.started_at else None,
+                "finished_at": timezone.localtime(execution.finished_at).strftime("%Y-%m-%d %H:%M:%S") if execution.finished_at else None,
                 "duration": execution.duration
             }
 
@@ -1285,12 +1284,12 @@ class Service:
                     "failed_cases": obj.failed_cases,
                     "pass_rate": float(obj.pass_rate) if obj.pass_rate else None,
                     "report_url": obj.report_url,
-                    "started_at": obj.started_at.strftime("%Y-%m-%d %H:%M:%S") if obj.started_at else None,
-                    "finished_at": obj.finished_at.strftime("%Y-%m-%d %H:%M:%S") if obj.finished_at else None,
+                    "started_at": timezone.localtime(obj.started_at).strftime("%Y-%m-%d %H:%M:%S") if obj.started_at else None,
+                    "finished_at": timezone.localtime(obj.finished_at).strftime("%Y-%m-%d %H:%M:%S") if obj.finished_at else None,
                     "duration": obj.duration,
                     "executed_user_id": obj.executed_user_id,
                     "executed_user": obj.executed_user,
-                    "created_at": obj.created_at.strftime("%Y-%m-%d %H:%M:%S") if obj.created_at else None
+                    "created_at": timezone.localtime(obj.created_at).strftime("%Y-%m-%d %H:%M:%S") if obj.created_at else None
                 }
                 results.append(item)
 
@@ -1369,13 +1368,13 @@ class Service:
                 "pass_rate": float(execution.pass_rate) if execution.pass_rate else None,
                 "report_url": execution.report_url,
                 "error_message": execution.error_message,
-                "started_at": execution.started_at.strftime("%Y-%m-%d %H:%M:%S") if execution.started_at else None,
-                "finished_at": execution.finished_at.strftime("%Y-%m-%d %H:%M:%S") if execution.finished_at else None,
+                "started_at": timezone.localtime(execution.started_at).strftime("%Y-%m-%d %H:%M:%S") if execution.started_at else None,
+                "finished_at": timezone.localtime(execution.finished_at).strftime("%Y-%m-%d %H:%M:%S") if execution.finished_at else None,
                 "duration": execution.duration,
                 "executed_user_id": execution.executed_user_id,
                 "executed_user": execution.executed_user,
-                "created_at": execution.created_at.strftime("%Y-%m-%d %H:%M:%S") if execution.created_at else None,
-                "updated_at": execution.updated_at.strftime("%Y-%m-%d %H:%M:%S") if execution.updated_at else None
+                "created_at": timezone.localtime(execution.created_at).strftime("%Y-%m-%d %H:%M:%S") if execution.created_at else None,
+                "updated_at": timezone.localtime(execution.updated_at).strftime("%Y-%m-%d %H:%M:%S") if execution.updated_at else None
             }
 
             return response
@@ -1491,7 +1490,7 @@ class Service:
                 "task_name": task_name,
                 "test_case_name": test_case.case_name,
                 "env_name": environment.env_name,
-                "next_execution_time": next_execution_time.strftime("%Y-%m-%d %H:%M:%S") if next_execution_time else None
+                "next_execution_time": timezone.localtime(next_execution_time).strftime("%Y-%m-%d %H:%M:%S") if next_execution_time else None
             }
 
             return response
@@ -1604,14 +1603,14 @@ class Service:
                     "schedule_time": obj.schedule_time.strftime("%H:%M") if obj.schedule_time else None,
                     "schedule_weekday": obj.schedule_weekday,
                     "is_enabled": obj.is_enabled,
-                    "last_execution_time": obj.last_execution_time.strftime("%Y-%m-%d %H:%M:%S") if obj.last_execution_time else None,
+                    "last_execution_time": timezone.localtime(obj.last_execution_time).strftime("%Y-%m-%d %H:%M:%S") if obj.last_execution_time else None,
                     "last_execution_status": obj.last_execution_status,
                     "last_execution_status_label": obj.get_last_execution_status_display() if obj.last_execution_status is not None else None,
-                    "next_execution_time": obj.next_execution_time.strftime("%Y-%m-%d %H:%M:%S") if obj.next_execution_time else None,
+                    "next_execution_time": timezone.localtime(obj.next_execution_time).strftime("%Y-%m-%d %H:%M:%S") if obj.next_execution_time else None,
                     "created_user_id": obj.created_user_id,
                     "created_user": obj.created_user,
-                    "created_at": obj.created_at.strftime("%Y-%m-%d %H:%M:%S") if obj.created_at else None,
-                    "updated_at": obj.updated_at.strftime("%Y-%m-%d %H:%M:%S") if obj.updated_at else None
+                    "created_at": timezone.localtime(obj.created_at).strftime("%Y-%m-%d %H:%M:%S") if obj.created_at else None,
+                    "updated_at": timezone.localtime(obj.updated_at).strftime("%Y-%m-%d %H:%M:%S") if obj.updated_at else None
                 }
                 results.append(item)
 
@@ -1735,7 +1734,7 @@ class Service:
             response["data"] = {
                 "schedule_id": schedule.id,
                 "task_name": schedule.task_name,
-                "next_execution_time": schedule.next_execution_time.strftime("%Y-%m-%d %H:%M:%S") if schedule.next_execution_time else None
+                "next_execution_time": timezone.localtime(schedule.next_execution_time).strftime("%Y-%m-%d %H:%M:%S") if schedule.next_execution_time else None
             }
 
             return response
@@ -1818,7 +1817,7 @@ class Service:
             response["data"] = {
                 "schedule_id": schedule.id,
                 "is_enabled": schedule.is_enabled,
-                "next_execution_time": schedule.next_execution_time.strftime("%Y-%m-%d %H:%M:%S") if schedule.next_execution_time else None
+                "next_execution_time": timezone.localtime(schedule.next_execution_time).strftime("%Y-%m-%d %H:%M:%S") if schedule.next_execution_time else None
             }
 
             return response

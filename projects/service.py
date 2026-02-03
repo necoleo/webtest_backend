@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 
 from constant.error_code import ErrorCode
@@ -104,9 +105,9 @@ class Service:
                 if project_info["end_date"]:
                     project_info["end_date"] = project_info["end_date"].strftime("%Y-%m-%d")
                 if project_info["created_at"]:
-                    project_info["created_at"] = project_info["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+                    project_info["created_at"] = timezone.localtime(project_info["created_at"]).strftime("%Y-%m-%d %H:%M:%S")
                 if project_info["updated_at"]:
-                    project_info["updated_at"] = project_info["updated_at"].strftime("%Y-%m-%d %H:%M:%S")
+                    project_info["updated_at"] = timezone.localtime(project_info["updated_at"]).strftime("%Y-%m-%d %H:%M:%S")
 
                 results.append(project_info)
 
