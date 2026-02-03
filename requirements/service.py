@@ -883,3 +883,100 @@ class Service:
             response["message"] = str(e)
             response["status_code"] = 500
             return response
+
+    @valid_params_blank(required_params_list=["requirement_id"])
+    def get_requirement_with_relations(self, requirement_id):
+        """
+        获取需求项及其关联需求的详细信息
+        :param requirement_id:
+        :return:
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+
+        try:
+            # 获取需求项
+            requirement_obj = RequirementModel.objects.get(
+                id=requirement_id,
+                deleted_at__isnull=True
+            )
+            # 获取该需求的content
+            requirement_content = requirement_obj.requirement_content
+
+            # 获取关联需求项
+            relation_requirement_obj = RequirementRelationModel.objects.filter(
+                source_requirement_id=requirement_id,
+                deleted_at__isnull=True
+            )
+
+            relation_requirement_detail_list = []
+
+            if relation_requirement_obj.exists():
+                # 先收集所有关联需求的ID
+                relation_requirement_id_list = []
+                for relation_requirement in relation_requirement_obj:
+                    relation_requirement_id_list.append(relation_requirement.target_requirement_id)
+
+                # 批量查询所有关联需求
+                requirement_with_relation_obj = RequirementModel.objects.filter(
+                    id__in=relation_requirement_id_list,
+                    deleted_at__isnull=True
+                )
+
+                # 构建关联需求id和内容的映射
+                relation_requirement_content_map = {}
+                for requirement_with_relation in requirement_with_relation_obj:
+                    relation_requirement_content_map[requirement_with_relation.id] = requirement_with_relation.requirement_content
+
+                # 批量查询关联需求项的测试用例
+                relation_test_case_obj_list = FunctionalTestCaseModel.objects.filter(
+                    requirement_id__in=relation_requirement_id_list,
+                    deleted_at__isnull=True
+                )
+
+                # 关联需求id和测试用例列表的映射
+                relation_test_case_map = {}
+                for relation_test_case in relation_test_case_obj_list:
+                    if relation_test_case.requirement_id not in relation_test_case_map:
+                        relation_test_case_map[relation_test_case.requirement_id] = []
+                    relation_test_case_map[relation_test_case.requirement_id].append(
+                        {
+                            "case_title": relation_test_case.case_title,
+                            "precondition": relation_test_case.precondition,
+                            "test_steps": relation_test_case.test_steps,
+                            "expected_result": relation_test_case.expected_result,
+                            "module": relation_test_case.module,
+                            "priority": relation_test_case.priority
+                        }
+                    )
+
+                # 组装每个关联需求的详细信息
+                for relation_requirement_id in relation_requirement_id_list:
+                    relation_requirement_detail = {
+                        "relation_requirement_content": relation_requirement_content_map.get(relation_requirement_id, ""),
+                        "relation_test_case_list": relation_test_case_map.get(relation_requirement_id, [])
+                    }
+                    relation_requirement_detail_list.append(relation_requirement_detail)
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "获取需求项及其关联需求的详细信息成功"
+            response["data"]["requirement_content"] = requirement_content
+            response["data"]["relation_requirement_detail_list"] = relation_requirement_detail_list
+            return response
+
+        except RequirementModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "需求项不存在"
+            response["status_code"] = 400
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = str(e)
+            response["status_code"] = 500
+            return response
+

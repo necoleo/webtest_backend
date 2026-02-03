@@ -12,11 +12,9 @@ from django.db import transaction
 
 from constant.error_code import ErrorCode
 from requirements.models import RequirementDocumentModel, RequirementModel
-from requirements.parser.requirement_document_parser import RequirementDocumentParser
 from requirements.parser.requirement_extractor import RequirementExtractor
 
 from requirements.vector.vectorization import Vectorization
-from utils.cos.cos_client import CosClient
 
 logger = get_task_logger(__name__)
 

@@ -42,6 +42,7 @@ def valid_params_blank(required_params_list):
 
             skip_count = 1 if param_names and param_names[0] in ['self', 'cls'] else 0
             param_names = param_names[skip_count:]
+
             params = {}
             args_without_self = args[skip_count:]
             for i, param in enumerate(param_names):
@@ -50,7 +51,7 @@ def valid_params_blank(required_params_list):
 
             # 关键字参数覆盖位置参数
             params.update(kwargs)
-            print(params)
+
             # 校验每个参数是否为blank
             blank_params_list = []
             for param in required_params_list:

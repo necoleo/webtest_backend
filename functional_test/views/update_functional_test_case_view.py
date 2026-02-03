@@ -28,14 +28,20 @@ class UpdateFunctionalTestCaseView(View):
         try:
             request_data = json.loads(request.body)
             test_case_id = request_data.get("test_case_id")
+            if test_case_id is not None:
+                test_case_id = int(test_case_id)
             case_title = request_data.get("case_title")
             precondition = request_data.get("precondition")
             test_steps = request_data.get("test_steps")
             expected_result = request_data.get("expected_result")
             module = request_data.get("module")
             priority = request_data.get("priority")
+            if priority is not None:
+                priority = int(priority)
             comment = request_data.get("comment")
             execution_status = request_data.get("execution_status")
+            if execution_status is not None:
+                execution_status = int(execution_status)
 
             service_response = self.service.update_functional_test_case(test_case_id, case_title, precondition,
                                     test_steps, expected_result, module, priority,

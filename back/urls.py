@@ -52,6 +52,7 @@ from api_auto_test.views.delete_api_test_schedule_view import DeleteApiTestSched
 from api_auto_test.views.trigger_api_test_schedule_view import TriggerApiTestScheduleView
 from functional_test.views.create_functional_test_case_view import CreateFunctionalTestCaseView
 from functional_test.views.delete_functional_test_case_view import DeleteFunctionalTestCaseView
+from functional_test.views.generate_functional_test_case_view import GenerateFunctionalTestCaseView
 from functional_test.views.get_functional_test_case_detail_view import GetFunctionalTestCaseDetailView
 from functional_test.views.get_functional_test_case_list_view import GetFunctionalTestCaseListView
 from functional_test.views.update_functional_test_case_view import UpdateFunctionalTestCaseView
@@ -104,6 +105,7 @@ urlpatterns = [
     path("api/functional_test_case/detail/", GetFunctionalTestCaseDetailView.as_view()),
     path("api/functional_test_case/update/", UpdateFunctionalTestCaseView.as_view()),
     path("api/functional_test_case/delete/", DeleteFunctionalTestCaseView.as_view()),
+    path("api/functional_test_case/generate/",GenerateFunctionalTestCaseView.as_view()),
 
     # 接口文档相关接口
     path("api/api_document/upload/", UploadApiDocumentView.as_view()),

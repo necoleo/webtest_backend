@@ -15,10 +15,18 @@ class FaissManager:
     def __init__(self):
         # 需求项向量数据库
         self.requirement_faiss_path = os.environ.get("FAISS_DB_PATH", "requirements_vectors.faiss")
+        # 确保目录存在
+        self._ensure_directory_exists()
         # 相似度
         self.threshold = float(os.environ.get("SIMILARITY_THRESHOLD"))
         # index索引
         self.index: Optional[faiss.IndexIDMap] = None
+
+    def _ensure_directory_exists(self):
+        """确保 FAISS 数据库文件所在目录存在"""
+        directory = os.path.dirname(self.requirement_faiss_path)
+        if directory and not os.path.exists(directory):
+            os.makedirs(directory, exist_ok=True)
 
     def load_index(self):
         """从文件中加载索引"""

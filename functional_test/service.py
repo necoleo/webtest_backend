@@ -9,6 +9,7 @@ from functional_test.models.functional_test_case_model import FunctionalTestCase
 from project_decorator.request_decorators import valid_params_blank
 from projects.models import ProjectModel
 from requirements.models import RequirementModel
+from tasks.functional_test_case_tasks import FunctionalTestCaseTasks
 
 
 class Service:
@@ -214,7 +215,6 @@ class Service:
             response["code"] = ErrorCode.SERVER_ERROR
             response["message"] = f"服务器错误：{str(e)}"
             response["status_code"] = 500
-
             return response
 
     @valid_params_blank(required_params_list=["test_case_id"])
@@ -407,4 +407,73 @@ class Service:
             response["status_code"] = 500
             return response
 
+    @valid_params_blank(required_params_list=["requirement_id_list"])
+    def generate_functional_test_case(self, requirement_id_list):
+        """
+        AI生成功能测试用例
+        :param requirement_id_list: 需求项id列表
+        :return:
+        """
+        response = {
+         "code": "",
+         "message": "",
+         "data": {},
+         "status_code": 200
+        }
+        try:
 
+            requirement_obj_list = list(RequirementModel.objects.filter(
+                id__in=requirement_id_list,
+                deleted_at__isnull=True
+            ))
+            found_requirement_id_list = []
+            for requirement_obj in requirement_obj_list:
+                found_requirement_id_list.append(requirement_obj.id)
+            miss_requirement_list = []
+            for requirement_id in requirement_id_list:
+                if requirement_id not in found_requirement_id_list:
+                    miss_requirement_list.append(requirement_id)
+            if miss_requirement_list:
+                response["code"] = ErrorCode.PARAM_INVALID
+                response["message"] = f"需求项不存在: {miss_requirement_list}"
+                response["status_code"] = 400
+                return response
+
+            # 检查状态
+            invalid_requirement_id_list = []
+            for requirement in requirement_obj_list:
+                # 需求项状态不是已审核
+                if requirement.status != RequirementModel.RequirementStatus.CONFIRMED.value:
+                    invalid_requirement_id_list.append(requirement.id)
+            if invalid_requirement_id_list:
+                response["code"] = ErrorCode.PARAM_INVALID
+                response["message"] = f"需求项状态非已审核：: {invalid_requirement_id_list}"
+                response["status_code"] = 400
+                return response
+
+            # 更新状态为 生成测试用例中
+            RequirementModel.objects.filter(
+                id__in=requirement_id_list,
+                deleted_at__isnull=True
+            ).update(status=RequirementModel.RequirementStatus.GENERATING)
+
+            # 提交异步任务
+            FunctionalTestCaseTasks.async_generate_functional_test_case.delay(requirement_id_list)
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "提交生成测试用例任务"
+            response["data"]["list"] = requirement_id_list
+
+            return response
+
+        except RequirementModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "该需求项不存在"
+            response["status_code"] = 400
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = str(e)
+            response["status_code"] = 500
+            return response

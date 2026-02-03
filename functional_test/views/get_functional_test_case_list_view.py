@@ -27,17 +27,28 @@ class GetFunctionalTestCaseListView(View):
         }
 
         try:
-            request_data = json.loads(request.body)
-            page = request_data.get("page", 1)
-            page_size = request_data.get.get("page_size", 20)
-            test_case_id = request_data.get("test_case_id")
-            project_id = request_data.get("project_id")
-            case_title = request_data.get("case_title")
-            module = request_data.get("module")
-            priority = request_data.get("priority")
-            case_source = request_data.get("case_source")
-            requirement_id = request_data.get("requirement_id")
-            execution_status = request_data.get("execution_status")
+            page = int(request.GET.get("page", 1))
+            page_size = int(request.GET.get("page_size", 20))
+            test_case_id = request.GET.get("test_case_id")
+            if test_case_id is not None:
+                test_case_id = int(test_case_id)
+            project_id = request.GET.get("project_id")
+            if project_id is not None:
+                project_id = int(project_id)
+            case_title = request.GET.get("case_title")
+            module = request.GET.get("module")
+            priority = request.GET.get("priority")
+            if priority is not None:
+                priority = int(priority)
+            case_source = request.GET.get("case_source")
+            if case_source is not None:
+                case_source = int(case_source)
+            requirement_id = request.GET.get("requirement_id")
+            if requirement_id is not None:
+                requirement_id = int(requirement_id)
+            execution_status = request.GET.get("execution_status")
+            if execution_status is not None:
+                execution_status = int(execution_status)
 
             service_response = self.service.get_functional_test_case_list(page, page_size, test_case_id, project_id, case_title,
                                                                           module, priority, case_source, requirement_id, execution_status)
