@@ -39,16 +39,15 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 # 放在安装依赖之后，这样代码变化时不需要重新安装依赖
 COPY . .
 
+# 复制启动脚本并设置执行权限
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # 创建临时文件目录（用于 COS 文件下载）
 RUN mkdir -p cos_file_temp
 
 # 声明容器监听的端口（仅作文档说明，不会实际开放端口）
 EXPOSE 8000
 
-# 启动命令
-# gunicorn: Python WSGI HTTP 服务器
-# back.wsgi:application: Django 的 WSGI 入口
-# -b 0.0.0.0:8000: 绑定到所有网络接口的 8000 端口
-# -w 4: 启动 4 个 worker 进程处理请求
-# --timeout 120: 请求超时时间 120 秒
-CMD ["gunicorn", "back.wsgi:application", "-b", "0.0.0.0:8000", "-w", "4", "--timeout", "120"]
+# 使用启动脚本（会自动执行数据库迁移后再启动 Gunicorn）
+ENTRYPOINT ["/entrypoint.sh"]
