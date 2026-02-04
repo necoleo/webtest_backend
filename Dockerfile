@@ -1,6 +1,6 @@
-# 基础镜像：使用官方 Python 3.9 精简版（与本地开发版本一致）
+# 基础镜像：使用官方 Python 3.12 精简版
 # slim 版本比完整版小很多，但包含运行 Python 所需的一切
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # 设置工作目录
 # 后续的 COPY、RUN 等命令都在这个目录下执行

@@ -817,9 +817,9 @@ class Service:
         }
         relation_list = []
         try:
+            similarity_threshold = float(os.environ.get("SIMILARITY_THRESHOLD"))
+            match_number = int(os.environ.get("MATCH_NUMBER"))
             for requirement_id in requirement_id_list:
-                similarity_threshold = float(os.environ.get("SIMILARITY_THRESHOLD"))
-                match_number = int(os.environ.get("MATCH_NUMBER"))
                 # 获取与requirement_id相似的需求项
                 similar_requirements_list = self.vector_matcher.find_similar_by_requirement_id(requirement_id, similarity_threshold, match_number)
 
@@ -833,6 +833,7 @@ class Service:
                         target_requirement_id=similar_requirement_id,
                         deleted_at__isnull=True
                     ).exists():
+                        # 只添加列表，未实际插入数据库，可能会存在重复项，后续一起去重
                         relation_list.append(
                             RequirementRelationModel(
                                 source_requirement_id=requirement_id,
@@ -856,8 +857,16 @@ class Service:
                                 match_method="vector"
                             )
                         )
+
+            # 对关联列表去重
+            relation_dict = {}
             if relation_list:
-                RequirementRelationModel.objects.bulk_create(relation_list, ignore_conflicts=True)
+
+                for relation_item in relation_list:
+                    key = (relation_item.source_requirement_id, relation_item.target_requirement_id)
+                    if key not in relation_dict:
+                        relation_dict[key] = relation_item
+                RequirementRelationModel.objects.bulk_create(relation_dict.values(), ignore_conflicts=True)
 
             # 将模型对象转换为可序列化的字典格式
             serializable_list = [
@@ -867,7 +876,7 @@ class Service:
                     "similarity_score": r.similarity_score,
                     "match_method": r.match_method
                 }
-                for r in relation_list
+                for r in relation_dict.values()
             ]
 
             response["code"] = ErrorCode.SUCCESS
