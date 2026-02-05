@@ -193,14 +193,10 @@ class RequirementTasks:
             for item in results["result"]:
                 requirement_id = item["requirement_id"]
                 if item["result"]:
-                    # 将状态更新为已审核
-                    RequirementModel.objects.filter(id=requirement_id).update(
-                        status=RequirementModel.RequirementStatus.CONFIRMED,
-                        is_vectorized=True
-                    )
+                    # 向量化成功
                     success_list.append(requirement_id)
                 else:
-                    # 将状态回退至待审核
+                    # 向量化失败，将状态回退至待审核
                     RequirementModel.objects.filter(id=requirement_id).update(
                         status=RequirementModel.RequirementStatus.PENDING
                     )
@@ -210,10 +206,19 @@ class RequirementTasks:
             # 向量化完成后，建立双向相似关联
             relations_count = 0
             if success_list:
+                logger.info(f"开始为 {len(success_list)} 个需求项建立相似关联")
                 service_response = service.build_similar_relations(success_list)
                 relations_count = len(service_response['data']['list'])
+                logger.info(f"关联建立完成，共建立 {relations_count} 个关联")
 
-            logger.info(f"批量处理完成，成功 {results['success_count']} 个， 失败 {results['fail_count']} 个, 关联 {relations_count}")
+                # 关联建立完成后，再批量更新状态为已审核
+                RequirementModel.objects.filter(id__in=success_list).update(
+                    status=RequirementModel.RequirementStatus.CONFIRMED,
+                    is_vectorized=True
+                )
+                logger.info(f"已将 {len(success_list)} 个需求项状态更新为已审核")
+
+            logger.info(f"批量处理完成，成功 {results['success_count']} 个， 失败 {results['fail_count']} 个, 关联 {relations_count} 个")
 
             response["code"] = ErrorCode.SUCCESS
             response["message"] = f"处理完成，成功 {len(success_list)} 个，失败 {len(fail_list)} 个，建立关联 {relations_count} 个"

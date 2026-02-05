@@ -1,0 +1,42 @@
+[
+  {
+    "requirement_title": "创建对象类型-填写中文名称",
+    "requirement_content": "创建对象类型时，用户需要填写中文名称字段，该字段为必填项",
+    "module": "对象类型管理"
+  },
+  {
+    "requirement_title": "创建对象类型-中文名称长度校验",
+    "requirement_content": "中文名称字段长度限制为2-50字符",
+    "module": "对象类型管理"
+  },
+  {
+    "requirement_title": "创建对象类型-填写英文名称",
+    "requirement_content": "创建对象类型时，用户需要填写英文名称字段，该字段为必填项",
+    "module": "对象类型管理"
+  },
+  {
+    "requirement_title": "创建对象类型-英文名称格式校验",
+    "requirement_content": "英文名称仅允许字母、数字、下划线",
+    "module": "对象类型管理"
+  },
+  {
+    "requirement_title": "创建对象类型-英文名称不可修改",
+    "requirement_content": "英文名称创建后不可修改",
+    "module": "对象类型管理"
+  },
+  {
+    "requirement_title": "对象类型列表-展示对象类型信息",
+    "requirement_content": "对象类型列表页展示以下信息：中文名称、英文名称、实例数、创建时间、操作",
+    "module": "对象类型管理"
+  },
+  {
+    "requirement_title": "对象类型列表-删除条件限制",
+    "requirement_content": "仅当对象类型的实例数为0时，才可执行删除操作",
+    "module": "对象类型管理"
+  },
+  {
+    "requirement_title": "对象类型列表-按中文名称搜索",
+    "requirement_content": "用户可以通过中文名称对对象类型进行模糊搜索",
+    "module": "对象类型管理"
+  }
+]
