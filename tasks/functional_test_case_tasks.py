@@ -53,8 +53,8 @@ class FunctionalTestCaseTasks:
         bind=True,
         max_retries=3,
         default_retry_delay=60,
-        time_limit=300,             # 硬超时 300 s
-        soft_time_limit=280,        # 软超时 280 s
+        time_limit=600,             # 硬超时 600 s
+        soft_time_limit=480,        # 软超时 480 s
         rate_limit='10/m'
     )
     def generate_single_functional_test_case(task, requirement_id):
