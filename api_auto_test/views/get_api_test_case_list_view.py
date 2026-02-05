@@ -41,9 +41,9 @@ class GetApiTestCaseListView(View):
             source = request.GET.get("source")
             if source:
                 source = int(source)
-
+            module = request.GET.get("module")
             service_response = self.service.get_api_test_case_list(
-                page, page_size, project_id, case_name, source
+                page, page_size, project_id, case_name, source, module
             )
             response['code'] = service_response['code']
             response['message'] = service_response['message']

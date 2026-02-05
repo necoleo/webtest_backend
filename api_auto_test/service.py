@@ -5,6 +5,7 @@ import yaml
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from django.db import transaction
+from django.db.models import Count
 from django.utils import timezone
 from qcloud_cos import CosClientError
 
@@ -406,11 +407,12 @@ class Service:
 
     # ==================== 接口测试用例管理 ====================
 
-    @valid_params_blank(required_params_list=["project_id", "case_name", "file", "created_user_id", "created_user"])
-    def upload_api_test_case(self, project_id, case_name, file, created_user_id, created_user, description=None):
+    @valid_params_blank(required_params_list=["project_id", "module", "case_name", "file", "created_user_id", "created_user"])
+    def upload_api_test_case(self, project_id, module, case_name, file, created_user_id, created_user, description=None):
         """
         上传接口测试用例
         :param project_id: 所属项目id
+        :param module: 所属模块
         :param case_name: 用例名称
         :param file: YAML文件
         :param created_user_id: 创建人id
@@ -485,6 +487,7 @@ class Service:
             # 创建测试用例记录
             test_case = ApiTestCaseModel.objects.create(
                 project_id=project_id,
+                module=module,
                 case_name=case_name,
                 description=description,
                 cos_access_url=cos_access_url,
@@ -527,7 +530,7 @@ class Service:
                     pass
 
     @valid_params_blank(required_params_list=["page", "page_size"])
-    def get_api_test_case_list(self, page, page_size, project_id=None, case_name=None, source=None):
+    def get_api_test_case_list(self, page, page_size, project_id=None, case_name=None, source=None, module=None):
         """
         获取接口测试用例列表
         :param page: 页码
@@ -535,6 +538,7 @@ class Service:
         :param project_id: 所属项目id
         :param case_name: 用例名称（模糊查询）
         :param source: 用例来源
+        :param module: 所属模块
         :return:
         """
         response = {
@@ -571,6 +575,9 @@ class Service:
             if source is not None:
                 filter_map["source"] = source
 
+            if module:
+                filter_map["module"] = module
+
             query_set = ApiTestCaseModel.objects.filter(**filter_map).order_by('-created_at')
 
             paginator = Paginator(query_set, page_size)
@@ -581,6 +588,7 @@ class Service:
                 item = {
                     "id": obj.id,
                     "project_id": obj.project_id,
+                    "module": obj.module,
                     "case_name": obj.case_name,
                     "description": obj.description,
                     "cos_access_url": obj.cos_access_url,
@@ -721,6 +729,40 @@ class Service:
             response["message"] = f"服务器错误：{str(e)}"
             response["status_code"] = 500
             return response
+
+    def get_api_test_case_module(self):
+        """获取所有模块列表及数据"""
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+        try:
+            modules = ApiTestCaseModel.objects.filter(
+                deleted_at__isnull=True,
+                module__isnull=False
+            ).values("module").annotate(
+                count=Count("id")
+            ).order_by("module")
+            module_list = list(modules)
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "查询接口测试用例模块成功"
+            response["data"] = {
+                "module": module_list,
+            }
+            return response
+        except ApiTestCaseModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "不存在模块"
+            response["status_code"] = 400
+            return response
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = str(e)
+            response["status_code"] = 500
+            return response
+
 
     @valid_params_blank(required_params_list=["test_case_id"])
     def delete_api_test_case(self, test_case_id):

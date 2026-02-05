@@ -20,6 +20,7 @@ from django.urls import path
 # 接口文档相关视图
 from api_auto_test.views.delete_api_document_view import DeleteApiDocumentView
 from api_auto_test.views.get_api_document_list_view import GetApiDocumentListView
+from api_auto_test.views.get_api_test_case_modules_view import GetApiTestCaseModulesView
 from api_auto_test.views.parse_api_document_view import ParseApiDocumentView
 from api_auto_test.views.update_api_document_view import UpdateApiDocumentView
 from api_auto_test.views.upload_api_document_view import UploadApiDocumentView
@@ -126,6 +127,7 @@ urlpatterns = [
     path("api/api_test_case/detail/", GetApiTestCaseDetailView.as_view()),
     path("api/api_test_case/yaml/", GetApiTestCaseYamlView.as_view()),
     path("api/api_test_case/delete/", DeleteApiTestCaseView.as_view()),
+    path("api/api_document/modules/", GetApiTestCaseModulesView.as_view()),
 
     # 接口测试环境配置相关接口
     path("api/api_test_environment/create/", CreateApiTestEnvironmentView.as_view()),

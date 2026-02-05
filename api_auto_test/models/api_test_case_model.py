@@ -26,6 +26,14 @@ class ApiTestCaseModel(models.Model):
         db_comment="所属项目id"
     )
 
+    # 所属模块
+    module = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_comment="所属模块"
+    )
+
     # 用例名称
     case_name = models.CharField(
         max_length=255,
