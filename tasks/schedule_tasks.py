@@ -23,12 +23,8 @@ from constant.error_code import ErrorCode
 logger = logging.getLogger(__name__)
 
 
-class ScheduleTaskService:
-    """定时任务调度服务类"""
-
-    @staticmethod
-    @shared_task
-    def checkScheduledTasks() -> dict:
+@shared_task(name='tasks.schedule_tasks.check_scheduled_tasks')
+def check_scheduled_tasks() -> dict:
         """
         检查接口测试定时任务（Celery 任务入口）
 

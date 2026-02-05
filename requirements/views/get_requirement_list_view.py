@@ -32,7 +32,7 @@ class GetRequirementListView(View):
         try:
             page = int(request.GET.get("page", 1))
             page_size = int(request.GET.get("page_size", 20))
-            requirement_id = request.GET.get("id")
+            requirement_id = request.GET.get("requirement_id")
             if requirement_id:
                 requirement_id = int(requirement_id)
             project_id = request.GET.get("project_id")
