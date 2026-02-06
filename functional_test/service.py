@@ -1,6 +1,7 @@
 
 
 from django.core.paginator import Paginator
+from django.db.models import Count
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 
@@ -161,7 +162,7 @@ class Service:
                 filter_map["project_id"] = project_id
             if case_title is not None:
                 filter_map["case_title__contains"] = case_title
-            if module is not None:
+            if module:
                 filter_map["module__contains"] = module
             if priority is not None:
                 filter_map["priority"] = priority
@@ -472,6 +473,39 @@ class Service:
             response["status_code"] = 400
             return response
 
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = str(e)
+            response["status_code"] = 500
+            return response
+
+    def get_functional_test_case_module(self):
+        """获取所有模块列表及数据"""
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+        try:
+            modules = FunctionalTestCaseModel.objects.filter(
+                deleted_at__isnull=True,
+                module__isnull=False
+            ).values("module").annotate(
+                count=Count("id")
+            ).order_by("module")
+            module_list = list(modules)
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "查询接口测试用例模块成功"
+            response["data"] = {
+                "module": module_list,
+            }
+            return response
+        except RequirementModel.DoesNotExist:
+            response["code"] = ErrorCode.PARAM_INVALID
+            response["message"] = "不存在模块"
+            response["status_code"] = 400
+            return response
         except Exception as e:
             response["code"] = ErrorCode.SERVER_ERROR
             response["message"] = str(e)

@@ -56,6 +56,7 @@ from functional_test.views.delete_functional_test_case_view import DeleteFunctio
 from functional_test.views.generate_functional_test_case_view import GenerateFunctionalTestCaseView
 from functional_test.views.get_functional_test_case_detail_view import GetFunctionalTestCaseDetailView
 from functional_test.views.get_functional_test_case_list_view import GetFunctionalTestCaseListView
+from functional_test.views.get_functional_test_case_modules_view import GetFunctionalTestCaseModulesView
 from functional_test.views.update_functional_test_case_view import UpdateFunctionalTestCaseView
 
 # 项目管理相关视图
@@ -70,6 +71,7 @@ from requirements.views.delete_requirement_document_view import DeleteRequiremen
 from requirements.views.delete_requirement_view import DeleteRequirementView
 from requirements.views.get_requirement_document_list_view import GetRequirementDocumentListView
 from requirements.views.get_requirement_list_view import GetRequirementListView
+from requirements.views.get_requirements_modules_view import GetRequirementsModuleView
 from requirements.views.parse_requirement_document_view import ParseRequirementDocumentView
 from requirements.views.update_requirement_document_view import UpdateRequirementDocumentView
 from requirements.views.update_requirement_view import UpdateRequirementView
@@ -99,6 +101,7 @@ urlpatterns = [
     path("api/requirement/list/", GetRequirementListView.as_view()),
     path("api/requirement/upload/", UploadRequirementView.as_view()),
     path("api/requirement/audit/", AuditRequirementView.as_view()),
+    path("api/requirement/modules/", GetRequirementsModuleView.as_view()),
 
     # 测试用例相关接口
     path("api/functional_test_case/create/", CreateFunctionalTestCaseView.as_view()),
@@ -107,6 +110,7 @@ urlpatterns = [
     path("api/functional_test_case/update/", UpdateFunctionalTestCaseView.as_view()),
     path("api/functional_test_case/delete/", DeleteFunctionalTestCaseView.as_view()),
     path("api/functional_test_case/generate/",GenerateFunctionalTestCaseView.as_view()),
+    path("api/functional_test_case/modules/", GetFunctionalTestCaseModulesView.as_view()),
 
     # 接口文档相关接口
     path("api/api_document/upload/", UploadApiDocumentView.as_view()),
