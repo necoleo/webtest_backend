@@ -555,12 +555,27 @@ class Service:
             page_obj = paginator.get_page(page)
 
             query_results = page_obj.object_list
+
+            requirement_document_list = []
+            for requirement_item in query_results:
+                if requirement_item.requirement_document_id:
+                    requirement_document_list.append(requirement_item.requirement_document_id)
+            # 批量查询需求文档
+            requirement_document_obj = RequirementDocumentModel.objects.filter(
+                deleted_at__isnull=True,
+                id__in=requirement_document_list,
+            )
+            requirement_document_dict = {}
+            for requirement_document_item in requirement_document_obj:
+                requirement_document_dict[requirement_document_item.id] = requirement_document_item.doc_name
+
             results = []
             for requirement_obj in query_results:
                 requirement_info = {
                     "id": requirement_obj.id,
                     "project_id": requirement_obj.project_id,
                     "requirement_document_id": requirement_obj.requirement_document_id,
+                    "requirement_document_name": requirement_document_dict.get(requirement_obj.requirement_document_id, "未知文档"),
                     "requirement_title": requirement_obj.requirement_title,
                     "requirement_content": requirement_obj.requirement_content,
                     "module": requirement_obj.module,

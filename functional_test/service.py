@@ -9,7 +9,7 @@ from constant.error_code import ErrorCode
 from functional_test.models.functional_test_case_model import FunctionalTestCaseModel
 from project_decorator.request_decorators import valid_params_blank
 from projects.models import ProjectModel
-from requirements.models import RequirementModel
+from requirements.models import RequirementModel, RequirementDocumentModel
 from tasks.functional_test_case_tasks import FunctionalTestCaseTasks
 
 
@@ -119,7 +119,7 @@ class Service:
     @valid_params_blank(required_params_list=["page", "page_size"])
     def get_functional_test_case_list(self, page, page_size, test_case_id=None, project_id=None,
                                       case_title=None, module=None, priority=None, case_source=None,
-                                      requirement_id=None, execution_status=None):
+                                      requirement_id=None, execution_status=None, requirement_document_id=None):
         response = {
             "code": "",
             "message": "",
@@ -145,7 +145,8 @@ class Service:
                 or (priority is not None and not isinstance(priority, int))
                 or (requirement_id is not None and not isinstance(requirement_id, int))
                 or (case_source is not None and not isinstance(case_source, int))
-                or (execution_status is not None and not isinstance(execution_status, int))):
+                or (execution_status is not None and not isinstance(execution_status, int))
+                or (requirement_document_id is not None and not isinstance(requirement_document_id, int))):
                 response["code"] = ErrorCode.PARAM_INVALID
                 response["message"] = "参数无效"
                 response["status_code"] = 400
@@ -172,16 +173,34 @@ class Service:
                 filter_map["requirement_id"] = requirement_id
             if execution_status is not None:
                 filter_map["execution_status"] = execution_status
+            if requirement_document_id is not None:
+                filter_map["requirement_document_id"] = requirement_document_id
 
             query_set = FunctionalTestCaseModel.objects.filter(**filter_map).order_by('-created_at')
             paginator = Paginator(query_set, page_size)
             page_obj = paginator.get_page(page)
+            query_results = page_obj.object_list
+
+            requirement_document_list = []
+            for requirement_item in query_results:
+                if requirement_item.requirement_document_id:
+                    requirement_document_list.append(requirement_item.requirement_document_id)
+            # 批量查询需求文档
+            requirement_document_obj = RequirementDocumentModel.objects.filter(
+                deleted_at__isnull=True,
+                id__in=requirement_document_list,
+            )
+            requirement_document_dict = {}
+            for requirement_document_item in requirement_document_obj:
+                requirement_document_dict[requirement_document_item.id] = requirement_document_item.doc_name
 
             results = []
             for test_case_obj in page_obj.object_list:
                 test_case_info = {
                     "id": test_case_obj.id,
                     "project_id": test_case_obj.project_id,
+                    "requirement_document_id": test_case_obj.requirement_document_id,
+                    "requirement_document_name": requirement_document_dict.get(test_case_obj.requirement_document_id,"未知文档"),
                     "case_title": test_case_obj.case_title,
                     "precondition": test_case_obj.precondition,
                     "test_steps": test_case_obj.test_steps,
