@@ -18,11 +18,5 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # 自动发现 tasks 目录下的任务模块
 app.autodiscover_tasks(['tasks'])
 
-# 定时任务配置（Celery Beat）
-app.conf.beat_schedule = {
-    # 每分钟检查接口测试定时任务
-    'check-api-test-scheduled-tasks': {
-        'task': 'tasks.schedule_tasks.ScheduleTaskService.checkScheduledTasks',
-        'schedule': 60.0,
-    },
-}
+# 定时任务配置已移至 settings.py 的 CELERY_BEAT_SCHEDULE
+# 无需在此重复配置

@@ -31,6 +31,11 @@ class FunctionalTestCaseModel(models.Model):
         db_column="所属项目id",
     )
 
+    # 所属需求文档id
+    requirement_document_id = models.IntegerField(
+        db_comment="所属需求文档id"
+    )
+
     # 用例标题
     case_title = models.CharField(
         max_length=255,

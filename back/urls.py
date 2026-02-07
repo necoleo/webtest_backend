@@ -70,6 +70,7 @@ from requirements.views.audit_requirement_view import AuditRequirementView
 from requirements.views.delete_requirement_document_view import DeleteRequirementDocumentView
 from requirements.views.delete_requirement_view import DeleteRequirementView
 from requirements.views.get_requirement_document_list_view import GetRequirementDocumentListView
+from requirements.views.get_requirement_document_options_view import GetRequirementDocumentOptionsView
 from requirements.views.get_requirement_list_view import GetRequirementListView
 from requirements.views.get_requirements_modules_view import GetRequirementsModuleView
 from requirements.views.parse_requirement_document_view import ParseRequirementDocumentView
@@ -94,6 +95,7 @@ urlpatterns = [
     path("api/requirement_document/delete/", DeleteRequirementDocumentView.as_view()),
     path("api/requirement_document/list/", GetRequirementDocumentListView.as_view()),
     path("api/requirement_document/parse/",ParseRequirementDocumentView.as_view()),
+    path("api/requirement_document/options/", GetRequirementDocumentOptionsView.as_view()),
 
     # 需求项相关接口
     path("api/requirement/delete/", DeleteRequirementView.as_view()),

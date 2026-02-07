@@ -1020,3 +1020,77 @@ class Service:
             response["status_code"] = 500
             return response
 
+
+    def get_requirements_document_options(self, source):
+        """
+        获取所有需求文档列表
+        :param source: 选择查询的模型,目前支持 requirement、test_case
+        """
+        response = {
+            "code": "",
+            "message": "",
+            "data": {},
+            "status_code": 200
+        }
+        try:
+            if not source:
+                response["code"] = ErrorCode.PARAM_INVALID
+                response["message"] = "缺少查询来源"
+                response["status_code"] = 400
+                return response
+
+            if source == "requirement":
+                model = RequirementModel
+            elif source == "test_case":
+                model = FunctionalTestCaseModel
+            else:
+                response["code"] = ErrorCode.PARAM_INVALID
+                response["message"] = "不支持该查询来源"
+                response["status_code"] = 400
+                return response
+
+            # 按 requirement_document_id 分组统计需求项数量
+            requirement_document_count = model.objects.filter(
+                deleted_at__isnull=True,
+                requirement_document_id__isnull=False
+            ).values("requirement_document_id").annotate(
+                count=Count("id")
+            ).order_by("requirement_document_id")
+
+            # 取出所有文档id
+            requirement_document_id_list = []
+            for item in requirement_document_count:
+                requirement_document_id_list.append(item["requirement_document_id"])
+
+            # 批量查询需求文档名称
+            requirement_document_obj = RequirementDocumentModel.objects.filter(
+                deleted_at__isnull=True,
+                id__in=requirement_document_id_list
+            )
+            requirement_document_map = {}
+            for requirement_document in requirement_document_obj:
+                requirement_document_map[requirement_document.id] = requirement_document.doc_name
+
+            # 组装输出结果
+            requirement_document_list = []
+            for item in requirement_document_count:
+                requirement_document_list.append(
+                    {
+                        "requirement_document_id": item["requirement_document_id"],
+                        "requirement_document_name": requirement_document_map.get(item["requirement_document_id"], "未知文档"),
+                        "count": item["count"]
+                    }
+                )
+
+            response["code"] = ErrorCode.SUCCESS
+            response["message"] = "查询需求文档成功"
+            response["data"] = {
+                "requirement_document": requirement_document_list,
+            }
+            return response
+
+        except Exception as e:
+            response["code"] = ErrorCode.SERVER_ERROR
+            response["message"] = str(e)
+            response["status_code"] = 500
+            return response

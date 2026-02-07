@@ -199,12 +199,12 @@ CELERY_TASK_TIME_LIMIT = 3600
 CELERY_BEAT_SCHEDULE = {
     # 每分钟检查接口测试定时任务
     'check-api-test-scheduled-tasks': {
-        'task': 'tasks.schedule_tasks.ScheduleTaskService.checkScheduledTasks',
+        'task': 'tasks.schedule_tasks.check_scheduled_tasks',
         'schedule': 60.0,  # 每 60 秒执行一次
     },
     # 每 5 分钟更新定时任务执行状态
     'update-schedule-execution-status': {
-        'task': 'tasks.schedule_tasks.ScheduleTaskService.updateExecutionStatus',
+        'task': 'tasks.schedule_tasks.update_execution_status',
         'schedule': 300.0,  # 每 300 秒执行一次
     },
 }
